@@ -352,17 +352,27 @@ h2.main-title {
 
 /* ----------- FULLSCREEN EN CELULAR ----------- */
 @media (max-width: 480px) {
+  /* 1. Body y Contenedor Principal (Calendar-Container) */
   body {
+    /* Forzamos al body a ocupar toda la altura */
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    padding: 0; /* Aseguramos que no haya padding extra que oculte cosas */
+    margin: 0;
+    overflow-y: auto; /* Permitir scroll si es necesario */
   }
+
   #calendar-container {
     width: 100%;
     max-width: 100%;
-    height: auto; /* Altura según contenido */
+    height: auto;
+    padding: 10px; /* Reducimos el padding general para dar más espacio */
+    box-sizing: border-box; /* Incluir padding en el width */
   }
 
+  /* 2. Cabeceras y Barras */
   .fc-header-toolbar {
     margin-bottom: 10px !important;
   }
@@ -385,19 +395,26 @@ h2.main-title {
     gap: 5px;
   }
 
-  /* Tamaño de los días ocupando la pantalla */
-  .fc-daygrid-day-frame {
-    min-height: calc((100vh - 200px) / 6) !important;
-    /* 6 filas = ocupa toda la pantalla */
-  }
-
-  .fc-daygrid-day-number {
-    font-size: 1rem !important;
-  }
-
+  /* Días de la semana */
   .fc-col-header-cell-cushion {
     font-size: 0.75rem !important;
     padding: 6px 0 !important;
     width: 90%;
+  }
+
+  /* 3. El ajuste de Altura CRÍTICO para los Días */
+  .fc-daygrid-body {
+    /* Ocupar toda la altura restante forzando flexbox o grid si es necesario */
+    flex-grow: 1;
+  }
+
+  .fc-daygrid-day-frame {
+    /* Ajuste más preciso para ocupar la altura restante */
+    /* 100vh es la altura de la ventana. Restamos un valor estimado para las cabeceras (RESERVA TU CITA, botones, nombres de los días) y dividimos entre 6 (filas). */
+    min-height: calc((100vh - 160px) / 6) !important;
+  }
+
+  .fc-daygrid-day-number {
+    font-size: 1rem !important;
   }
 }
