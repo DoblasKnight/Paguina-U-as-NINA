@@ -352,9 +352,7 @@ h2.main-title {
 
 /* ----------- FULLSCREEN EN CELULAR ----------- */
 @media (max-width: 480px) {
-  /* 1. Body y Contenedor Principal (Calendar-Container) */
   body {
-    /* Alineamos el contenido arriba en lugar de al centro para maximizar el espacio */
     align-items: flex-start;
     padding: 0;
   }
@@ -362,15 +360,14 @@ h2.main-title {
   #calendar-container {
     width: 100%;
     max-width: 100%;
-    margin: 0; /* Eliminamos el margin auto */
-    padding: 15px; /* Reducimos el padding interno */
-    border-radius: 0; /* Asegura que no haya bordes redondeados en los bordes de la pantalla */
-    box-shadow: none; /* Look más de aplicación nativa */
-    min-height: 100vh; /* CRÍTICO: Fuerza a ocupar al menos la altura visible */
+    margin: 0;
+    padding: 15px;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: auto;
     box-sizing: border-box;
   }
 
-  /* 2. Elementos del Calendario */
   .fc-toolbar-title {
     font-size: 1.1rem !important;
   }
@@ -380,22 +377,30 @@ h2.main-title {
     padding: 8px 0 !important;
   }
 
-  /* 3. Ajuste de Altura de los Días para permitir un mejor flujo y scroll */
-  .fc-daygrid-day-frame {
-    /* Reducido para que quepan más días verticalmente antes de necesitar scroll */
-    min-height: 70px;
-  }
-
-  /* Habilitamos el flujo de la cuadrícula si el contenido lo requiere (FullCalendar lo maneja automáticamente con height: 'auto') */
-  .fc-daygrid-body {
-    overflow-y: visible;
-  }
-
-  .fc-scrollgrid-sync-table {
+  .fc-scrollgrid-sync-table,
+  .fc-daygrid-body-unbalanced {
     height: auto !important;
   }
 
-  .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
-    min-height: 15px;
+  /* CORRECCIÓN: Quitamos el overflow: hidden que tenías globalmente para FullCalendar */
+  .fc-scroller {
+    overflow-y: visible !important;
+  }
+
+  /* Hacemos las celdas más pequeñas para que quepan más */
+  .fc-daygrid-day-frame {
+    min-height: 65px; /* Reducido un poco más */
+  }
+
+  /* Aseguramos que la cuadrícula de días también fluya */
+  .fc-daygrid-body {
+    overflow-y: visible;
+    /* CRÍTICO: Anular altura fija en el cuerpo de la cuadrícula */
+    max-height: none !important;
+  }
+
+  /* Ajuste para el número del día */
+  .fc-daygrid-day-number {
+    font-size: 1rem;
   }
 }
