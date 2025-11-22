@@ -16,7 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
     firstDay: 0, // Domingo
     headerToolbar: { left: "prev", center: "title", right: "next" },
 
-    // Al hacer CLIC en un día
+    // CORRECCIÓN CLAVE: Muestra los días del mes anterior y siguiente
+    showNonCurrentDates: true, // Al hacer CLIC en un día
+
     dateClick: function (info) {
       // Validación opcional: No dejar agendar en el pasado
       let clickedDate = new Date(info.dateStr);
@@ -49,26 +51,22 @@ async function openHoursModal(date) {
   modalHours.classList.remove("hidden");
   modalForm.classList.add("hidden");
 
-  const grid = document.getElementById("hours-grid");
-  // Mensaje de carga mientras consultamos a Supabase
-  grid.innerHTML = '<p style="color:white;">Verificando disponibilidad...</p>';
+  const grid = document.getElementById("hours-grid"); // Mensaje de carga mientras consultamos a Supabase
+  grid.innerHTML = '<p style="color:white;">Verificando disponibilidad...</p>'; // --- PASO A: Consultar citas existentes en esa fecha ---
 
-  // --- PASO A: Consultar citas existentes en esa fecha ---
   const { data: citasOcupadas, error } = await supabase
     .from("citas")
     .select("hora")
-    .eq("fecha", date);
+    .eq("fecha", date); // Creamos una lista simple de horas ocupadas. Ej: ['09:00', '10:00']
 
-  // Creamos una lista simple de horas ocupadas. Ej: ['09:00', '10:00']
-  const horasBloqueadas = citasOcupadas ? citasOcupadas.map((c) => c.hora) : [];
+  const horasBloqueadas = citasOcupadas ? citasOcupadas.map((c) => c.hora) : []; // --- PASO B: Generar los botones ---
 
-  // --- PASO B: Generar los botones ---
   grid.innerHTML = ""; // Limpiar mensaje de carga
   const horarios = [
-    "09:00",
-    "10:00",
-    "11:00",
-    "14:00",
+    "06:00 AM",
+    "08:30 AM",
+    "11:00 AM",
+    "06:00 PM",
     "15:00",
     "16:00",
     "17:00",
@@ -77,18 +75,16 @@ async function openHoursModal(date) {
   horarios.forEach((hora) => {
     let btn = document.createElement("div");
     btn.className = "time-slot";
-    btn.innerText = hora;
+    btn.innerText = hora; // Si la hora está en la lista de bloqueadas...
 
-    // Si la hora está en la lista de bloqueadas...
     if (horasBloqueadas.includes(hora)) {
       btn.classList.add("booked"); // Agregamos clase para estilo (rojo)
-      btn.innerText += " (Ocupado)";
+      btn.innerText += " (Reservado)";
       btn.style.backgroundColor = "#330000"; // Rojo oscuro
       btn.style.color = "#ff4444"; // Texto rojo claro
       btn.style.borderColor = "#ff4444";
       btn.style.opacity = "0.6";
-      btn.style.cursor = "not-allowed";
-      // No le ponemos evento onclick, así que no hace nada
+      btn.style.cursor = "not-allowed"; // No le ponemos evento onclick, así que no hace nada
     } else {
       // Si está libre, asignamos el evento clic
       btn.onclick = () => {
@@ -129,9 +125,8 @@ document
     const btn = document.querySelector(".btn-confirm");
     const originalText = btn.innerText;
     btn.innerText = "Subiendo Comprobante...";
-    btn.disabled = true;
+    btn.disabled = true; // --- PASO 1: SUBIR IMAGEN ---
 
-    // --- PASO 1: SUBIR IMAGEN ---
     const fileInput = document.getElementById("inp-comprobante");
     const file = fileInput.files[0];
 
@@ -140,12 +135,10 @@ document
       btn.innerText = originalText;
       btn.disabled = false;
       return;
-    }
+    } // Nombre único para el archivo: tiempo_nombre.jpg
 
-    // Nombre único para el archivo: tiempo_nombre.jpg
-    const fileName = `${Date.now()}_${file.name.replace(/\s/g, "")}`;
+    const fileName = `${Date.now()}_${file.name.replace(/\s/g, "")}`; // Subir al bucket 'comprobantes'
 
-    // Subir al bucket 'comprobantes'
     const { error: uploadError } = await supabase.storage
       .from("comprobantes")
       .upload(fileName, file);
@@ -155,16 +148,14 @@ document
       btn.innerText = originalText;
       btn.disabled = false;
       return;
-    }
+    } // Obtener la URL pública de la imagen
 
-    // Obtener la URL pública de la imagen
     const { data: urlData } = supabase.storage
       .from("comprobantes")
       .getPublicUrl(fileName);
 
-    const imagenUrl = urlData.publicUrl;
+    const imagenUrl = urlData.publicUrl; // --- PASO 2: GUARDAR DATOS EN LA TABLA ---
 
-    // --- PASO 2: GUARDAR DATOS EN LA TABLA ---
     btn.innerText = "Confirmando Cita...";
 
     const datos = {
@@ -183,9 +174,7 @@ document
     } else {
       alert("¡Cita Agendada Exitosamente!");
       closeModal();
-      document.getElementById("booking-form").reset();
-      // Opcional: recargar para actualizar el calendario visualmente
-      // location.reload();
+      document.getElementById("booking-form").reset(); // Opcional: recargar para actualizar el calendario visualmente // location.reload();
     }
 
     btn.innerText = originalText;

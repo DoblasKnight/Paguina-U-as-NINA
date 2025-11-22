@@ -1,11 +1,12 @@
-/* --- CONFIGURACIÓN GENERAL Y GRADIENTE ROSADO --- */
 :root {
-  --bg-dark: #1a1a2e;
-  --bg-panel: #232336;
-  --neon-cyan: #00d4ff;
-  --neon-pink: #ff00aa;
-  --text-gray: #aebabf;
+  --bg-dark: #1a1a2e; /* Fondo principal */
+  --bg-panel: #232336; /* Fondo del calendario */
+  --neon-cyan: #00d4ff; /* Color Cyan (Días de la semana, Día actual) */
+  --neon-pink: #ff00aa; /* Color Rosa (Botones, Hover, Eventos) */
+  --text-gray: #aebabf; /* Números inactivos */
   --text-white: #ffffff;
+  --cell-bg: #2d2d44; /* Fondo de cada casilla de día */
+  --radius: 10px; /* Radio para bordes redondeados */
 }
 
 body {
@@ -19,22 +20,25 @@ body {
   overflow-x: hidden;
 }
 
+/* --- CONTENEDOR PRINCIPAL DEL CALENDARIO --- */
 #calendar-container {
   background-color: var(--bg-panel);
-  padding: 20px;
   border-radius: 20px;
   border: 1px solid rgba(255, 0, 170, 0.3); /* Borde rosa suave */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 0, 170, 0.1);
-  width: 90%;
-  max-width: 500px;
+  width: 95%; /* Más ancho en pantallas grandes */
+  max-width: 650px; /* Antes estaba en 500px */
+  padding: 35px; /* Más espacio interno */
 }
 
 h2.main-title {
   color: var(--neon-cyan);
   text-align: center;
   text-transform: uppercase;
-  margin-bottom: 20px;
-  text-shadow: 0 0 5px var(--neon-cyan);
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.5rem;
+  text-shadow: 0 0 8px var(--neon-cyan), 0 0 15px rgba(0, 212, 255, 0.5);
 }
 
 /* FIX: Ocultar la barra de scroll vertical interna de FullCalendar */
@@ -42,52 +46,137 @@ h2.main-title {
   overflow-y: hidden !important;
 }
 
-/* --- ESTILOS FULLCALENDAR --- */
-.fc-toolbar-title {
-  color: #fff;
-  font-size: 1.2rem !important;
-}
+/* --- ESTILOS PROFUNDOS DE FULLCALENDAR --- */
 
-/* Botones de navegación (Flechas) */
-.fc-button {
-  background-color: var(--neon-pink) !important;
+/* Quitar bordes y fondos por defecto de la tabla */
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
   border: none !important;
-  box-shadow: 0 0 8px rgba(255, 0, 170, 0.6);
-  transition: 0.2s;
-}
-.fc-button:hover {
-  background-color: #d6008e !important;
+  background-color: transparent !important;
 }
 
-/* Encabezados de días (DOM, LUN, etc) */
-.fc-col-header-cell-cushion {
-  color: var(--neon-cyan);
-  text-transform: uppercase;
+/* Header del calendario (Título del mes y flechas de navegación) */
+.fc .fc-toolbar-title {
+  color: var(--text-white);
+  font-size: 1.2rem;
+  background: #161620;
+  padding: 8px 15px;
+  border: 1px solid var(--neon-cyan);
+  border-radius: var(--radius);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+/* Botones de navegación (flechas < > y "hoy") */
+.fc .fc-button-primary {
+  background-color: var(--neon-pink);
+  border: none;
+  border-radius: var(--radius);
   font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px var(--neon-pink);
+  padding: 8px 12px;
+}
+.fc .fc-button-primary:hover {
+  background-color: #d6008e !important;
+  box-shadow: 0 0 15px var(--neon-pink);
+}
+.fc .fc-button-primary:focus {
+  outline: none;
+  box-shadow: 0 0 15px var(--neon-pink);
+}
+.fc .fc-button-primary:disabled {
+  background-color: #555;
+  box-shadow: none;
 }
 
-/* Números de los días */
+/* Días de la semana (DOM, LUN, MAR...) */
+.fc-col-header-cell {
+  padding-bottom: 10px !important; /* Espacio debajo de los días de la semana */
+}
+.fc-col-header-cell-cushion {
+  background-color: var(
+    --neon-cyan
+  ); /* Fondo cian para los botones de los días */
+  color: #000;
+  border-radius: var(--radius);
+  padding: 12px 0;
+  display: block; /* Para que ocupe todo el espacio y el radio funcione */
+  width: 90%; /* Un poco más estrecho que la celda para separación */
+  margin: 0 auto;
+  text-decoration: none !important;
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+}
+
+.fc-daygrid-day-frame {
+  background-color: var(--cell-bg); /* Fondo oscuro para cada cuadro de día */
+  border-radius: var(--radius);
+  margin: 0px; /* Espacio entre cuadros */
+  min-height: 90px; /* Altura de las celdas */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrar contenido */
+  justify-content: flex-start; /* Alinear número arriba */
+  position: relative;
+  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+  padding-top: 1px; /* Espacio superior para el número */
+}
+/* Efecto Hover neón en los días (cuando pasas el mouse) */
+.fc-daygrid-day-frame:not(.fc-day-today):hover {
+  background-color: rgba(
+    255,
+    0,
+    170,
+    0.15
+  ); /* Fondo rosado semi-transparente */
+  border: 1px solid rgba(255, 0, 170, 0.5);
+  box-shadow: 0 0 15px rgba(255, 0, 170, 0.3); /* Brillo rosa */
+  transform: scale(1.03); /* Ligero agrandamiento */
+  cursor: pointer;
+}
+
+/* El número del día */
 .fc-daygrid-day-number {
   color: var(--text-gray);
+  font-size: 1, 2rem;
+  text-decoration: none !important;
+  font-weight: 500;
+  position: relative; /* Para poder darle z-index si es necesario */
+  z-index: 2; /* Para que el número esté por encima de otros elementos */
 }
 
-/* Día de hoy (resaltado) */
-.fc-day-today {
-  background-color: rgba(0, 212, 255, 0.2) !important;
-  box-shadow: inset 0 0 5px var(--neon-cyan);
+/* --- DÍA ACTUAL (Highlight Cian Neón) --- */
+.fc-day-today .fc-daygrid-day-frame {
+  background-color: var(--neon-cyan) !important;
+  box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--neon-cyan);
+}
+.fc-day-today .fc-daygrid-day-number {
+  color: #000 !important; /* Texto negro para el día actual */
+  font-weight: 900;
+  font-size: 1.15rem;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
-/* --- EFECTO HOVER NEÓN EN LOS DÍAS --- */
-.fc-daygrid-day-frame:hover {
-  /* Fondo rosado semi-transparente y cursor */
-  background-color: rgba(255, 0, 170, 0.1);
-  cursor: pointer;
-  border: 1px solid rgba(255, 0, 170, 0.5);
-  box-shadow: inset 0 0 10px rgba(255, 0, 170, 0.2);
+/* --- ESTILOS DE EVENTOS (SI HUBIERA) --- */
+.fc-event {
+  background-color: var(--neon-pink) !important;
+  border: none !important;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  padding: 2px 5px;
+  margin-top: 2px;
+  box-shadow: 0 0 5px rgba(255, 0, 170, 0.5);
+}
+.fc-event-title {
+  color: #fff !important;
 }
 
-/* --- ESTILOS DE LA MODAL Y FORMULARIO (MANTENIDOS) --- */
-
+/* --- MODALES Y FORMULARIOS (MANTENIDOS Y LIGEROS RETOQUES) --- */
 .hidden {
   display: none !important;
 }
@@ -115,11 +204,29 @@ h2.main-title {
   max-width: 350px;
   text-align: center;
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+  animation: fadeIn 0.3s ease-out; /* Animación al aparecer */
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-box h3 {
   color: #fff;
   margin-top: 0;
+  font-size: 1.3rem;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+.modal-box p.subtitle {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
 }
 
 #hours-grid {
@@ -133,111 +240,191 @@ h2.main-title {
   background: #161620;
   color: var(--neon-cyan);
   border: 1px solid var(--neon-cyan);
-  padding: 8px;
-  border-radius: 6px;
+  padding: 10px;
+  border-radius: 8px;
   cursor: pointer;
   transition: 0.3s;
+  font-weight: bold;
 }
 .time-slot:hover {
   background: var(--neon-cyan);
   color: #000;
-  box-shadow: 0 0 10px var(--neon-cyan);
+  box-shadow: 0 0 12px var(--neon-cyan);
+  transform: translateY(-2px);
 }
 
-.input-group {
-  margin-bottom: 12px;
-  text-align: left;
-}
-.input-group label {
-  display: block;
-  color: var(--text-gray);
-  font-size: 0.8rem;
-  margin-bottom: 4px;
-}
-.input-group input {
-  width: 100%;
-  padding: 8px;
-  background: #161620;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #fff;
-  box-sizing: border-box;
-}
-.input-group input:focus {
-  border-color: var(--neon-pink);
-  box-shadow: 0 0 8px rgba(255, 0, 170, 0.4);
-}
-
-/* Slots Ocupados */
+/* Slots Ocupados (Rojo Neón) */
 .time-slot.booked {
   cursor: not-allowed !important;
   background-color: #330000 !important;
   border-color: #ff4444 !important;
   color: #ff4444 !important;
-  opacity: 0.6;
+  opacity: 0.7;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.4);
+  pointer-events: none; /* Asegura que no se pueda hacer clic */
 }
 
+/* Formulario */
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.input-group label {
+  display: block;
+  color: var(--text-gray);
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+}
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  background: #161620;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  box-sizing: border-box;
+}
+.input-group input:focus {
+  outline: none;
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 8px rgba(255, 0, 170, 0.4);
+}
+.input-group input[type="file"] {
+  padding-top: 10px; /* Ajuste para el input de archivo */
+}
+.input-group input[type="file"]::-webkit-file-upload-button {
+  background-color: var(--neon-cyan);
+  color: #000;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.input-group input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #00aacc;
+}
+
+/* Botones de Acción */
 .modal-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 25px;
 }
 .btn-cancel,
 .btn-back {
   background: none;
   border: 1px solid #666;
   color: #ccc;
-  padding: 8px 12px;
-  border-radius: 5px;
+  padding: 8px 15px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: all 0.2s;
 }
+.btn-cancel:hover,
+.btn-back:hover {
+  background-color: #333;
+  border-color: #fff;
+  color: #fff;
+}
+
 .btn-confirm {
   background: var(--neon-pink);
   border: none;
   color: #fff;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 10px 20px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  box-shadow: 0 0 8px rgba(255, 0, 170, 0.6);
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(255, 0, 170, 0.6);
+  transition: all 0.3s ease;
+}
+.btn-confirm:hover {
+  background-color: #d6008e;
+  box-shadow: 0 0 15px var(--neon-pink);
+}
+.btn-confirm:disabled {
+  background-color: #555;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 /* --- RESPONSIVIDAD (MOBILE) --- */
 
 @media (max-width: 550px) {
   #calendar-container {
-    width: 95%; /* Asegura que no sea más ancho que el móvil */
+    width: 98%; /* Un poco más de ancho en móviles */
     padding: 15px;
+  }
+
+  h2.main-title {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
   }
 
   .fc-toolbar-title {
     font-size: 1rem !important;
   }
 
+  /* Ajustar botones de navegación para móvil */
   .fc-toolbar-chunk {
-    flex-wrap: wrap; /* Permite que los botones pasen a la siguiente línea */
+    display: flex;
+    flex-wrap: wrap; /* Permite que los botones pasen a la siguiente línea si no caben */
+    justify-content: center;
+    gap: 5px;
   }
-
   .fc-button {
     padding: 6px 10px !important;
-    margin: 2px !important;
+    font-size: 0.8rem;
   }
 
-  /* Reducir el tamaño de fuente para los días de la semana */
+  /* Reducir el tamaño de fuente y padding para los días de la semana */
   .fc-col-header-cell-cushion {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    padding: 6px 0;
+    width: 95%;
   }
 
-  /* Para que la modal no se vea gigante */
+  /* Reducir altura de las celdas de día */
+  .fc-daygrid-day-frame {
+    min-height: 55px;
+    margin: 3px;
+    padding-top: 6px;
+  }
+  .fc-daygrid-day-number {
+    font-size: 0.9rem;
+  }
+  .fc-day-today .fc-daygrid-day-number {
+    font-size: 1.05rem;
+  }
+
+  /* Modales en móvil */
   .modal-box {
-    max-width: 90%;
-    padding: 20px;
+    max-width: 95%;
+    padding: 18px;
   }
-
+  .modal-box h3 {
+    font-size: 1.1rem;
+  }
   #hours-grid {
     grid-template-columns: repeat(
       2,
       1fr
     ); /* 2 columnas en lugar de 3 en móvil */
+    gap: 8px;
+  }
+  .time-slot {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  .modal-actions {
+    flex-direction: column-reverse; /* Botón atrás arriba, confirmar abajo */
+    gap: 10px;
+  }
+  .btn-back,
+  .btn-confirm {
+    width: 100%;
+    box-sizing: border-box;
   }
 }
