@@ -353,7 +353,7 @@ h2.main-title {
 /* --- RESPONSIVIDAD (MOBILE) --- */
 
 /* ----------- FIXES RESPONSIVE IMPORTANTES ----------- */
-@media (max-width: 10px) {
+@media (max-width: 0px) {
   /* Evita que las columnas se encojan demasiado */
   .fc-daygrid-body table {
     table-layout: fixed !important;
