@@ -115,8 +115,8 @@ h2.main-title {
 .fc-daygrid-day-frame {
   background-color: var(--cell-bg); /* Fondo oscuro para cada cuadro de día */
   border-radius: var(--radius);
-  margin: 0px; /* Espacio entre cuadros */
-  min-height: 90px; /* Altura de las celdas */
+  margin: 1px; /* Espacio entre cuadros */
+  min-height: 10px; /* Altura de las celdas */
   display: flex;
   flex-direction: column;
   align-items: center; /* Centrar contenido */
@@ -350,11 +350,9 @@ h2.main-title {
   cursor: not-allowed;
 }
 
-/* ----------- FULLSCREEN EN CELULAR (AJUSTES CORREGIDOS PARA SCROLL) ----------- */
+/* ----------- FULLSCREEN EN CELULAR ----------- */
 @media (max-width: 480px) {
-  /* 1. Body y Contenedor Principal (Calendar-Container) */
   body {
-    /* Permite que el contenido empiece arriba */
     align-items: flex-start;
     padding: 0;
   }
@@ -370,7 +368,6 @@ h2.main-title {
     box-sizing: border-box;
   }
 
-  /* 2. Elementos del Calendario */
   .fc-toolbar-title {
     font-size: 1.1rem !important;
   }
@@ -380,20 +377,16 @@ h2.main-title {
     padding: 8px 0 !important;
   }
 
-  /* 3. CORRECCIÓN CRÍTICA: Desactivar la altura fija de FullCalendar */
   .fc-scrollgrid-sync-table,
   .fc-daygrid-body-unbalanced {
     height: auto !important;
   }
 
-  /* CRÍTICO: El scroller DEBE ser visible en móvil para que el calendario fluya */
   .fc-scroller {
-    /* Eliminamos la regla global de 'hidden' y forzamos visible para que fluya */
     overflow-y: visible !important;
   }
 
   .fc-daygrid-day-frame {
-    /* Altura de la celda ligeramente reducida */
     min-height: 65px;
   }
 
@@ -402,7 +395,6 @@ h2.main-title {
     max-height: none !important;
   }
 
-  /* Pequeño ajuste para evitar que el número del día se vea muy grande */
   .fc-daygrid-day-number {
     font-size: 1rem;
   }
