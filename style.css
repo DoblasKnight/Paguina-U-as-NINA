@@ -353,8 +353,7 @@ h2.main-title {
 /* --- RESPONSIVIDAD (MOBILE) --- */
 
 /* ----------- FIXES RESPONSIVE IMPORTANTES ----------- */
-@media (max-width: 0px) {
-  /* Evita que las columnas se encojan demasiado */
+@media (max-width: 1px) {
   .fc-daygrid-body table {
     table-layout: fixed !important;
   }
@@ -366,7 +365,7 @@ h2.main-title {
 
   /* Fuerza el tamaño visual correcto del cuadro */
   .fc-daygrid-day-frame {
-    min-height: 65px !important; /* 55 estaba muy chiquito, 65 queda perfecto */
+    min-height: 15px !important; /* 55 estaba muy chiquito, 65 queda perfecto */
     margin: 2px !important;
     padding-top: 5px !important;
     border-radius: 8px;
