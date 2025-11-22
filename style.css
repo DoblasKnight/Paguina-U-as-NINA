@@ -1,4 +1,4 @@
-/* --- CONFIGURACIÓN GENERAL --- */
+/* --- CONFIGURACIÓN GENERAL Y GRADIENTE ROSADO --- */
 :root {
   --bg-dark: #1a1a2e;
   --bg-panel: #232336;
@@ -10,21 +10,24 @@
 
 body {
   font-family: "Segoe UI", sans-serif;
-  background-color: var(--bg-dark);
+  /* Fondo Degradado de Rosados/Magenta */
+  background: linear-gradient(135deg, #11001a 0%, #330033 50%, #660066 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
+  overflow-x: hidden; /* Evita el scroll horizontal en móviles */
 }
 
-/* --- CALENDARIO --- */
+/* --- CALENDARIO CONTENEDOR Y SCROLL FIX --- */
 #calendar-container {
   background-color: var(--bg-panel);
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  width: 95%;
+  border: 1px solid rgba(255, 0, 170, 0.3); /* Borde rosa suave */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 0, 170, 0.1);
+  width: 90%;
   max-width: 500px;
 }
 
@@ -33,31 +36,60 @@ h2.main-title {
   text-align: center;
   text-transform: uppercase;
   margin-bottom: 20px;
+  text-shadow: 0 0 5px var(--neon-cyan);
 }
 
-/* Retoques a FullCalendar */
+/* FIX: Ocultar la barra de scroll vertical interna de FullCalendar */
+.fc-scroller {
+  overflow-y: hidden !important;
+}
+
+/* --- ESTILOS FULLCALENDAR --- */
 .fc-toolbar-title {
   color: #fff;
   font-size: 1.2rem !important;
 }
+
+/* Botones de navegación (Flechas) */
 .fc-button {
   background-color: var(--neon-pink) !important;
   border: none !important;
+  box-shadow: 0 0 8px rgba(255, 0, 170, 0.6);
+  transition: 0.2s;
 }
+.fc-button:hover {
+  background-color: #d6008e !important;
+}
+
+/* Encabezados de días (DOM, LUN, etc) */
 .fc-col-header-cell-cushion {
   color: var(--neon-cyan);
   text-transform: uppercase;
-  text-decoration: none;
-}
-.fc-daygrid-day-number {
-  color: var(--text-gray);
-  text-decoration: none;
-}
-.fc-day-today {
-  background-color: rgba(0, 212, 255, 0.1) !important;
+  font-weight: bold;
 }
 
-/* --- VENTANAS MODALES (Popups) --- */
+/* Números de los días */
+.fc-daygrid-day-number {
+  color: var(--text-gray);
+}
+
+/* Día de hoy (resaltado) */
+.fc-day-today {
+  background-color: rgba(0, 212, 255, 0.2) !important;
+  box-shadow: inset 0 0 5px var(--neon-cyan);
+}
+
+/* --- EFECTO HOVER NEÓN EN LOS DÍAS --- */
+.fc-daygrid-day-frame:hover {
+  /* Fondo rosado semi-transparente y cursor */
+  background-color: rgba(255, 0, 170, 0.1);
+  cursor: pointer;
+  border: 1px solid rgba(255, 0, 170, 0.5);
+  box-shadow: inset 0 0 10px rgba(255, 0, 170, 0.2);
+}
+
+/* --- ESTILOS DE LA MODAL Y FORMULARIO (MANTENIDOS) --- */
+
 .hidden {
   display: none !important;
 }
@@ -92,7 +124,6 @@ h2.main-title {
   margin-top: 0;
 }
 
-/* Botones de Horas */
 #hours-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -112,9 +143,9 @@ h2.main-title {
 .time-slot:hover {
   background: var(--neon-cyan);
   color: #000;
+  box-shadow: 0 0 10px var(--neon-cyan);
 }
 
-/* Formulario */
 .input-group {
   margin-bottom: 12px;
   text-align: left;
@@ -134,8 +165,20 @@ h2.main-title {
   color: #fff;
   box-sizing: border-box;
 }
+.input-group input:focus {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 8px rgba(255, 0, 170, 0.4);
+}
 
-/* Botones de Acción */
+/* Slots Ocupados */
+.time-slot.booked {
+  cursor: not-allowed !important;
+  background-color: #330000 !important;
+  border-color: #ff4444 !important;
+  color: #ff4444 !important;
+  opacity: 0.6;
+}
+
 .modal-actions {
   display: flex;
   justify-content: space-between;
@@ -158,4 +201,45 @@ h2.main-title {
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
+  box-shadow: 0 0 8px rgba(255, 0, 170, 0.6);
+}
+
+/* --- RESPONSIVIDAD (MOBILE) --- */
+
+@media (max-width: 550px) {
+  #calendar-container {
+    width: 95%; /* Asegura que no sea más ancho que el móvil */
+    padding: 15px;
+  }
+
+  .fc-toolbar-title {
+    font-size: 1rem !important;
+  }
+
+  .fc-toolbar-chunk {
+    flex-wrap: wrap; /* Permite que los botones pasen a la siguiente línea */
+  }
+
+  .fc-button {
+    padding: 6px 10px !important;
+    margin: 2px !important;
+  }
+
+  /* Reducir el tamaño de fuente para los días de la semana */
+  .fc-col-header-cell-cushion {
+    font-size: 0.75rem;
+  }
+
+  /* Para que la modal no se vea gigante */
+  .modal-box {
+    max-width: 90%;
+    padding: 20px;
+  }
+
+  #hours-grid {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* 2 columnas en lugar de 3 en móvil */
+  }
 }
