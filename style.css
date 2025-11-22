@@ -1,86 +1,420 @@
-/* --- Variables y Estilos Generales --- */
 :root {
-  --color-fondo: #000000;
-  --color-texto-principal: #ffffff;
-  --color-texto-domingo: #ff3333; /* Rojo para el domingo */
-  --color-destaque-evento: #33ff33; /* Verde para eventos */
-  --color-borde-dia-actual: #ffffff; /* Borde blanco para el día de hoy */
-  --color-fondo-dia-actual: #1a1a1a; /* Un gris muy oscuro para el fondo del día actual */
-  --espaciado-celda: 10px;
+  --bg-dark: #1a1a2e; /* Fondo principal */
+  --bg-panel: #232336; /* Fondo del calendario */
+  --neon-cyan: #00d4ff; /* Color Cyan (Días de la semana, Día actual) */
+  --neon-pink: #ff00aa; /* Color Rosa (Botones, Hover, Eventos) */
+  --text-gray: #aebabf; /* Números inactivos */
+  --text-white: #ffffff;
+  --cell-bg: #2d2d44; /* Fondo de cada casilla de día */
+  --radius: 10px; /* Radio para bordes redondeados */
 }
 
 body {
-  background-color: var(--color-fondo);
-  color: var(--color-texto-principal);
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #11001a 0%, #330033 50%, #660066 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   margin: 0;
-  padding: 20px;
+  overflow-x: hidden;
 }
 
-/* --- Encabezado del Mes --- */
-.calendar-header {
+/* --- CONTENEDOR PRINCIPAL DEL CALENDARIO --- */
+#calendar-container {
+  background-color: var(--bg-panel);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 0, 170, 0.3); /* Borde rosa suave */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 0, 170, 0.1);
+  width: 95%; /* Más ancho en pantallas grandes */
+  max-width: 650px; /* Antes estaba en 500px */
+  padding: 35px; /* Más espacio interno */
+}
+
+h2.main-title {
+  color: var(--neon-cyan);
   text-align: center;
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-
-/* --- Cuadrícula del Calendario (Tabla o Flexbox) --- */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: var(--espaciado-celda);
-  max-width: 400px; /* Para simular la vista móvil */
-  margin: 0 auto;
-}
-
-/* --- Días de la Semana (LUN, MAR, etc.) --- */
-.weekday-name {
-  text-align: center;
-  font-weight: normal;
-  font-size: 0.8em;
-  margin-bottom: 5px;
   text-transform: uppercase;
-  /* El domingo puede tener un color especial si quieres, aunque en la imagen no lo tiene */
-  /* &.dom { color: var(--color-texto-domingo); } */
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.5rem;
+  text-shadow: 0 0 8px var(--neon-cyan), 0 0 15px rgba(0, 212, 255, 0.5);
 }
 
-/* --- Celdas de los Días --- */
-.day-cell {
+/* FIX: Ocultar la barra de scroll vertical interna de FullCalendar */
+.fc-scroller {
+  overflow-y: hidden !important;
+}
+
+/* --- ESTILOS PROFUNDOS DE FULLCALENDAR --- */
+
+/* Quitar bordes y fondos por defecto de la tabla */
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+  border: none !important;
+  background-color: transparent !important;
+}
+
+/* Header del calendario (Título del mes y flechas de navegación) */
+.fc .fc-toolbar-title {
+  color: var(--text-white);
+  font-size: 1.2rem;
+  background: #161620;
+  padding: 8px 15px;
+  border: 1px solid var(--neon-cyan);
+  border-radius: var(--radius);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+}
+
+/* Botones de navegación (flechas < > y "hoy") */
+.fc .fc-button-primary {
+  background-color: var(--neon-pink);
+  border: none;
+  border-radius: var(--radius);
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px var(--neon-pink);
+  padding: 8px 12px;
+}
+.fc .fc-button-primary:hover {
+  background-color: #d6008e !important;
+  box-shadow: 0 0 15px var(--neon-pink);
+}
+.fc .fc-button-primary:focus {
+  outline: none;
+  box-shadow: 0 0 15px var(--neon-pink);
+}
+.fc .fc-button-primary:disabled {
+  background-color: #555;
+  box-shadow: none;
+}
+
+/* Días de la semana (DOM, LUN, MAR...) */
+.fc-col-header-cell {
+  padding-bottom: 10px !important; /* Espacio debajo de los días de la semana */
+}
+.fc-col-header-cell-cushion {
+  background-color: var(
+    --neon-cyan
+  ); /* Fondo cian para los botones de los días */
+  color: #000;
+  border-radius: var(--radius);
+  padding: 12px 0;
+  display: block; /* Para que ocupe todo el espacio y el radio funcione */
+  width: 90%; /* Un poco más estrecho que la celda para separación */
+  margin: 0 auto;
+  text-decoration: none !important;
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+}
+
+.fc-daygrid-day-frame {
+  background-color: var(--cell-bg); /* Fondo oscuro para cada cuadro de día */
+  border-radius: var(--radius);
+  margin: 0px; /* Espacio entre cuadros */
+  min-height: 90px; /* Altura de las celdas */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrar contenido */
+  justify-content: flex-start; /* Alinear número arriba */
+  position: relative;
+  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+  padding-top: 1px; /* Espacio superior para el número */
+}
+/* Efecto Hover neón en los días (cuando pasas el mouse) */
+.fc-daygrid-day-frame:not(.fc-day-today):hover {
+  background-color: rgba(
+    255,
+    0,
+    170,
+    0.15
+  ); /* Fondo rosado semi-transparente */
+  border: 1px solid rgba(255, 0, 170, 0.5);
+  box-shadow: 0 0 15px rgba(255, 0, 170, 0.3); /* Brillo rosa */
+  transform: scale(1.03); /* Ligero agrandamiento */
+  cursor: pointer;
+}
+
+/* El número del día */
+.fc-daygrid-day-number {
+  color: var(--text-gray);
+  font-size: 1, 2rem;
+  text-decoration: none !important;
+  font-weight: 500;
+  position: relative; /* Para poder darle z-index si es necesario */
+  z-index: 2; /* Para que el número esté por encima de otros elementos */
+}
+
+/* --- DÍA ACTUAL (Highlight Cian Neón) --- */
+.fc-day-today .fc-daygrid-day-frame {
+  background-color: var(--neon-cyan) !important;
+  box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--neon-cyan);
+}
+.fc-day-today .fc-daygrid-day-number {
+  color: #000 !important; /* Texto negro para el día actual */
+  font-weight: 900;
+  font-size: 1.15rem;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+/* --- ESTILOS DE EVENTOS (SI HUBIERA) --- */
+.fc-event {
+  background-color: var(--neon-pink) !important;
+  border: none !important;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  padding: 2px 5px;
+  margin-top: 2px;
+  box-shadow: 0 0 5px rgba(255, 0, 170, 0.5);
+}
+.fc-event-title {
+  color: #fff !important;
+}
+
+/* --- MODALES Y FORMULARIOS (MANTENIDOS Y LIGEROS RETOQUES) --- */
+.hidden {
+  display: none !important;
+}
+
+#modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-box {
+  background: var(--bg-panel);
+  padding: 25px;
+  border-radius: 15px;
+  border: 1px solid var(--neon-cyan);
+  width: 90%;
+  max-width: 350px;
   text-align: center;
-  font-size: 1.2em;
-  padding: 5px 0;
-  position: relative; /* Necesario para posicionar la línea de evento */
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+  animation: fadeIn 0.3s ease-out; /* Animación al aparecer */
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Los días inactivos (fuera del mes actual) o los no seleccionables */
-.day-cell.inactive {
-  opacity: 0.4;
+.modal-box h3 {
+  color: #fff;
+  margin-top: 0;
+  font-size: 1.3rem;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+.modal-box p.subtitle {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
 }
 
-/* El estilo de los días domingos */
-.day-cell.domingo {
-  color: var(--color-texto-domingo);
+#hours-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 20px 0;
 }
 
-/* --- Destacando el Día Actual (Día 22 en tu imagen) --- */
-.day-cell.today {
-  border: 1px solid var(--color-borde-dia-actual);
-  border-radius: 5px;
-  background-color: var(--color-fondo-dia-actual);
-  padding: 5px 0;
+.time-slot {
+  background: #161620;
+  color: var(--neon-cyan);
+  border: 1px solid var(--neon-cyan);
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+}
+.time-slot:hover {
+  background: var(--neon-cyan);
+  color: #000;
+  box-shadow: 0 0 12px var(--neon-cyan);
+  transform: translateY(-2px);
 }
 
-/* --- Línea de Evento (El guion verde debajo del número) --- */
-.day-cell.has-event {
-  /* No cambiar el color del número, solo añadir la línea */
+/* Slots Ocupados (Rojo Neón) */
+.time-slot.booked {
+  cursor: not-allowed !important;
+  background-color: #330000 !important;
+  border-color: #ff4444 !important;
+  color: #ff4444 !important;
+  opacity: 0.7;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.4);
+  pointer-events: none; /* Asegura que no se pueda hacer clic */
 }
-.day-cell.has-event::after {
-  content: "";
+
+/* Formulario */
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.input-group label {
   display: block;
-  width: 70%; /* Longitud de la línea */
-  height: 3px;
-  background-color: var(--color-destaque-evento);
-  margin: 3px auto 0 auto;
-  border-radius: 2px;
+  color: var(--text-gray);
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+}
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  background: #161620;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  box-sizing: border-box;
+}
+.input-group input:focus {
+  outline: none;
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 8px rgba(255, 0, 170, 0.4);
+}
+.input-group input[type="file"] {
+  padding-top: 10px; /* Ajuste para el input de archivo */
+}
+.input-group input[type="file"]::-webkit-file-upload-button {
+  background-color: var(--neon-cyan);
+  color: #000;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.input-group input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #00aacc;
+}
+
+/* Botones de Acción */
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+.btn-cancel,
+.btn-back {
+  background: none;
+  border: 1px solid #666;
+  color: #ccc;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-cancel:hover,
+.btn-back:hover {
+  background-color: #333;
+  border-color: #fff;
+  color: #fff;
+}
+
+.btn-confirm {
+  background: var(--neon-pink);
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(255, 0, 170, 0.6);
+  transition: all 0.3s ease;
+}
+.btn-confirm:hover {
+  background-color: #d6008e;
+  box-shadow: 0 0 15px var(--neon-pink);
+}
+.btn-confirm:disabled {
+  background-color: #555;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ----------- FULLSCREEN EN CELULAR ----------- */
+@media (max-width: 480px) {
+  /* 1. Body y Contenedor Principal (Calendar-Container) */
+  body {
+    /* Forzamos al body a ocupar toda la altura */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0; /* Aseguramos que no haya padding extra que oculte cosas */
+    margin: 0;
+    overflow-y: auto; /* Permitir scroll si es necesario */
+  }
+
+  #calendar-container {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    padding: 10px; /* Reducimos el padding general para dar más espacio */
+    box-sizing: border-box; /* Incluir padding en el width */
+  }
+
+  /* 2. Cabeceras y Barras */
+  .fc-header-toolbar {
+    margin-bottom: 10px !important;
+  }
+
+  /* Ajustar título */
+  .fc-toolbar-title {
+    font-size: 1rem !important;
+    padding: 5px 10px;
+  }
+
+  /* Botones (Hoy, <, >) */
+  .fc-button {
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .fc-toolbar-chunk {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  /* Días de la semana */
+  .fc-col-header-cell-cushion {
+    font-size: 0.75rem !important;
+    padding: 6px 0 !important;
+    width: 90%;
+  }
+
+  /* 3. El ajuste de Altura CRÍTICO para los Días */
+  .fc-daygrid-body {
+    /* Ocupar toda la altura restante forzando flexbox o grid si es necesario */
+    flex-grow: 1;
+  }
+
+  .fc-daygrid-day-frame {
+    /* Ajuste más preciso para ocupar la altura restante */
+    /* 100vh es la altura de la ventana. Restamos un valor estimado para las cabeceras (RESERVA TU CITA, botones, nombres de los días) y dividimos entre 6 (filas). */
+    min-height: calc((100vh - 160px) / 6) !important;
+  }
+
+  .fc-daygrid-day-number {
+    font-size: 1rem !important;
+  }
 }
