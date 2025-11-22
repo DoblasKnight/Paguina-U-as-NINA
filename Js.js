@@ -4,48 +4,60 @@ document.addEventListener("DOMContentLoaded", function () {
   const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     locale: "es",
-    selectable: true,
     headerToolbar: {
       left: "prev,next today",
       center: "title",
-      right: "",
+      right: "dayGridMonth",
     },
     dateClick: function (info) {
-      // Al hacer clic en un día, lo seleccionamos para el formulario
-      document.getElementById(
-        "mensaje"
-      ).textContent = `Seleccionaste el día: ${info.dateStr}`;
-      document.getElementById("mensaje").style.color = "#ff3399";
-      // Guardamos la fecha en un input oculto
-      const inputDate = document.getElementById("fecha");
-      if (!inputDate) {
-        const fechaInput = document.createElement("input");
-        fechaInput.type = "hidden";
-        fechaInput.id = "fecha";
-        fechaInput.value = info.dateStr;
-        document.getElementById("form-cita").appendChild(fechaInput);
-      } else {
-        inputDate.value = info.dateStr;
-      }
+      selectedDate = info.dateStr;
+      openModal(selectedDate);
     },
+    events: [],
   });
 
   calendar.render();
-});
 
-// Manejo de envío de formulario (solo mensaje por ahora)
-document.getElementById("form-cita").addEventListener("submit", function (e) {
-  e.preventDefault();
+  let selectedDate = "";
 
-  const nombre = document.getElementById("nombre").value;
-  const correo = document.getElementById("correo").value;
-  const fecha = document.getElementById("fecha").value;
-  const hora = document.getElementById("hora").value;
-  const servicio = document.getElementById("servicio").value;
+  window.openModal = function (date) {
+    const hours = [
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+    ];
+    const container = document.getElementById("hoursContainer");
+    container.innerHTML = "";
 
-  const mensaje = document.getElementById("mensaje");
-  mensaje.textContent = `Cita agendada para ${nombre} el ${fecha} a las ${hora} para ${servicio}.`;
-  mensaje.style.color = "#ff3399";
+    hours.forEach((hour) => {
+      const btn = document.createElement("button");
+      btn.textContent = hour;
 
-  this.reset();
+      btn.onclick = function () {
+        const title = prompt("Ingrese el recordatorio:");
+        if (title) {
+          calendar.addEvent({
+            title: title,
+            start: date + "T" + hour,
+          });
+        }
+        closeModal();
+      };
+
+      container.appendChild(btn);
+    });
+
+    document.getElementById("hourModal").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+  };
+
+  window.closeModal = function () {
+    document.getElementById("hourModal").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+  };
 });
