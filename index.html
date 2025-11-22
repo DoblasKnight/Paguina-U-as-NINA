@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agenda Uñas</title>
+
+    <!-- FullCalendar CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>💅 Agenda de Uñas</h1>
+    </header>
+
+    <main>
+      <div id="calendar"></div>
+
+      <section class="formulario">
+        <h2>Agendar cita</h2>
+        <form id="form-cita">
+          <input
+            type="text"
+            id="nombre"
+            placeholder="Nombre completo"
+            required
+          />
+          <input
+            type="email"
+            id="correo"
+            placeholder="Correo electrónico"
+            required
+          />
+          <input type="time" id="hora" required />
+          <select id="servicio" required>
+            <option value="">Selecciona un servicio</option>
+            <option value="Manicure">Manicure</option>
+            <option value="Pedicure">Pedicure</option>
+            <option value="Uñas Acrílicas">Uñas Acrílicas</option>
+          </select>
+          <button type="submit">Agendar cita</button>
+        </form>
+        <p id="mensaje"></p>
+      </section>
+    </main>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+    <script src="Js.js  "></script>
+  </body>
+</html>
