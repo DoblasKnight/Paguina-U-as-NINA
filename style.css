@@ -352,51 +352,53 @@ h2.main-title {
 
 /* ----------- FULLSCREEN EN CELULAR ----------- */
 @media (max-width: 480px) {
-  /* Contenedor ocupa todo el ancho, altura automática */
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
   #calendar-container {
     width: 100%;
-    max-width: 100%;
-    height: auto; /* Altura según contenido */
-    padding: 10px;
-    margin: 0;
-    border-radius: 0;
-    box-shadow: none;
-    overflow: visible; /* deja que crezca según filas */
+    height: 100vh;
+    max-width: none;
+    overflow-y: auto;
   }
 
-  /* Toolbar y botones más compactos */
+  .fc-header-toolbar {
+    margin-bottom: 10px !important;
+  }
+
+  /* Ajustar título */
   .fc-toolbar-title {
     font-size: 1rem !important;
     padding: 5px 10px;
   }
+
+  /* Botones (Hoy, <, >) */
   .fc-button {
     padding: 6px 10px !important;
     font-size: 0.8rem !important;
   }
+
   .fc-toolbar-chunk {
     flex-wrap: wrap;
     justify-content: center;
     gap: 5px;
   }
 
-  /* Días de la semana */
-  .fc-col-header-cell-cushion {
-    font-size: 0.75rem !important;
-    padding: 5px 0 !important;
-    width: 95%;
-  }
-
-  /* Celdas de los días */
+  /* Tamaño de los días ocupando la pantalla */
   .fc-daygrid-day-frame {
-    min-height: 50px !important; /* tamaño cómodo, pero no forzado */
-    padding-top: 4px !important;
-    margin: 2px !important;
+    min-height: calc((100vh - 200px) / 6) !important;
+    /* 6 filas = ocupa toda la pantalla */
   }
 
   .fc-daygrid-day-number {
-    font-size: 0.9rem !important;
-  }
-  .fc-day-today .fc-daygrid-day-number {
     font-size: 1rem !important;
+  }
+
+  .fc-col-header-cell-cushion {
+    font-size: 0.75rem !important;
+    padding: 6px 0 !important;
+    width: 90%;
   }
 }
