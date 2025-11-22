@@ -2,28 +2,84 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <title>Calendario Rosa Neón Móvil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agenda Neon Supabase</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <link rel="stylesheet" href="style.css" />
-
-    <!-- FullCalendar CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css"
-      rel="stylesheet"
-    />
-
-    <!-- FullCalendar JS -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
   </head>
   <body>
-    <div id="calendar"></div>
+    <div id="calendar-container">
+      <h2 class="main-title">Reserva tu Cita</h2>
+      <div id="calendar"></div>
+    </div>
 
-    <div id="overlay"></div>
+    <div id="modal-overlay" class="hidden">
+      <div id="modal-hours" class="modal-box">
+        <h3>
+          Horarios para el
+          <span id="selected-date-span" style="color: var(--neon-cyan)"></span>
+        </h3>
+        <div id="hours-grid"></div>
+        <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      </div>
 
-    <div id="hourModal">
-      <h3>Seleccione la hora</h3>
-      <div id="hoursContainer"></div>
-      <button class="cancel-btn" id="cancelButton">Cancelar</button>
+      <div id="modal-form" class="modal-box hidden">
+        <h3>Tus Datos</h3>
+        <p style="color: #ccc; font-size: 0.9rem">
+          Reservando para:
+          <span
+            id="summary-info"
+            style="font-weight: bold; color: var(--neon-pink)"
+          ></span>
+        </p>
+
+        <form id="booking-form">
+          <div class="input-group">
+            <label>Nombre Completo</label>
+            <input type="text" id="inp-name" required placeholder="Tu nombre" />
+          </div>
+
+          <div class="input-group">
+            <label>Teléfono</label>
+            <input
+              type="tel"
+              id="inp-phone"
+              required
+              placeholder="Ej: 300 123 4567"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Correo</label>
+            <input
+              type="email"
+              id="inp-email"
+              required
+              placeholder="email@ejemplo.com"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Comprobante de Pago</label>
+            <input
+              type="text"
+              id="inp-comprobante"
+              placeholder="Código de transacción"
+            />
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-back" onclick="backToHours()">
+              Atrás
+            </button>
+            <button type="submit" class="btn-confirm">CONFIRMAR</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <script src="Js.js"></script>
