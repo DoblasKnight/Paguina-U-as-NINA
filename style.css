@@ -10,17 +10,15 @@
 
 body {
   font-family: "Segoe UI", sans-serif;
-  /* Fondo Degradado de Rosados/Magenta */
   background: linear-gradient(135deg, #11001a 0%, #330033 50%, #660066 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  overflow-x: hidden; /* Evita el scroll horizontal en móviles */
+  overflow-x: hidden;
 }
 
-/* --- CALENDARIO CONTENEDOR Y SCROLL FIX --- */
 #calendar-container {
   background-color: var(--bg-panel);
   padding: 20px;

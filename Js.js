@@ -1,6 +1,6 @@
 // 1. CONFIGURACIÓN DE SUPABASE
-const supabaseUrl = "https://jifwtgpchbipxyriirtq.supabase.co";
-const supabaseKey = "sb_publishable_zF5mj6Ba61zibU_19vnFPQ_a4GDaKwi"; // Tu llave actual
+const supabaseUrl = "https://qjdqrhpufbeacizkvoiz.supabase.co";
+const supabaseKey = "sb_publishable_a_gj9sXQ5lFoCe1421fBdg_J0LXe5ou"; // Tu llave actual
 
 // Inicializamos la conexión
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
