@@ -2,45 +2,41 @@ body {
   font-family: Arial, sans-serif;
   background: #111;
   color: white;
+  margin: 0;
+  padding: 0;
 }
 
 #calendar {
-  max-width: 900px;
-  margin: 50px auto;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
-/* ============================
-   BOTONES ESTILO CALCULADORA
-   + EFECTO NEÓN ROSA
-============================ */
-
+/* BOTONES ESTILO CALCULADORA + NEÓN ROSA */
 .fc-daygrid-day {
   background: #ff66b3;
-  border-radius: 12px; /* forma de botón */
-  margin: 6px;
-  padding: 10px;
+  border-radius: 15px;
+  margin: 4px;
+  padding: 10px 0;
   cursor: pointer;
-
-  box-shadow: 0 0 10px #ff1a75, 0 0 20px #ff4da6, inset 0 0 8px #ff1a75;
-
+  box-shadow: 0 0 8px #ff1a75, 0 0 16px #ff4da6, inset 0 0 6px #ff1a75;
   transition: 0.2s;
 }
 
 .fc-daygrid-day:hover {
-  transform: scale(1.07);
-  box-shadow: 0 0 15px #ff4da6, 0 0 30px #ff1a75, inset 0 0 12px #ff3385;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #ff4da6, 0 0 24px #ff1a75, inset 0 0 10px #ff3385;
 }
 
-/* Color del número del día */
 .fc-daygrid-day-number {
   color: white !important;
   font-weight: bold;
-  text-shadow: 0 0 8px #ff1a75;
+  text-shadow: 0 0 6px #ff1a75;
+  font-size: 1em;
 }
 
-/* ============================
-   OVERLAY
-============================ */
+/* OVERLAY */
 #overlay {
   display: none;
   position: fixed;
@@ -52,9 +48,7 @@ body {
   z-index: 500;
 }
 
-/* ============================
-   MODAL
-============================ */
+/* MODAL */
 #hourModal {
   display: none;
   position: fixed;
@@ -63,33 +57,55 @@ body {
   transform: translate(-50%, -50%);
   background: #222;
   border: 2px solid #ff4da6;
-  border-radius: 15px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 15px;
   z-index: 1000;
   text-align: center;
   color: white;
-  box-shadow: 0 0 20px #ff1a75;
+  box-shadow: 0 0 16px #ff1a75;
+  width: 80%;
+  max-width: 300px;
+  box-sizing: border-box;
 }
 
 /* Botones del modal */
 #hourModal button {
   margin: 5px;
-  padding: 10px 15px;
+  padding: 8px 10px;
   background-color: #ff4da6;
   color: white;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-
-  box-shadow: 0 0 10px #ff1a75;
+  box-shadow: 0 0 8px #ff1a75;
+  font-size: 0.9em;
 }
 
 #hourModal button:hover {
   background-color: #ff1a75;
-  box-shadow: 0 0 18px #ff4da6;
+  box-shadow: 0 0 12px #ff4da6;
 }
 
 .cancel-btn {
   background: #444 !important;
   box-shadow: none !important;
+}
+
+/* ===== Responsive para celulares ===== */
+@media (max-width: 480px) {
+  #calendar {
+    margin: 10px;
+    padding: 0 5px;
+  }
+
+  #hourModal {
+    width: 90%;
+    max-width: 280px;
+    padding: 12px;
+  }
+
+  #hourModal button {
+    padding: 6px 8px;
+    font-size: 0.85em;
+  }
 }
