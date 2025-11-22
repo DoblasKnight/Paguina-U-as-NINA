@@ -352,79 +352,59 @@ h2.main-title {
 
 /* --- RESPONSIVIDAD (MOBILE) --- */
 
-@media (max-width: 550px) {
-  #calendar-container {
-    width: 98%; /* Un poco más de ancho en móviles */
-    padding: 15px;
+/* ----------- FIXES RESPONSIVE IMPORTANTES ----------- */
+@media (max-width: 480px) {
+  /* Evita que las columnas se encojan demasiado */
+  .fc-daygrid-body table {
+    table-layout: fixed !important;
   }
 
-  h2.main-title {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
+  /* Ajusta el ancho real de cada celda en móviles */
+  .fc-daygrid-day {
+    width: calc(100% / 7) !important;
   }
 
-  .fc-toolbar-title {
+  /* Fuerza el tamaño visual correcto del cuadro */
+  .fc-daygrid-day-frame {
+    min-height: 65px !important; /* 55 estaba muy chiquito, 65 queda perfecto */
+    margin: 2px !important;
+    padding-top: 5px !important;
+    border-radius: 8px;
+  }
+
+  /* Número del día */
+  .fc-daygrid-day-number {
     font-size: 1rem !important;
   }
 
-  /* Ajustar botones de navegación para móvil */
+  /* El número del día actual */
+  .fc-day-today .fc-daygrid-day-number {
+    font-size: 1.15rem !important;
+  }
+
+  /* Mantén los días de la semana legibles */
+  .fc-col-header-cell-cushion {
+    font-size: 0.75rem !important;
+    padding: 5px 0 !important;
+  }
+
+  /* Mantiene el contenedor bonito */
+  #calendar-container {
+    width: 97%;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  /* Botones */
+  .fc-button {
+    padding: 6px 8px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Evita que los botones choquen */
   .fc-toolbar-chunk {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los botones pasen a la siguiente línea si no caben */
+    flex-wrap: wrap;
     justify-content: center;
     gap: 5px;
-  }
-  .fc-button {
-    padding: 6px 10px !important;
-    font-size: 0.8rem;
-  }
-
-  /* Reducir el tamaño de fuente y padding para los días de la semana */
-  .fc-col-header-cell-cushion {
-    font-size: 0.7rem;
-    padding: 6px 0;
-    width: 95%;
-  }
-
-  /* Reducir altura de las celdas de día */
-  .fc-daygrid-day-frame {
-    min-height: 55px;
-    margin: 3px;
-    padding-top: 6px;
-  }
-  .fc-daygrid-day-number {
-    font-size: 0.9rem;
-  }
-  .fc-day-today .fc-daygrid-day-number {
-    font-size: 1.05rem;
-  }
-
-  /* Modales en móvil */
-  .modal-box {
-    max-width: 95%;
-    padding: 18px;
-  }
-  .modal-box h3 {
-    font-size: 1.1rem;
-  }
-  #hours-grid {
-    grid-template-columns: repeat(
-      2,
-      1fr
-    ); /* 2 columnas en lugar de 3 en móvil */
-    gap: 8px;
-  }
-  .time-slot {
-    padding: 8px;
-    font-size: 0.9rem;
-  }
-  .modal-actions {
-    flex-direction: column-reverse; /* Botón atrás arriba, confirmar abajo */
-    gap: 10px;
-  }
-  .btn-back,
-  .btn-confirm {
-    width: 100%;
-    box-sizing: border-box;
   }
 }
