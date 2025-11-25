@@ -41,6 +41,38 @@ const loadingOverlay = document.getElementById("loading-modal-overlay"); // Over
 const loadingMessage = document.getElementById("loading-message"); // Mensaje del modal de carga
 // ----------------------------------------------------
 
+// --- FUNCIONES DE UTILIDAD DE FECHA/HORA (AÑADIDA) ---
+
+/**
+ * Formatea la hora de 24h (HH:MM) a 12h (HH:MM AM/PM).
+ * @param {string} time24 - Hora en formato 24 horas (ej: "15:00").
+ * @returns {string} Hora en formato 12 horas (ej: "03:00 PM").
+ */
+function formatTime24To12(time24) {
+  if (!time24) return "";
+  const [hours, minutes] = time24.split(":");
+  let h = parseInt(hours);
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12;
+  h = h ? h : 12; // La hora '0' debe ser '12'
+  const strTime = h.toString().padStart(2, "0") + ":" + minutes + " " + ampm;
+  return strTime;
+}
+
+/**
+ * Formatea una fecha 'YYYY-MM-DD' a un formato largo y legible.
+ */
+function formatDay(dateString) {
+  const date = new Date(dateString + "T00:00:00");
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  return date.toLocaleDateString("es-ES", options);
+}
+
 // --- FUNCIONES DE MODAL DE CARGA Y NOTIFICACIÓN ---
 
 /**
@@ -56,10 +88,8 @@ function showLoading(message) {
 
 /**
  * Muestra un modal genérico de notificación (éxito, error, info).
- * Reemplaza la lógica de alert().
  */
 function showNotificationModal(message, isError = false, duration = 3000) {
-  // Si la función de carga se está mostrando, la ocultamos y reconfiguramos para notificación
   const spinner = document.querySelector(".spinner");
   if (spinner) spinner.style.display = "none";
 
@@ -92,8 +122,11 @@ function hideLoading() {
   loadingOverlay.classList.add("hidden");
   // Reseteamos el estilo del modal
   const box = document.getElementById("loading-box");
-  box.style.border = "";
-  box.style.boxShadow = "";
+  if (box) {
+    // Aseguramos que existe antes de modificar
+    box.style.border = "";
+    box.style.boxShadow = "";
+  }
 }
 
 // --- FUNCIONES DE AUTENTICACIÓN Y ROLES ---
@@ -283,16 +316,24 @@ async function handleLogout() {
 }
 
 /**
- * Carga TODAS las citas para el admin y las renderiza en una tabla HTML.
+ * Carga TODAS las citas para el admin y las renderiza en un formato agrupado por día.
  */
 async function renderCronograma() {
+  // Asegúrate de que cronogramaDetails esté definido antes de usarlo
+  const cronogramaDetails = document.getElementById("cronograma-details");
+
+  if (!cronogramaDetails) {
+    console.error("Elemento 'cronograma-details' no encontrado.");
+    return;
+  }
+
   cronogramaDetails.innerHTML =
     '<p class="loading-message">Cargando citas...</p>';
 
   // Consulta para obtener todas las citas ordenadas por fecha y hora
   const { data: citas, error } = await supabase
     .from("citas")
-    .select("fecha, hora, nombre, telefono, correo")
+    .select("id, fecha, hora, nombre, telefono, correo, comprobante")
     .order("fecha", { ascending: true })
     .order("hora", { ascending: true });
 
@@ -307,39 +348,66 @@ async function renderCronograma() {
     return;
   }
 
-  // Generar la tabla HTML
-  let tableHTML = `
-        <table class="cronograma-table">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Cliente</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+  // 1. AGREGAR CITAS POR DÍA
+  const citasPorDia = citas.reduce((acc, cita) => {
+    const dateKey = cita.fecha; // 'AAAA-MM-DD'
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
+    }
+    acc[dateKey].push(cita);
+    return acc;
+  }, {});
 
-  citas.forEach((cita) => {
-    tableHTML += `
-            <tr>
-                <td>${cita.fecha}</td>
-                <td>${cita.hora}</td>
-                <td>${cita.nombre}</td>
-                <td>${cita.telefono}</td>
-                <td>${cita.correo}</td>
-            </tr>
+  // 2. GENERAR EL HTML AGRUPADO
+  let cronogramaHTML = '<div class="cronograma-agrupado">';
+
+  for (const [fecha, citasDelDia] of Object.entries(citasPorDia)) {
+    const diaLargo = formatDay(fecha); // Ejemplo: "viernes, 25 de noviembre de 2025"
+
+    // Contenedor para el día
+    cronogramaHTML += `
+            <section class="dia-cita-section">
+                <h3 class="dia-titulo">${diaLargo}</h3>
+                <div class="citas-lista">
         `;
-  });
 
-  tableHTML += `
-            </tbody>
-        </table>
-    `;
+    // Iterar sobre las citas de ese día
+    citasDelDia.forEach((cita) => {
+      // Se utiliza la función formatTime24To12 para el formato deseado
+      const displayTime = formatTime24To12(cita.hora);
 
-  cronogramaDetails.innerHTML = tableHTML;
+      // CONVERTIMOS EL NOMBRE A MAYÚSCULAS Y ELIMINAMOS EL DOBLE ASTERISCO
+      const nombreEnMayusculas = cita.nombre.toUpperCase();
+
+      cronogramaHTML += `
+                <div class="cita-card">
+                    <div class="cita-hora-container">
+                        <span class="cita-hora">${displayTime}</span>
+                    </div>
+                    <div class="cita-info">
+                        <p class="cita-cliente">${nombreEnMayusculas}</p> 
+                        <p class="cita-contacto">
+                            <i class="fas fa-phone"></i> ${cita.telefono}
+                            <i class="fas fa-envelope ml-3"></i> ${cita.correo}
+                        </p>
+                        <a href="${cita.comprobante}" target="_blank" class="comprobante-link">
+                            <i class="fas fa-file-alt"></i> Ver Comprobante
+                        </a>
+                    </div>
+                    </div>
+            `;
+    });
+
+    // Cierre de la sección del día
+    cronogramaHTML += `
+                </div> 
+            </section>
+        `;
+  }
+
+  cronogramaHTML += "</div>"; // Cierre de cronograma-agrupado
+
+  cronogramaDetails.innerHTML = cronogramaHTML;
 }
 
 // --- FUNCIONES DE LA VENTANA MODAL (CON LÓGICA DE ROLES) ---
@@ -348,7 +416,10 @@ async function renderCronograma() {
  * Muestra las horas disponibles, cargando más detalles si el usuario es 'admin'.
  */
 async function openHoursModal(date) {
-  document.getElementById("selected-date-span").innerText = date;
+  // La fecha en el encabezado se muestra larga
+  const displayDate = formatDay(date);
+  document.getElementById("selected-date-span").innerText = displayDate;
+
   overlay.classList.remove("hidden");
   modalHours.classList.remove("hidden");
   modalForm.classList.add("hidden");
@@ -379,35 +450,37 @@ async function openHoursModal(date) {
 
   // --- PASO B: Generar los botones ---
   grid.innerHTML = "";
-  const horarios = [
-    "06:00 AM",
-    "08:30 AM",
-    "11:00 AM",
-    "06:00 PM",
+  // HORARIOS EN FORMATO 24H (el que se guarda en la base de datos)
+  const horarios24H = [
+    "06:00",
+    "08:30",
+    "11:00",
     "15:00",
     "16:00",
     "17:00",
+    "18:00", // Corregido el "06:00 PM" a 18:00
   ];
 
-  horarios.forEach((hora) => {
-    const cita = citasPorHora[hora];
+  horarios24H.forEach((hora24) => {
+    const hora12 = formatTime24To12(hora24);
+    const cita = citasPorHora[hora24]; // Buscamos por la hora en 24H
     const isBooked = !!cita;
 
     let btn = document.createElement("div");
     btn.className = "time-slot";
-    btn.innerText = hora;
+    btn.innerText = hora12; // Mostramos la hora en 12H
 
     if (isBooked) {
       btn.classList.add("booked");
 
       if (userRole === "admin") {
         // VISTA ADMIN: Muestra detalles y permite clic para ver info
-        btn.innerText = `${hora} - Reservado: ${cita.nombre}`;
+        btn.innerText = `${hora12} - Reservado: ${cita.nombre}`;
 
         btn.onclick = () => {
           // Usamos el modal de notificación para mostrar detalles de la cita
           showNotificationModal(
-            `Detalles:\nCliente: ${cita.nombre}\nTeléfono: ${cita.telefono}\nFecha: ${date} Hora: ${hora}`,
+            `Detalles de la Cita:\nCliente: ${cita.nombre}\nTeléfono: ${cita.telefono}\nFecha: ${displayDate} Hora: ${hora12}`,
             false,
             7000 // Dejamos el modal visible más tiempo para que lo lea
           );
@@ -425,7 +498,7 @@ async function openHoursModal(date) {
     } else {
       // Si está LIBRE (para ambos roles), asignamos el evento clic para agendar
       btn.onclick = () => {
-        currentSelection.time = hora;
+        currentSelection.time = hora24; // Guardamos en 24H para la DB
         showForm();
       };
     }
@@ -437,9 +510,10 @@ async function openHoursModal(date) {
 function showForm() {
   modalHours.classList.add("hidden");
   modalForm.classList.remove("hidden");
-  document.getElementById(
-    "summary-info"
-  ).innerText = `${currentSelection.date} a las ${currentSelection.time}`;
+  const displayTime = formatTime24To12(currentSelection.time); // Mostrar hora en 12h
+  document.getElementById("summary-info").innerText = `${formatDay(
+    currentSelection.date
+  )} a las ${displayTime}`;
 }
 
 // 3. Cerrar todo
@@ -508,7 +582,7 @@ document
 
     const datos = {
       fecha: currentSelection.date,
-      hora: currentSelection.time,
+      hora: currentSelection.time, // Se guarda en 24H
       nombre: document.getElementById("inp-name").value,
       telefono: document.getElementById("inp-phone").value,
       correo: document.getElementById("inp-email").value,
@@ -529,6 +603,11 @@ document
       showNotificationModal("¡Cita Agendada Exitosamente!");
       closeModal();
       document.getElementById("booking-form").reset();
+
+      // Recarga el calendario para actualizar la disponibilidad
+      if (calendar) {
+        calendar.refetchEvents();
+      }
     }
 
     btn.innerText = originalText;
@@ -572,7 +651,9 @@ document.addEventListener("DOMContentLoaded", function () {
       cronogramaView.classList.add("hidden");
       navCalendarBtn.classList.add("active");
       navCronogramaBtn.classList.remove("active");
-      calendar.updateSize(); // Para redibujar el calendario
+      if (calendar) {
+        calendar.updateSize(); // Para redibujar el calendario
+      }
     });
   }
 

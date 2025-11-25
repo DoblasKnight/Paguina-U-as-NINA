@@ -544,42 +544,105 @@ h2.main-title {
   border: 1px solid rgba(255, 0, 170, 0.3);
   color: #fff;
 }
-.cronograma-table {
-  width: 100%;
-  border-collapse: collapse;
+
+/* --- NUEVOS ESTILOS PARA LA VISTA AGRUPADA --- */
+
+.cronograma-agrupado {
+  display: flex;
+  flex-direction: column;
+  gap: 40px; /* Espacio entre los días */
   margin-top: 20px;
-  color: #fff;
-  font-size: 0.9em;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-  border-radius: var(--radius);
-  overflow: hidden;
 }
 
-.cronograma-table th,
-.cronograma-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #444;
+.dia-cita-section {
+  border-left: 5px solid var(--neon-pink); /* Barra vertical del día */
+  padding-left: 20px;
+  position: relative;
 }
 
-.cronograma-table thead th {
-  background-color: #222;
-  color: var(--neon-pink);
-  text-transform: uppercase;
-}
-
-.cronograma-table tbody tr:hover {
-  background-color: #333;
+.dia-titulo {
+  font-size: 1.8em;
   color: var(--neon-cyan);
+  margin-bottom: 20px;
+  text-transform: capitalize; /* El primer texto será mayúscula */
+  letter-spacing: 1px;
+  font-weight: 700;
 }
 
-.cronograma-table tbody tr:last-child td {
-  border-bottom: none;
+.citas-lista {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(300px, 1fr)
+  ); /* Responsivo, 300px mínimo */
+  gap: 20px;
 }
-.cronograma-table .action-btn {
-  padding: 5px 10px;
+
+.cita-card {
+  background-color: #222; /* Fondo oscuro para la tarjeta */
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid rgba(255, 0, 170, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cita-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
+  border-color: var(--neon-cyan);
+}
+
+.cita-hora-container {
+  padding-right: 15px;
+  border-right: 2px solid var(--neon-pink);
+  min-width: 60px; /* Ancho fijo para la hora */
+  text-align: center;
+}
+
+.cita-hora {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--neon-pink);
+}
+
+.cita-info {
+  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.cita-cliente {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+}
+
+.cita-contacto {
+  font-size: 0.85em;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.cita-contacto i {
+  color: var(--neon-cyan);
   margin-right: 5px;
-  font-size: 0.8em;
+}
+
+.comprobante-link {
+  color: var(--neon-cyan);
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: color 0.3s ease;
+}
+
+.comprobante-link:hover {
+  color: #fff;
+  text-decoration: underline;
 }
 
 /* ----------- RESPONSIVE / CELULAR ----------- */
