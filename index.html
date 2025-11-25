@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agenda NinaNails</title>
+    <title>Nails By NINA</title>
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
@@ -12,72 +12,152 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="calendar-container">
-      <h2 class="main-title">Reserva tu Cita</h2>
-      <div id="calendar"></div>
-    </div>
+    <div id="auth-container">
+      <form id="login-form" class="auth-form">
+        <h2 class="main-title">Iniciar Sesión</h2>
+        <div class="input-group">
+          <label for="login-email">Correo Electrónico</label>
+          <input type="email" id="login-email" required />
+        </div>
+        <div class="input-group">
+          <label for="login-password">Contraseña</label>
+          <input type="password" id="login-password" required />
+        </div>
+        <button type="submit" id="login-btn" class="btn-confirm">
+          Iniciar Sesión
+        </button>
 
-    <div id="modal-overlay" class="hidden">
-      <div id="modal-hours" class="modal-box">
-        <h3>
-          Horarios para el
-          <span id="selected-date-span" style="color: var(--neon-cyan)"></span>
-        </h3>
-        <div id="hours-grid"></div>
-        <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-      </div>
-
-      <div id="modal-form" class="modal-box hidden">
-        <h3>Tus Datos</h3>
-        <p style="color: #ccc; font-size: 0.9rem">
-          Reservando para:
-          <span
-            id="summary-info"
-            style="font-weight: bold; color: var(--neon-pink)"
-          ></span>
+        <p class="auth-toggle">
+          ¿No tienes cuenta?
+          <a href="#" id="show-signup-btn">Regístrate aquí</a>
         </p>
+      </form>
 
-        <form id="booking-form">
-          <div class="input-group">
-            <label>Nombre Completo</label>
-            <input type="text" id="inp-name" required placeholder="Tu nombre" />
-          </div>
+      <form id="signup-form" class="auth-form hidden">
+        <h2 class="main-title">Crear Cuenta</h2>
+        <div class="input-group">
+          <label for="signup-email">Correo Electrónico</label>
+          <input type="email" id="signup-email" required />
+        </div>
+        <div class="input-group">
+          <label for="signup-password">Contraseña</label>
+          <input type="password" id="signup-password" required />
+        </div>
+        <button type="submit" id="signup-btn" class="btn-confirm">
+          Registrarse
+        </button>
 
-          <div class="input-group">
-            <label>Teléfono</label>
-            <input
-              type="tel"
-              id="inp-phone"
-              required
-              placeholder="Ej: 300 123 4567"
-            />
-          </div>
-
-          <div class="input-group">
-            <label>Correo</label>
-            <input
-              type="email"
-              id="inp-email"
-              required
-              placeholder="email@ejemplo.com"
-            />
-          </div>
-
-          <div class="input-group">
-            <label>Subir Comprobante (Imagen)</label>
-            <input type="file" id="inp-comprobante" required accept="image/*" />
-          </div>
-
-          <div class="modal-actions">
-            <button type="button" class="btn-back" onclick="backToHours()">
-              Atrás
-            </button>
-            <button type="submit" class="btn-confirm">CONFIRMAR</button>
-          </div>
-        </form>
-      </div>
+        <p class="auth-toggle">
+          ¿Ya tienes cuenta?
+          <a href="#" id="show-login-btn">Inicia Sesión</a>
+        </p>
+      </form>
     </div>
 
+    <div id="app-container" class="hidden">
+      <button id="logout-btn" class="btn-neon-pink">Cerrar Sesión</button>
+
+      <nav id="admin-nav" class="hidden">
+        <button id="nav-calendar-btn" class="nav-link active">
+          Calendario
+        </button>
+        <button id="nav-cronograma-btn" class="nav-link">
+          Cronograma / Clientes
+        </button>
+      </nav>
+
+      <div id="calendar-view" class="view-panel">
+        <div id="calendar-container">
+          <h2 class="main-title">Agenda tu Cita Neón</h2>
+          <div id="calendar"></div>
+        </div>
+      </div>
+
+      <div id="cronograma-view" class="view-panel hidden">
+        <h2 class="main-title">Detalles de Citas Agendadas</h2>
+        <div id="cronograma-details"></div>
+      </div>
+
+      <div id="modal-overlay" class="hidden">
+        <div id="modal-hours" class="modal-box">
+          <h3>
+            Horarios para el
+            <span
+              id="selected-date-span"
+              style="color: var(--neon-cyan)"
+            ></span>
+          </h3>
+          <div id="hours-grid"></div>
+          <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+        </div>
+
+        <div id="modal-form" class="modal-box hidden">
+          <h3>Tus Datos</h3>
+          <p style="color: #ccc; font-size: 0.9rem">
+            Reservando para:
+            <span
+              id="summary-info"
+              style="font-weight: bold; color: var(--neon-pink)"
+            ></span>
+          </p>
+
+          <form id="booking-form">
+            <div class="input-group">
+              <label>Nombre Completo</label>
+              <input
+                type="text"
+                id="inp-name"
+                required
+                placeholder="Tu nombre"
+              />
+            </div>
+
+            <div class="input-group">
+              <label>Teléfono</label>
+              <input
+                type="tel"
+                id="inp-phone"
+                required
+                placeholder="Ej: 300 123 4567"
+              />
+            </div>
+
+            <div class="input-group">
+              <label>Correo</label>
+              <input
+                type="email"
+                id="inp-email"
+                required
+                placeholder="email@ejemplo.com"
+              />
+            </div>
+
+            <div class="input-group">
+              <label>Subir Comprobante (Imagen)</label>
+              <input
+                type="file"
+                id="inp-comprobante"
+                required
+                accept="image/*"
+              />
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="btn-back" onclick="backToHours()">
+                Atrás
+              </button>
+              <button type="submit" class="btn-confirm">CONFIRMAR</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div id="loading-modal-overlay" class="hidden">
+      <div id="loading-box" class="modal-box">
+        <span id="loading-message">Procesando...</span>
+        <div class="spinner"></div>
+      </div>
+    </div>
     <script src="Js.js"></script>
   </body>
 </html>
