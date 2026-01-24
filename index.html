@@ -2,8 +2,11 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nails App - Sistema Completo</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Nails App - Premium Admin</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       :root {
@@ -44,36 +47,17 @@
         max-width: 350px;
         text-align: center;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-        animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      }
-      @keyframes bounceIn {
-        0% {
-          transform: scale(0.3);
-          opacity: 0;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
       }
 
-      /* LOGIN / REGISTRO */
-      .auth-container {
-        background: white;
+      /* APP INTERFACE */
+      #auth-screen {
         max-width: 400px;
         margin: 40px auto;
+        background: white;
         padding: 30px;
         border-radius: 25px;
         border: 2px solid var(--accent);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
       }
-      .auth-container h1 {
-        color: var(--primary);
-        text-align: center;
-        margin-bottom: 25px;
-      }
-
-      /* APP */
       #app-screen {
         display: none;
         max-width: 1000px;
@@ -83,6 +67,7 @@
         overflow: hidden;
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
       }
+
       .nav-header {
         background: var(--primary);
         color: white;
@@ -124,12 +109,10 @@
         cursor: pointer;
         border: 1px solid #fff0f5;
         text-align: center;
-        font-weight: 500;
       }
       .day.today {
         border: 2px solid var(--primary);
         color: var(--primary);
-        background: white;
       }
       .day.selected {
         background: var(--primary) !important;
@@ -139,7 +122,6 @@
       .day.disabled {
         color: #ccc;
         cursor: not-allowed;
-        background: #fdfdfd;
         opacity: 0.4;
         pointer-events: none;
       }
@@ -189,6 +171,7 @@
         font-weight: bold;
       }
 
+      /* CARDS DE CITA */
       .appointment-card {
         background: white;
         border-left: 6px solid var(--primary);
@@ -196,96 +179,91 @@
         border-radius: 15px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         margin-bottom: 15px;
+        position: relative;
+      }
+      .admin-data-box {
+        background: #f8f8f8;
+        padding: 10px;
+        border-radius: 12px;
+        margin-top: 10px;
+        font-size: 0.85rem;
+        border: 1px dashed var(--accent);
       }
       .btn-remind {
         background: var(--whatsapp);
         color: white;
         border: none;
-        padding: 8px 12px;
+        padding: 10px;
         border-radius: 10px;
         cursor: pointer;
-        font-size: 0.8rem;
+        width: 100%;
         font-weight: bold;
         margin-top: 10px;
+      }
+      .role-badge {
+        font-size: 0.6rem;
+        background: white;
+        color: var(--primary);
+        padding: 2px 6px;
+        border-radius: 4px;
+        vertical-align: middle;
+        margin-left: 5px;
+        text-transform: uppercase;
+        font-weight: bold;
       }
     </style>
   </head>
   <body>
-    <div id="signupModal" class="modal-overlay">
-      <div class="modal-content">
-        <div style="font-size: 60px">🌸</div>
-        <h2 id="regTitle">¡Bienvenida!</h2>
-        <p id="regMsg">
-          Tu cuenta ha sido creada. Ahora puedes iniciar sesión para agendar.
-        </p>
-        <button class="btn-main" onclick="closeSignupModal()">
-          Entrar ahora
-        </button>
-      </div>
-    </div>
-
     <div id="confirmModal" class="modal-overlay">
       <div class="modal-content">
         <div style="font-size: 60px">📩</div>
         <h2>¡Casi listo!</h2>
         <p>
-          Para confirmar tu espacio, **debes enviarnos el comprobante de pago**
-          por WhatsApp ahora.
+          Para agendar tu espacio, **debes enviar el comprobante** por WhatsApp
+          ahora mismo.
         </p>
         <button class="btn-wa" onclick="enviarWhatsAppCliente()">
-          Enviar por WhatsApp 📱
+          Enviar Comprobante 📱
         </button>
       </div>
     </div>
 
     <div id="auth-screen">
-      <div class="auth-container">
-        <h1>Nails App</h1>
-
-        <div id="login-form">
-          <input
-            type="email"
-            id="loginEmail"
-            placeholder="Tu correo electrónico"
-          />
-          <input type="password" id="loginPass" placeholder="Tu contraseña" />
-          <button class="btn-main" onclick="handleAuth('login')">
-            Ingresar
-          </button>
-          <p style="text-align: center; font-size: 0.9rem; margin-top: 20px">
-            ¿No tienes cuenta?
-            <a
-              href="#"
-              onclick="toggleAuth(false)"
-              style="color: var(--primary)"
-              >Regístrate aquí</a
-            >
-          </p>
-        </div>
-
-        <div id="signup-form" style="display: none">
-          <input type="text" id="regNombre" placeholder="Nombre completo" />
-          <input type="email" id="regEmail" placeholder="Correo electrónico" />
-          <input
-            type="password"
-            id="regPass"
-            placeholder="Crea una contraseña"
-          />
-          <button class="btn-main" onclick="handleAuth('signup')">
-            Crear cuenta
-          </button>
-          <p style="text-align: center; font-size: 0.9rem; margin-top: 20px">
-            <a href="#" onclick="toggleAuth(true)" style="color: var(--primary)"
-              >Ya tengo cuenta</a
-            >
-          </p>
-        </div>
+      <h1 style="text-align: center; color: var(--primary)">Nails App</h1>
+      <div id="login-form">
+        <input type="email" id="loginEmail" placeholder="Correo" />
+        <input type="password" id="loginPass" placeholder="Contraseña" />
+        <button class="btn-main" onclick="handleAuth('login')">Entrar</button>
+        <p style="text-align: center; font-size: 0.8rem">
+          ¿No tienes cuenta?
+          <a href="#" onclick="toggleAuth(false)" style="color: var(--primary)"
+            >Regístrate</a
+          >
+        </p>
+      </div>
+      <div id="signup-form" style="display: none">
+        <input type="text" id="regNombre" placeholder="Nombre completo" />
+        <input type="email" id="regEmail" placeholder="Correo" />
+        <input type="password" id="regPass" placeholder="Contraseña (min. 6)" />
+        <button class="btn-main" onclick="handleAuth('signup')">
+          Crear Cuenta
+        </button>
+        <p style="text-align: center; font-size: 0.8rem">
+          <a href="#" onclick="toggleAuth(true)" style="color: var(--primary)"
+            >Ya tengo cuenta</a
+          >
+        </p>
       </div>
     </div>
 
     <div id="app-screen">
       <div class="nav-header">
-        <span>💅 <b id="displayUserName"></b></span>
+        <span
+          >💅 <b id="displayUserName"></b>
+          <span id="adminBadge" class="role-badge" style="display: none"
+            >Admin</span
+          ></span
+        >
         <button
           onclick="logout()"
           style="
@@ -295,10 +273,10 @@
             padding: 5px 10px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
           "
         >
-          Cerrar Sesión
+          Salir
         </button>
       </div>
 
@@ -308,10 +286,10 @@
           class="tab-btn active"
           onclick="showTab('agenda')"
         >
-          Agendar Cita
+          Agendar
         </button>
         <button id="tab-lista" class="tab-btn" onclick="showTab('lista')">
-          Mis Citas
+          Citas
         </button>
       </div>
 
@@ -326,24 +304,14 @@
           >
             <button
               onclick="moveMonth(-1)"
-              style="
-                border: none;
-                background: none;
-                cursor: pointer;
-                font-size: 1.2rem;
-              "
+              style="border: none; background: none; cursor: pointer"
             >
               ◀
             </button>
             <b id="monthDisplay"></b>
             <button
               onclick="moveMonth(1)"
-              style="
-                border: none;
-                background: none;
-                cursor: pointer;
-                font-size: 1.2rem;
-              "
+              style="border: none; background: none; cursor: pointer"
             >
               ▶
             </button>
@@ -352,67 +320,44 @@
         </div>
 
         <div class="form-section">
-          <label style="font-size: 0.7rem; font-weight: bold"
-            >DATOS DE CITA:</label
-          >
-          <input
-            type="text"
-            id="fieldNombre"
-            readonly
-            style="background: #f9f9f9; color: #888"
-          />
+          <input type="text" id="fieldNombre" placeholder="Nombre de clienta" />
           <input
             type="email"
             id="fieldCorreo"
-            readonly
-            style="background: #f9f9f9; color: #888"
+            placeholder="Correo electrónico"
           />
           <input
             type="text"
             id="fieldTelefono"
-            placeholder="WhatsApp (Ej: 573001234567)"
+            placeholder="WhatsApp (Ej: 57300...)"
           />
-
           <select id="fieldServicio">
             <option>Uñas Acrílicas</option>
             <option>Retoque</option>
             <option>Semipermanente</option>
-            <option>Manicura Rusa</option>
           </select>
-
           <select id="fieldHora"></select>
-
           <label style="font-size: 0.7rem; font-weight: bold"
-            >COMPROBANTE (Captura de pago):</label
+            >FOTO COMPROBANTE:</label
           >
           <input type="file" id="fieldFile" accept="image/*" />
-
-          <button
-            class="btn-main"
-            onclick="confirmarCita()"
-            style="margin-top: 10px"
-          >
+          <button class="btn-main" onclick="confirmarCita()">
             ✨ Reservar Espacio
           </button>
         </div>
       </div>
 
       <div id="view-lista" style="display: none; padding: 20px">
-        <h2 id="listTitle" style="color: var(--primary); margin: 0 0 20px 0">
-          Citas Programadas
-        </h2>
         <div id="tablaCitasContainer"></div>
       </div>
     </div>
 
     <script>
-      // CONFIGURACIÓN SUPABASE
       const sbUrl = "https://jifwtgpchbipxyriirtq.supabase.co";
       const sbKey = "sb_publishable_zF5mj6Ba61zibU_19vnFPQ_a4GDaKwi";
       const client = supabase.createClient(sbUrl, sbKey);
 
-      // TU TELÉFONO (Donde recibes las citas)
-      const miTelefonoAdmin = "573153217110";
+      const miWhatsAppAdmin = "573228211246"; // PON TU NÚMERO AQUÍ
 
       let userProfile = null;
       let selectedDate = null;
@@ -426,7 +371,6 @@
         return `${h}:${m} ${suf}`;
       }
 
-      // --- SISTEMA DE AUTENTICACIÓN ---
       function toggleAuth(isLogin) {
         document.getElementById("login-form").style.display = isLogin
           ? "block"
@@ -438,34 +382,22 @@
 
       async function handleAuth(type) {
         if (type === "signup") {
-          const nombre = document.getElementById("regNombre").value;
           const email = document.getElementById("regEmail").value;
           const pass = document.getElementById("regPass").value;
-
-          if (!nombre || !email || pass.length < 6)
-            return alert(
-              "Completa todos los datos (Contraseña min 6 caracteres)",
-            );
-
-          const { data, error } = await client.auth.signUp({
+          const name = document.getElementById("regNombre").value;
+          const { error } = await client.auth.signUp({
             email,
             password: pass,
-            options: { data: { full_name: nombre } },
+            options: { data: { full_name: name } },
           });
-
           if (error) alert(error.message);
-          else {
-            document.getElementById("regTitle").innerText = `¡Hola ${nombre}!`;
-            document.getElementById("signupModal").style.display = "block";
-          }
+          else alert("Cuenta creada. ¡Inicia sesión!");
         } else {
-          const email = document.getElementById("loginEmail").value;
-          const pass = document.getElementById("loginPass").value;
           const { error } = await client.auth.signInWithPassword({
-            email,
-            password: pass,
+            email: document.getElementById("loginEmail").value,
+            password: document.getElementById("loginPass").value,
           });
-          if (error) alert("Correo o contraseña incorrectos");
+          if (error) alert("Error: " + error.message);
           else checkUser();
         }
       }
@@ -487,18 +419,28 @@
           document.getElementById("app-screen").style.display = "block";
           document.getElementById("displayUserName").innerText =
             profile.full_name;
-          document.getElementById("fieldNombre").value = profile.full_name;
-          document.getElementById("fieldCorreo").value = session.user.email;
+
+          // REGLAS ADMIN VS CLIENTE
+          const inputN = document.getElementById("fieldNombre");
+          const inputC = document.getElementById("fieldCorreo");
+          inputN.value = profile.full_name;
+          inputC.value = session.user.email;
 
           if (profile.role === "admin") {
-            document.getElementById("fieldNombre").readOnly = false;
-            document.getElementById("fieldNombre").style.background = "white";
+            document.getElementById("adminBadge").style.display =
+              "inline-block";
+            inputN.readOnly = false;
+            inputC.readOnly = false;
+            inputN.style.background = "white";
+          } else {
+            inputN.readOnly = true;
+            inputC.readOnly = false;
+            inputN.style.background = "#f0f0f0";
           }
           renderCalendar();
         }
       }
 
-      // --- SISTEMA DE AGENDAMIENTO ---
       function renderCalendar() {
         const grid = document.getElementById("calendarGrid");
         const months = [
@@ -525,7 +467,7 @@
         grid.innerHTML = "";
         ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"].forEach(
           (d) =>
-            (grid.innerHTML += `<div style="font-size:0.7rem; text-align:center; color:#bbb; padding-bottom:10px;">${d}</div>`),
+            (grid.innerHTML += `<div style="font-size:0.7rem; color:#bbb; text-align:center;">${d}</div>`),
         );
 
         const firstDay = new Date(year, month, 1).getDay();
@@ -534,11 +476,11 @@
         for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
         for (let i = 1; i <= lastDate; i++) {
           const d = document.createElement("div");
-          d.className = "day";
-          d.innerText = i;
           const cIter = new Date(year, month, i);
           const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
 
+          d.className = "day";
+          d.innerText = i;
           if (cIter < today) d.classList.add("disabled");
           else {
             if (cIter.getTime() === today.getTime()) d.classList.add("today");
@@ -555,7 +497,6 @@
         }
       }
 
-      const horasBase = ["09:00", "11:00", "14:00", "16:00"];
       async function checkHoras(fecha) {
         const { data } = await client
           .from("citas")
@@ -563,8 +504,7 @@
           .eq("fecha", fecha);
         const selector = document.getElementById("fieldHora");
         selector.innerHTML = "";
-
-        horasBase.forEach((h) => {
+        ["09:00", "11:00", "14:00", "16:00"].forEach((h) => {
           const opt = document.createElement("option");
           opt.value = h;
           const ocupado = data && data.some((c) => c.hora.startsWith(h));
@@ -575,100 +515,74 @@
       }
 
       async function confirmarCita() {
-        if (!selectedDate)
-          return alert("Por favor, selecciona un día en el calendario 🌸");
-
-        // Verificamos que el archivo esté seleccionado pero no lo subimos aún a Supabase
-        // para evitar errores de almacenamiento. Se enviará por WhatsApp.
+        if (!selectedDate) return alert("Selecciona fecha");
         const file = document.getElementById("fieldFile").files[0];
-        if (!file) return alert("Debes seleccionar la foto del comprobante 📸");
+        if (!file) return alert("Sube el comprobante");
 
-        const tel = document.getElementById("fieldTelefono").value;
-        if (!tel || tel.length < 7)
-          return alert("Por favor, ingresa un número de WhatsApp válido");
-
-        const btn = document.querySelector(".btn-main");
-        btn.innerText = "Procesando...";
-        btn.disabled = true;
-
-        const datosCita = {
+        const datos = {
           fecha: selectedDate,
           hora: document.getElementById("fieldHora").value,
           nombre: document.getElementById("fieldNombre").value,
           correo: document.getElementById("fieldCorreo").value,
-          telefono: tel,
+          telefono: document.getElementById("fieldTelefono").value,
           servicio: document.getElementById("fieldServicio").value,
           user_id: userProfile.id,
-          // No enviamos la columna 'comprobante' aquí para evitar el error de restricción
         };
 
-        const { error } = await client.from("citas").insert([datosCita]);
-
-        if (error) {
-          console.error("ERROR COMPLETO:", error);
-          alert("Error al guardar: " + error.message);
-          btn.innerText = "✨ Reservar Espacio";
-          btn.disabled = false;
-        } else {
-          // Guardamos los datos para el mensaje de WhatsApp
-          lastCitaData = {
-            nombre: datosCita.nombre,
-            fecha: datosCita.fecha,
-            hora: format12h(datosCita.hora),
-            servicio: datosCita.servicio,
-          };
-
-          // Abrimos el modal que obliga a enviar el WhatsApp
+        const { error } = await client.from("citas").insert([datos]);
+        if (error) alert(error.message);
+        else {
+          lastCitaData = datos;
           document.getElementById("confirmModal").style.display = "block";
-
-          btn.innerText = "✨ Reservar Espacio";
-          btn.disabled = false;
         }
       }
 
       function enviarWhatsAppCliente() {
-        const msg = `¡Hola! Soy *${lastCitaData.nombre}*. Agendé cita para *${lastCitaData.servicio}* el *${lastCitaData.fecha}* a las *${lastCitaData.hora}*. Adjunto comprobante. ✨`;
+        const msg = `¡Hola! Soy *${lastCitaData.nombre}*. Agendé cita para *${lastCitaData.servicio}* el *${lastCitaData.fecha}* a las *${format12h(lastCitaData.hora)}*. Adjunto comprobante. ✨`;
         window.open(
-          `https://wa.me/${miTelefonoAdmin}?text=${encodeURIComponent(msg)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
           "_blank",
         );
         document.getElementById("confirmModal").style.display = "none";
         showTab("lista");
       }
 
-      function enviarRecordatorioAdmin(n, f, h, tel) {
-        const msg = `¡Hola *${n}*! 💅 Te recordamos tu cita de mañana *${f}* a las *${format12h(h)}*. ¿Confirmas asistencia? ✨`;
-        window.open(
-          `https://wa.me/${tel}?text=${encodeURIComponent(msg)}`,
-          "_blank",
-        );
-      }
-
       async function loadAllAppointments() {
         let query = client.from("citas").select("*");
         if (userProfile.role !== "admin")
           query = query.eq("user_id", userProfile.id);
-        const { data } = await query.order("fecha", { ascending: true });
 
+        const { data } = await query
+          .order("fecha", { ascending: true })
+          .order("hora", { ascending: true });
         const container = document.getElementById("tablaCitasContainer");
         container.innerHTML = "";
-        const manana = new Date();
-        manana.setDate(manana.getDate() + 1);
-        const mananaStr = manana.toISOString().split("T")[0];
+
+        const mañana = new Date();
+        mañana.setDate(mañana.getDate() + 1);
+        const mañanaStr = mañana.toISOString().split("T")[0];
 
         if (data)
           data.forEach((c) => {
-            const esManana = c.fecha === mananaStr;
+            const esMañana = c.fecha === mañanaStr;
+            let adminInfo = "";
+
+            if (userProfile.role === "admin") {
+              adminInfo = `
+                        <div class="admin-data-box">
+                            <b>📱 WhatsApp:</b> ${c.telefono}<br>
+                            <b>📧 Correo:</b> ${c.correo}
+                        </div>
+                        ${esMañana ? `<button class="btn-remind" onclick="window.open('https://wa.me/${c.telefono}?text=Hola%20${c.nombre}!%20Confirmamos%20tu%20cita%20de%20mañana%20a%20las%20${format12h(c.hora)}')">📱 Recordar Mañana</button>` : ""}
+                    `;
+            }
+
             container.innerHTML += `
                     <div class="appointment-card">
                         <div style="font-weight:bold; color:var(--primary)">🕒 ${format12h(c.hora)} - ${c.fecha}</div>
-                        <div>👤 ${c.nombre}</div>
-                        <div style="font-size:0.8rem">✨ ${c.servicio}</div>
-                        ${
-                          userProfile.role === "admin" && esManana
-                            ? `<button class="btn-remind" onclick="enviarRecordatorioAdmin('${c.nombre}', '${c.fecha}', '${c.hora}', '${c.telefono}')">📱 Recordar cita de mañana</button>`
-                            : ""
-                        }
+                        <div style="font-size:1.1rem; margin:5px 0;">👤 ${c.nombre}</div>
+                        <div style="font-size:0.8rem; color:#666">✨ ${c.servicio}</div>
+                        ${adminInfo}
                     </div>`;
           });
       }
@@ -678,13 +592,15 @@
           t === "agenda" ? "grid" : "none";
         document.getElementById("view-lista").style.display =
           t === "lista" ? "block" : "none";
+        document
+          .getElementById("tab-agenda")
+          .classList.toggle("active", t === "agenda");
+        document
+          .getElementById("tab-lista")
+          .classList.toggle("active", t === "lista");
         if (t === "lista") loadAllAppointments();
       }
 
-      function closeSignupModal() {
-        document.getElementById("signupModal").style.display = "none";
-        toggleAuth(true);
-      }
       function moveMonth(d) {
         viewDate.setMonth(viewDate.getMonth() + d);
         renderCalendar();
@@ -693,7 +609,6 @@
         await client.auth.signOut();
         window.location.reload();
       }
-
       checkUser();
     </script>
   </body>
