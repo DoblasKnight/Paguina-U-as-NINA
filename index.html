@@ -183,7 +183,6 @@
         box-shadow: var(--primary-glow);
       }
 
-      /* COMPONENTES */
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -866,6 +865,7 @@
               pattern="[0-9]*"
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
+
             <label
               style="
                 font-size: 0.8rem;
@@ -1166,45 +1166,33 @@
         pendingCancelId = null,
         pendingCancelData = null;
 
-      // --- INICIO ---
-      async function initApp() {
-        // Verificar si la URL es de recuperación
-        const hash = window.location.hash;
-        if (hash && hash.includes("type=recovery")) {
-          // Bloquear pantalla
+      // --- INICIO INTELIGENTE ---
+      const hash = window.location.hash;
+      const isRecovery = hash && hash.includes("type=recovery");
+
+      function initApp() {
+        if (isRecovery) {
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "none";
           document.getElementById("recovery-screen").style.display = "block";
-
-          // INTENTO 1: Verificar si Supabase ya lo cachó (inmediato)
-          const {
-            data: { session },
-          } = await client.auth.getSession();
-          if (session) {
-            showRecoverySuccess();
-          }
-          // Si no, el listener onAuthStateChange lo cachará
+          // Esperamos evento Supabase
         } else {
           checkUser();
         }
       }
 
-      // --- EL SECRETO: DETECTAR Y MOSTRAR ---
-      function showRecoverySuccess() {
-        document.getElementById("recoveryStatus").innerText =
-          "Enlace verificado. Ingresa tu nueva clave.";
-        document.getElementById("recoveryStatus").style.color =
-          "var(--success)";
-        document.getElementById("recoveryForm").style.display = "block";
-      }
-
+      // --- DETECCIÓN DE SESIÓN PARA RECUPERACIÓN ---
       client.auth.onAuthStateChange(async (event, session) => {
-        // Si estamos en recovery mode y llega un evento de sesión (SIGNED_IN o PASSWORD_RECOVERY)
         if (
-          window.location.hash.includes("type=recovery") &&
-          (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN")
+          event === "PASSWORD_RECOVERY" ||
+          (event === "SIGNED_IN" && isRecovery)
         ) {
-          showRecoverySuccess();
+          // Ya tenemos sesión del link, habilitamos el formulario
+          document.getElementById("recoveryStatus").innerText =
+            "✅ Enlace verificado. Ingresa tu nueva clave.";
+          document.getElementById("recoveryStatus").style.color =
+            "var(--success)";
+          document.getElementById("recoveryForm").style.display = "block";
         }
       });
 
@@ -1302,18 +1290,24 @@
         if (error) {
           showAlert(
             "Error",
-            "Error al actualizar. Intenta solicitar el enlace de nuevo.",
+            "Tu enlace expiró o no es válido. Pide uno nuevo.",
           );
+          // Limpiar URL y recargar tras el error
+          setTimeout(() => {
+            window.location.href = window.location.origin;
+          }, 2500);
         } else {
           showAlert("¡Éxito!", "Contraseña restablecida. Ingresando...");
           document.getElementById("recovery-screen").style.display = "none";
-          history.replaceState(null, null, " "); // Limpiar URL
-          setTimeout(() => checkUser(), 500);
+          history.replaceState(null, null, " ");
+          setTimeout(() => {
+            window.location.href = window.location.origin;
+          }, 1500); // Recarga limpia
         }
       }
 
       async function checkUser() {
-        if (window.location.hash.includes("type=recovery")) return; // No interrumpir recuperación
+        if (isRecovery) return; // No chequear si estamos recuperando
 
         const {
           data: { session },
@@ -1434,7 +1428,14 @@
         }
       }
 
-      // --- SWIPE, CALENDARIO Y CITA ---
+      // --- LOGOUT ROBUSTO (Cierra sesión, limpia y recarga) ---
+      async function logout() {
+        await client.auth.signOut();
+        localStorage.clear(); // Limpieza agresiva
+        window.location.href = window.location.origin; // Recarga limpia
+      }
+
+      // --- SWIPE, CALENDARIO Y CITA (Misma lógica) ---
       let touchStartX = 0,
         touchEndX = 0;
       const appScreen = document.getElementById("app-screen");
@@ -1465,7 +1466,6 @@
         }
       }
 
-      // ... (Resto de funciones: format12h, updateFileName, startReschedule, confirmCita, etc. igual que antes) ...
       function format12h(h24) {
         if (!h24) return "";
         let [h, m] = h24.split(":");
@@ -1758,7 +1758,7 @@
         if (t === "lista") loadAllAppointments();
         if (t !== "agenda") cancelRescheduleMode();
       }
-      // ADMIN FUNCS (SIMPLIFIED FOR SPACE)
+      // ADMIN FUNCS (SIMPLIFIED)
       function toggleWeekDay(d) {
         const i = selectedWeekDays.indexOf(d);
         if (i > -1) selectedWeekDays.splice(i, 1);
