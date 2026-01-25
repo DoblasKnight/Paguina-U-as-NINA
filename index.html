@@ -6,22 +6,21 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Nails App - Premium</title>
+    <title>NailsByNINA - App</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       :root {
-        --primary: #d63384;
-        --primary-soft: #fce4ec;
-        --accent: #f8bbd0;
-        --bg: #fff5f8;
+        /* Paleta NailsByNINA - Neon & Clean */
+        --primary: #ff1493; /* Deep Pink Neón */
+        --primary-glow: 0 0 10px rgba(255, 20, 147, 0.4);
+        --bg: #fff0f5; /* Lavender Blush */
+        --card-bg: #ffffff;
         --text: #4a148c;
+        --text-light: #888;
         --whatsapp: #25d366;
-        --danger: #ff4d4d;
-        --info: #2196f3;
-        --warning: #ff9800;
-        --success: #4caf50;
-        --full-bg: #ffcdd2;
-        --full-text: #b71c1c;
+        --danger: #ff3366;
+        --info: #00bfff; /* Deep Sky Blue Neón */
+        --radius: 20px;
       }
 
       body {
@@ -29,34 +28,29 @@
         background: var(--bg);
         margin: 0;
         color: var(--text);
-        padding: 10px;
+        padding: 15px;
         -webkit-tap-highlight-color: transparent;
+        /* Evita el rebote de scroll para mejorar el swipe */
+        overscroll-behavior-y: none;
       }
 
-      /* ANIMACIONES */
-      @keyframes fadeIn {
-        from {
+      /* --- ANIMACIONES --- */
+      @keyframes popIn {
+        0% {
           opacity: 0;
+          transform: scale(0.95);
         }
-        to {
+        100% {
           opacity: 1;
+          transform: scale(1);
         }
-      }
-      @keyframes slideUp {
-        from {
-          transform: translateY(20px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-      .animate-fade {
-        animation: fadeIn 0.4s ease-out;
       }
 
-      /* MODALES */
+      .animate-pop {
+        animation: popIn 0.3s ease-out;
+      }
+
+      /* --- MODALES --- */
       .modal-overlay {
         display: none;
         position: fixed;
@@ -65,41 +59,41 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background: rgba(74, 20, 140, 0.5);
-        backdrop-filter: blur(4px);
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(8px);
         align-items: center;
         justify-content: center;
-        animation: fadeIn 0.2s ease;
       }
       .modal-content {
         background: white;
-        padding: 25px;
-        border-radius: 25px;
+        padding: 30px;
+        border-radius: var(--radius);
         width: 85%;
-        max-width: 320px;
+        max-width: 340px;
         text-align: center;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-        animation: slideUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        box-shadow: 0 20px 60px rgba(255, 20, 147, 0.15);
+        border: 1px solid rgba(255, 20, 147, 0.1);
+        animation: popIn 0.3s ease-out;
       }
       .modal-icon {
-        font-size: 3rem;
-        margin-bottom: 10px;
+        font-size: 3.5rem;
+        margin-bottom: 15px;
         display: block;
       }
       .modal-btn-row {
         display: flex;
-        gap: 10px;
-        margin-top: 20px;
+        gap: 12px;
+        margin-top: 25px;
       }
       .btn-modal {
         flex: 1;
-        padding: 12px;
+        padding: 14px;
         border: none;
         border-radius: 12px;
-        font-weight: bold;
+        font-weight: 600;
         cursor: pointer;
-        font-size: 0.9rem;
-        transition: transform 0.1s;
+        font-size: 0.95rem;
+        transition: transform 0.2s;
       }
       .btn-modal:active {
         transform: scale(0.95);
@@ -107,6 +101,7 @@
       .btn-modal.primary {
         background: var(--primary);
         color: white;
+        box-shadow: var(--primary-glow);
       }
       .btn-modal.secondary {
         background: #f0f0f0;
@@ -115,43 +110,49 @@
       .btn-modal.whatsapp {
         background: var(--whatsapp);
         color: white;
+        box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
       }
       .btn-modal.danger {
         background: var(--danger);
         color: white;
       }
 
-      /* ESTILOS BASE */
+      /* --- CONTENEDORES --- */
       #auth-screen,
       #app-screen {
         display: none;
-        max-width: 1000px;
-        margin: 10px auto;
-        background: white;
-        border-radius: 25px;
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--card-bg);
+        border-radius: var(--radius);
         overflow: hidden;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+        min-height: 80vh; /* Altura mínima para capturar swipe cómodamente */
       }
       #auth-screen {
         display: block;
         max-width: 400px;
         margin-top: 40px;
-        padding: 30px;
-        border: 2px solid var(--accent);
+        padding: 40px 30px;
+        border: 2px solid #ffe6f2;
+        min-height: auto;
       }
 
+      /* --- HEADER & NAV --- */
       .nav-header {
-        background: var(--primary);
-        color: white;
-        padding: 15px 25px;
+        background: white;
+        color: var(--primary);
+        padding: 20px 25px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        border-bottom: 1px solid #ffe6f2;
       }
       .tabs {
         display: flex;
         background: white;
-        border-bottom: 2px solid var(--accent);
+        padding: 5px;
+        border-bottom: 1px solid #f8f8f8;
       }
       .tab-btn {
         flex: 1;
@@ -159,268 +160,281 @@
         border: none;
         background: none;
         cursor: pointer;
-        font-weight: bold;
-        color: #888;
-        transition: all 0.3s;
+        font-weight: 600;
+        color: #bbb;
+        position: relative;
+        transition: color 0.3s;
       }
       .tab-btn.active {
         color: var(--primary);
-        border-bottom: 3px solid var(--primary);
-        background: var(--bg);
+      }
+      .tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 6px;
+        height: 6px;
+        background: var(--primary);
+        border-radius: 50%;
+        box-shadow: var(--primary-glow);
       }
 
-      /* CALENDARIO */
+      /* --- CALENDARIO --- */
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 6px;
-        margin-top: 10px;
+        gap: 8px;
+        margin-top: 15px;
       }
       .day {
         aspect-ratio: 1/1;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 12px;
+        border-radius: 14px;
         cursor: pointer;
-        border: 1px solid #fff0f5;
         font-size: 0.9rem;
-        transition: transform 0.1s;
-      }
-      .day:active {
-        transform: scale(0.9);
+        transition: all 0.2s;
+        background: #fff;
+        border: 1px solid transparent;
+        color: #555;
       }
       .day.today {
-        border: 2px solid var(--primary);
+        border-color: var(--primary);
         color: var(--primary);
-        font-weight: 800;
+        font-weight: 700;
       }
       .day.selected {
         background: var(--primary) !important;
         color: white !important;
-        font-weight: bold;
+        box-shadow: var(--primary-glow);
         transform: scale(1.05);
-      }
-      .day.disabled {
-        color: #ddd;
-        pointer-events: none;
+        font-weight: bold;
       }
       .day.full {
-        background: var(--full-bg);
-        color: var(--full-text);
-        border: 1px solid var(--full-bg);
+        background: #f8f8f8;
+        color: #ddd;
+        text-decoration: line-through;
+        pointer-events: none;
+      }
+      .day.disabled {
+        opacity: 0.3;
+        pointer-events: none;
       }
 
-      /* FORMULARIO */
+      /* --- FORMULARIO --- */
       .main-grid {
         display: grid;
-        grid-template-columns: 1fr 350px;
-        gap: 20px;
-        padding: 20px;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 25px;
       }
-      @media (max-width: 850px) {
+      @media (min-width: 768px) {
         .main-grid {
-          grid-template-columns: 1fr;
+          grid-template-columns: 1fr 350px;
         }
       }
+
       input,
       select {
         width: 100%;
-        padding: 14px;
+        padding: 16px;
         margin: 8px 0;
-        border: 2px solid var(--primary-soft);
-        border-radius: 15px;
+        border: 2px solid #f0f0f0;
+        border-radius: 16px;
         box-sizing: border-box;
-        background: #fafafa;
+        background: #fbfbfb;
         font-size: 1rem;
+        transition: border-color 0.3s;
+        color: #333;
       }
       input:focus,
       select:focus {
         outline: none;
         border-color: var(--primary);
         background: white;
+        box-shadow: 0 0 0 4px rgba(255, 20, 147, 0.05);
       }
+
+      /* --- UPLOAD --- */
+      .file-upload-wrapper {
+        margin: 15px 0;
+        text-align: center;
+      }
+      .custom-file-upload {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 20px;
+        cursor: pointer;
+        border: 2px dashed var(--primary);
+        border-radius: 15px;
+        background: rgba(255, 20, 147, 0.03);
+        color: var(--primary);
+        font-weight: bold;
+        width: 100%;
+        box-sizing: border-box;
+        transition: all 0.3s;
+      }
+      #fileNameDisplay {
+        display: block;
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 5px;
+        font-style: italic;
+      }
+
       .btn-main {
         background: var(--primary);
         color: white;
         border: none;
-        padding: 16px;
+        padding: 18px;
         width: 100%;
-        border-radius: 15px;
+        border-radius: 16px;
         cursor: pointer;
-        font-weight: bold;
-        font-size: 1rem;
-        margin-top: 10px;
-        transition: transform 0.1s;
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-top: 15px;
+        box-shadow: var(--primary-glow);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
       .btn-main:active {
         transform: scale(0.98);
       }
       .btn-main.reschedule-mode {
         background: var(--info);
-        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
       }
 
-      /* BARRA DE EDICIÓN */
-      #editModeBar {
-        background: var(--info);
-        color: white;
-        padding: 10px;
-        text-align: center;
-        font-weight: bold;
-        font-size: 0.9rem;
-        display: none;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .btn-cancel-edit {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 0.8rem;
-      }
-
-      /* CARDS */
+      /* --- CARDS --- */
       .appointment-card {
         background: white;
-        border-left: 6px solid var(--primary);
-        padding: 15px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        margin-bottom: 15px;
-        animation: slideUp 0.4s ease forwards;
+        border: 1px solid #f0f0f0;
+        padding: 20px;
+        border-radius: 18px;
+        margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
       }
-      .appointment-card.reprogramada {
-        border-left-color: var(--warning);
-        background: #fffbf0;
+      .appointment-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+        background: var(--primary);
+        box-shadow: var(--primary-glow);
+      }
+      .appointment-card.reprogramada::before {
+        background: var(--info);
+        box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
       }
 
-      .admin-data-box {
-        background: #f8f8f8;
-        padding: 10px;
-        border-radius: 12px;
-        margin-top: 10px;
-        font-size: 0.85rem;
-        border: 1px dashed var(--accent);
-      }
-      .badge-reprogramada {
+      .status-pill {
         display: inline-block;
-        background: var(--warning);
-        color: white;
-        padding: 2px 6px;
-        border-radius: 4px;
         font-size: 0.7rem;
-        font-weight: bold;
-        margin-bottom: 5px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: #f0f0f0;
+        color: #666;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+      .status-pill.repro {
+        background: rgba(0, 191, 255, 0.1);
+        color: var(--info);
+        border: 1px solid var(--info);
       }
 
       .actions-row {
         display: flex;
-        gap: 6px;
-        margin-top: 12px;
-        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
       }
       .btn-action {
         border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
+        padding: 10px;
+        border-radius: 10px;
         cursor: pointer;
-        font-weight: bold;
-        font-size: 0.8rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
-        color: white;
-        flex: 1;
-      }
-      .btn-remind {
-        background: var(--whatsapp);
+        gap: 5px;
       }
       .btn-reschedule {
-        background: var(--info);
+        background: #eeffff;
+        color: var(--info);
       }
       .btn-cancel {
-        background: white;
-        border: 2px solid var(--danger);
+        background: #fff5f5;
         color: var(--danger);
-        flex: 0.6;
       }
 
-      /* ADMIN CONFIG */
+      /* --- ADMIN --- */
       .admin-control-panel {
         padding: 20px;
-        background: #fff;
-      }
-      .week-selector {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        margin: 20px 0;
-        flex-wrap: wrap;
+        background: white;
       }
       .day-chip {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: #f0f0f0;
-        color: #888;
+        width: 45px;
+        height: 45px;
+        border-radius: 14px;
+        background: #f5f5f5;
+        color: #aaa;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
         cursor: pointer;
+        transition: 0.3s;
       }
       .day-chip.active {
         background: var(--primary);
         color: white;
-      }
-      .admin-control-box {
-        background: #fff0f5;
-        border: 2px dashed var(--primary);
-        border-radius: 20px;
-        padding: 20px;
-        margin-top: 20px;
-      }
-      .hour-btn {
-        padding: 8px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        margin: 2px;
-      }
-      .hour-btn.open {
-        background: white;
-        border: 2px solid var(--success);
-        color: var(--success);
-      }
-      .hour-btn.blocked {
-        background: var(--danger);
-        color: white;
-        text-decoration: line-through;
-        opacity: 0.7;
+        box-shadow: var(--primary-glow);
+        transform: translateY(-3px);
       }
       .hour-tag {
         display: inline-block;
         background: var(--primary);
         color: white;
-        padding: 5px 10px;
-        border-radius: 15px;
-        margin: 2px;
-        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+        margin: 4px;
+        font-size: 0.85rem;
+      }
+      #editModeBar {
+        background: var(--info);
+        color: white;
+        padding: 12px;
+        text-align: center;
+        font-weight: bold;
+        display: none;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 0 0 15px 15px;
+        margin-bottom: 15px;
       }
     </style>
   </head>
   <body>
     <div id="generalModal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-icon" id="genIcon">🔔</div>
-        <h3 id="genTitle"></h3>
-        <p id="genMsg" style="color: #666; margin: 10px 0 20px"></p>
+        <div class="modal-icon" id="genIcon">✨</div>
+        <h3 id="genTitle" style="color: var(--primary); margin: 0"></h3>
+        <p
+          id="genMsg"
+          style="color: #666; margin: 15px 0 25px; line-height: 1.5"
+        ></p>
         <div class="modal-btn-row">
           <button
             class="btn-modal primary"
@@ -434,16 +448,19 @@
 
     <div id="cancelModal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-icon">⚠️</div>
-        <h3>¿Cancelar Cita?</h3>
-        <p style="color: #666">Esta acción es irreversible.</p>
+        <div class="modal-icon">💔</div>
+        <h3 style="color: var(--text); margin: 0">¿Cancelar Cita?</h3>
+        <p style="color: #888; margin-top: 10px">
+          Esta acción liberará tu espacio.
+        </p>
         <div class="modal-btn-row">
           <button
             class="btn-modal secondary"
             onclick="closeModal('cancelModal')"
           >
-            Volver</button
-          ><button class="btn-modal danger" onclick="confirmCancelation()">
+            Volver
+          </button>
+          <button class="btn-modal danger" onclick="confirmCancelation()">
             Sí, Cancelar
           </button>
         </div>
@@ -452,12 +469,15 @@
 
     <div id="wspModal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-icon">📩</div>
-        <h2>¡Casi listo!</h2>
-        <p>Envía el comprobante por WhatsApp.</p>
+        <div class="modal-icon">💅</div>
+        <h2 style="color: var(--primary); margin: 0">¡Casi Listo!</h2>
+        <p style="color: #666; margin: 15px 0">
+          Gracias por elegir <b>NailsByNINA</b>.<br />Para confirmar, envía tu
+          comprobante.
+        </p>
         <div class="modal-btn-row">
           <button class="btn-modal whatsapp" onclick="enviarWhatsAppCliente()">
-            Enviar 📱
+            Enviar Comprobante
           </button>
         </div>
       </div>
@@ -466,72 +486,147 @@
     <div id="wspRescheduleModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">🔄</div>
-        <h2>¡Reprogramada!</h2>
-        <p>Tu nueva fecha está lista. Avisa por WhatsApp para confirmar.</p>
+        <h2 style="color: var(--info); margin: 0">Cambio Realizado</h2>
+        <p style="color: #666; margin: 15px 0">
+          Tu nueva fecha ha sido reservada.<br />Avísanos para actualizar.
+        </p>
         <div class="modal-btn-row">
           <button
             class="btn-modal whatsapp"
             onclick="enviarWhatsAppReprogramacion()"
           >
-            Avisar Cambio 📱
+            Confirmar Cambio
           </button>
         </div>
       </div>
     </div>
 
-    <div id="auth-screen">
-      <h1 style="text-align: center; color: var(--primary)">Nails App</h1>
+    <div id="auth-screen" class="animate-pop">
+      <h1 style="text-align: center; color: var(--primary); margin-bottom: 5px">
+        NailsByNINA
+      </h1>
+      <p
+        style="
+          text-align: center;
+          color: #aaa;
+          font-size: 0.9rem;
+          margin-bottom: 30px;
+        "
+      >
+        Agenda tu momento de brillo ✨
+      </p>
+
       <div id="login-form">
-        <input type="email" id="loginEmail" placeholder="Correo" />
+        <input type="email" id="loginEmail" placeholder="Tu Correo" />
         <input type="password" id="loginPass" placeholder="Contraseña" />
-        <button class="btn-main" onclick="handleAuth('login')">Entrar</button>
-        <p style="text-align: center; font-size: 0.8rem; margin-top: 20px">
-          ¿No tienes cuenta?
-          <a href="#" onclick="toggleAuth(false)">Regístrate</a>
+        <button class="btn-main" onclick="handleAuth('login')">
+          Ingresar 💖
+        </button>
+        <p
+          style="
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 25px;
+            color: #888;
+          "
+        >
+          ¿Primera vez?
+          <a
+            href="#"
+            onclick="toggleAuth(false)"
+            style="
+              color: var(--primary);
+              font-weight: bold;
+              text-decoration: none;
+            "
+            >Crear cuenta</a
+          >
         </p>
       </div>
+
       <div id="signup-form" style="display: none">
-        <input type="text" id="regNombre" placeholder="Nombre completo" />
-        <input type="email" id="regEmail" placeholder="Correo" />
-        <input type="password" id="regPass" placeholder="Contraseña (min 6)" />
+        <input type="text" id="regNombre" placeholder="Tu Nombre Completo" />
+        <input type="email" id="regEmail" placeholder="Tu Correo" />
+        <input type="password" id="regPass" placeholder="Contraseña (mín 6)" />
         <button class="btn-main" onclick="handleAuth('signup')">
-          Crear Cuenta
+          Registrarme ✨
         </button>
-        <p style="text-align: center; font-size: 0.8rem; margin-top: 20px">
-          <a href="#" onclick="toggleAuth(true)">Ya tengo cuenta</a>
+        <p
+          style="
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 25px;
+            color: #888;
+          "
+        >
+          <a
+            href="#"
+            onclick="toggleAuth(true)"
+            style="
+              color: var(--primary);
+              font-weight: bold;
+              text-decoration: none;
+            "
+            >Ya tengo cuenta</a
+          >
         </p>
       </div>
     </div>
 
-    <div id="app-screen">
+    <div id="app-screen" class="animate-pop">
       <div class="nav-header">
-        <span
-          >💅 <b id="displayUserName"></b>
+        <span style="font-size: 1.1rem; font-weight: bold">
+          NailsByNINA
           <span
             id="adminBadge"
-            class="badge-reprogramada"
-            style="display: none; background: white; color: var(--primary)"
+            style="
+              display: none;
+              font-size: 0.6rem;
+              background: var(--text);
+              color: white;
+              padding: 2px 5px;
+              border-radius: 4px;
+              vertical-align: middle;
+              margin-left: 5px;
+            "
             >ADMIN</span
-          ></span
-        >
+          >
+        </span>
+        <div style="display: flex; align-items: center; gap: 10px">
+          <span
+            id="displayUserName"
+            style="font-size: 0.85rem; color: #888"
+          ></span>
+          <button
+            onclick="logout()"
+            style="
+              background: none;
+              border: 1px solid #ffcccc;
+              color: var(--danger);
+              padding: 6px 12px;
+              border-radius: 10px;
+              cursor: pointer;
+              font-size: 0.8rem;
+            "
+          >
+            Salir
+          </button>
+        </div>
+      </div>
+
+      <div id="editModeBar">
+        <span>🔄 REPROGRAMANDO CITA</span>
         <button
-          onclick="logout()"
+          onclick="cancelRescheduleMode()"
           style="
-            background: none;
-            border: 1px solid white;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
             color: white;
             padding: 5px 10px;
             border-radius: 8px;
             cursor: pointer;
           "
         >
-          Salir
-        </button>
-      </div>
-
-      <div id="editModeBar">
-        <span>🔄 MODO REPROGRAMACIÓN</span>
-        <button class="btn-cancel-edit" onclick="cancelRescheduleMode()">
           Cancelar
         </button>
       </div>
@@ -553,38 +648,55 @@
           onclick="showTab('config')"
           style="display: none"
         >
-          Configurar
+          Admin
         </button>
       </div>
 
-      <div id="view-agenda" class="main-grid animate-fade">
+      <div id="view-agenda" class="main-grid animate-pop">
         <div>
           <div
             style="
               display: flex;
               justify-content: space-between;
               align-items: center;
-              margin-bottom: 10px;
+              margin-bottom: 15px;
             "
           >
             <button
               onclick="moveMonth(-1)"
               style="
                 border: none;
-                background: none;
-                font-size: 1.2rem;
+                background: white;
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                color: var(--primary);
+                font-weight: bold;
                 cursor: pointer;
               "
             >
               ◀
             </button>
-            <b id="monthDisplay"></b>
+            <b
+              id="monthDisplay"
+              style="
+                color: var(--text);
+                font-size: 1.1rem;
+                text-transform: capitalize;
+              "
+            ></b>
             <button
               onclick="moveMonth(1)"
               style="
                 border: none;
-                background: none;
-                font-size: 1.2rem;
+                background: white;
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                color: var(--primary);
+                font-weight: bold;
                 cursor: pointer;
               "
             >
@@ -595,43 +707,77 @@
         </div>
 
         <div class="form-section">
+          <h3 style="margin: 0 0 15px 0; color: var(--primary)">
+            Detalles de la Cita
+          </h3>
           <div id="newAppointmentFields">
             <input
               type="text"
               id="fieldNombre"
-              placeholder="Nombre de clienta"
+              placeholder="Nombre de quien asiste"
             />
-            <input type="email" id="fieldCorreo" placeholder="Correo" />
+            <input
+              type="email"
+              id="fieldCorreo"
+              placeholder="Correo electrónico"
+            />
             <input
               type="tel"
               id="fieldTelefono"
-              placeholder="WhatsApp"
+              placeholder="WhatsApp (Sin espacios)"
               pattern="[0-9]*"
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
+
+            <label
+              style="
+                font-size: 0.8rem;
+                color: #888;
+                margin-left: 5px;
+                margin-top: 5px;
+                display: block;
+              "
+              >Servicio deseado:</label
+            >
             <select id="fieldServicio">
               <option>Uñas Acrílicas</option>
-              <option>Retoque</option>
-              <option>Semipermanente</option>
+              <option>Retoque / Mantenimiento</option>
+              <option>Esmaltado Semipermanente</option>
+              <option>Diseño Especial (Nail Art)</option>
+              <option>Press On</option>
             </select>
           </div>
 
-          <select id="fieldHora"></select>
+          <label
+            style="
+              font-size: 0.8rem;
+              color: #888;
+              margin-left: 5px;
+              margin-top: 10px;
+              display: block;
+            "
+            >Hora de la cita:</label
+          >
+          <select id="fieldHora">
+            <option value="">Selecciona un día primero</option>
+          </select>
 
-          <div id="fileUploadDiv">
-            <label
-              style="
-                font-size: 0.75rem;
-                font-weight: bold;
-                color: var(--primary);
-              "
-              >FOTO COMPROBANTE:</label
-            >
-            <input type="file" id="fieldFile" accept="image/*" />
+          <div id="fileUploadDiv" class="file-upload-wrapper">
+            <input
+              type="file"
+              id="fieldFile"
+              accept="image/*"
+              hidden
+              onchange="updateFileName()"
+            />
+            <label for="fieldFile" class="custom-file-upload">
+              📸 Subir Comprobante
+            </label>
+            <span id="fileNameDisplay">Ningún archivo seleccionado</span>
           </div>
 
           <button id="btnMainAction" class="btn-main" onclick="confirmarCita()">
-            ✨ Reservar Espacio
+            💖 Reservar Cita
           </button>
         </div>
       </div>
@@ -639,20 +785,30 @@
       <div
         id="view-lista"
         style="display: none; padding: 20px"
-        class="animate-fade"
+        class="animate-pop"
       >
+        <h3 style="color: var(--primary); margin-bottom: 20px">
+          Tus Citas Programadas
+        </h3>
         <div id="tablaCitasContainer"></div>
       </div>
 
       <div
         id="view-config"
-        class="admin-control-panel animate-fade"
+        class="admin-control-panel animate-pop"
         style="display: none"
       >
         <h3 style="text-align: center; color: var(--primary)">
-          Horario Base Semanal
+          Configuración Semanal
         </h3>
-        <div class="week-selector">
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+          "
+        >
           <div class="day-chip" id="d1" onclick="toggleWeekDay(1)">Lu</div>
           <div class="day-chip" id="d2" onclick="toggleWeekDay(2)">Ma</div>
           <div class="day-chip" id="d3" onclick="toggleWeekDay(3)">Mi</div>
@@ -661,13 +817,22 @@
           <div class="day-chip" id="d6" onclick="toggleWeekDay(6)">Sa</div>
           <div class="day-chip" id="d0" onclick="toggleWeekDay(0)">Do</div>
         </div>
-        <div class="hours-editor-box" id="hoursEditor" style="display: none">
+        <div
+          id="hoursEditor"
+          style="
+            display: none;
+            background: #fffbfd;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px dashed var(--primary);
+          "
+        >
           <div id="weeklyHours" style="margin-bottom: 10px"></div>
-          <div class="add-hour-row">
+          <div style="display: flex; gap: 10px">
             <input type="time" id="newHourInput" style="margin: 0" />
             <button
               class="btn-main"
-              style="width: auto; padding: 0 20px; margin: 0; height: 50px"
+              style="width: auto; margin: 0; padding: 0 20px"
               onclick="addStagedHour()"
             >
               +
@@ -675,55 +840,45 @@
           </div>
           <button
             class="btn-main"
-            style="background: var(--success); margin-top: 15px"
+            style="background: var(--whatsapp); margin-top: 10px"
             onclick="saveWeekSchedule()"
           >
-            💾 Guardar
+            Guardar Horario
           </button>
         </div>
-
-        <h3
-          style="
-            text-align: center;
-            color: var(--primary);
-            margin-top: 40px;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-          "
-        >
-          Bloqueos por Fecha
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0" />
+        <h3 style="text-align: center; color: var(--primary)">
+          Bloquear Fecha
         </h3>
         <input
           type="date"
           id="adminDateInput"
           onchange="loadAdminDayConfig()"
         />
-        <div
-          id="adminPanelControls"
-          style="display: none"
-          class="admin-control-box"
-        >
+        <div id="adminPanelControls" style="display: none; margin-top: 15px">
           <button
             id="btnToggleDay"
-            class="btn-block-day"
             onclick="toggleFullDayBlock()"
+            class="btn-main"
+            style="background: #888"
           >
-            🔓 DÍA ABIERTO
+            CERRAR DÍA COMPLETO
           </button>
           <div
+            id="adminHourGrid"
             style="
               display: grid;
               grid-template-columns: repeat(3, 1fr);
               gap: 8px;
               margin-top: 15px;
             "
-            id="adminHourGrid"
           ></div>
         </div>
       </div>
     </div>
 
     <script>
+      // CONFIG
       const sbUrl = "https://jifwtgpchbipxyriirtq.supabase.co";
       const sbKey = "sb_publishable_zF5mj6Ba61zibU_19vnFPQ_a4GDaKwi";
       const client = supabase.createClient(sbUrl, sbKey);
@@ -736,15 +891,51 @@
       let viewDate = new Date();
       let selectedDate = null;
       let lastCitaData = null;
-
-      // VARIABLES PARA REPROGRAMAR
       let isRescheduling = false;
       let rescheduleId = null;
       let rescheduleData = null;
-
-      // VARIABLES PARA BORRAR
       let pendingCancelId = null;
-      let pendingCancelData = null; // {tel, name, isClient}
+      let pendingCancelData = null;
+
+      // --- SWIPE LOGIC (DESLIZAR) ---
+      let touchStartX = 0;
+      let touchEndX = 0;
+      const appScreen = document.getElementById("app-screen");
+
+      appScreen.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      appScreen.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        const threshold = 50; // Mínimo de píxeles para considerar swipe
+        const diff = touchEndX - touchStartX;
+
+        // Determinar pestaña actual
+        const tabs = ["agenda", "lista"];
+        if (userProfile && userProfile.role === "admin") tabs.push("config");
+
+        // Encontrar cual está activa
+        let activeIdx = 0;
+        if (document.getElementById("view-lista").style.display !== "none")
+          activeIdx = 1;
+        if (document.getElementById("view-config").style.display !== "none")
+          activeIdx = 2;
+
+        if (Math.abs(diff) > threshold) {
+          if (diff < 0) {
+            // Deslizar izquierda (Siguiente pestaña)
+            if (activeIdx < tabs.length - 1) showTab(tabs[activeIdx + 1]);
+          } else {
+            // Deslizar derecha (Pestaña anterior)
+            if (activeIdx > 0) showTab(tabs[activeIdx - 1]);
+          }
+        }
+      }
 
       function format12h(h24) {
         if (!h24) return "";
@@ -754,7 +945,19 @@
         return `${h}:${m} ${suf}`;
       }
 
-      function showAlert(t, m, i = "🔔") {
+      function updateFileName() {
+        const input = document.getElementById("fieldFile");
+        const display = document.getElementById("fileNameDisplay");
+        if (input.files && input.files[0]) {
+          display.innerText = "Archivo: " + input.files[0].name;
+          display.style.color = "var(--primary)";
+        } else {
+          display.innerText = "Ningún archivo seleccionado";
+          display.style.color = "#888";
+        }
+      }
+
+      function showAlert(t, m, i = "✨") {
         document.getElementById("genIcon").innerText = i;
         document.getElementById("genTitle").innerText = t;
         document.getElementById("genMsg").innerText = m;
@@ -764,7 +967,6 @@
         document.getElementById(id).style.display = "none";
       }
 
-      // AUTH
       function toggleAuth(l) {
         document.getElementById("login-form").style.display = l
           ? "block"
@@ -773,6 +975,7 @@
           ? "none"
           : "block";
       }
+
       async function handleAuth(type) {
         const email = document.getElementById(
           type === "login" ? "loginEmail" : "regEmail",
@@ -788,14 +991,19 @@
               data: { full_name: document.getElementById("regNombre").value },
             },
           });
-          if (error) showAlert("Error", error.message);
-          else showAlert("Éxito", "Cuenta creada. Inicia sesión.");
+          if (error) showAlert("Ups", error.message, "🧐");
+          else
+            showAlert(
+              "¡Bienvenida!",
+              "Cuenta creada. Por favor inicia sesión.",
+              "💖",
+            );
         } else {
           const { error } = await client.auth.signInWithPassword({
             email,
             password: pass,
           });
-          if (error) showAlert("Error", error.message);
+          if (error) showAlert("Error", "Datos incorrectos.", "🚫");
           else checkUser();
         }
       }
@@ -811,12 +1019,12 @@
             .eq("id", session.user.id)
             .single();
           if (!data) return setTimeout(checkUser, 500);
+
           userProfile = data;
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "block";
           document.getElementById("displayUserName").innerText = data.full_name;
 
-          // Prellenar datos
           document.getElementById("fieldNombre").value = data.full_name;
           document.getElementById("fieldCorreo").value = session.user.email;
 
@@ -825,11 +1033,9 @@
             document.getElementById("adminBadge").style.display =
               "inline-block";
             document.getElementById("tab-config").style.display = "block";
-            // Admin puede editar campos
             document.getElementById("fieldNombre").readOnly = false;
             document.getElementById("fieldCorreo").readOnly = false;
           } else {
-            // Cliente solo lectura en campos clave
             document.getElementById("fieldNombre").readOnly = true;
             document.getElementById("fieldCorreo").readOnly = true;
           }
@@ -837,47 +1043,34 @@
         }
       }
 
-      // --- LÓGICA DE REPROGRAMACIÓN (CLIENTE Y ADMIN) ---
-
       function startReschedule(id, fecha, hora, servicio, nombre, tel) {
-        // Activar modo edición
         isRescheduling = true;
         rescheduleId = id;
         rescheduleData = { fecha, hora, servicio, nombre, tel };
 
-        // UI Changes
         document.getElementById("editModeBar").style.display = "flex";
-        document.getElementById("newAppointmentFields").style.display = "none"; // Ocultar datos pers
-        document.getElementById("fileUploadDiv").style.display = "none"; // Ocultar subida de foto
+        document.getElementById("newAppointmentFields").style.display = "none";
+        document.getElementById("fileUploadDiv").style.display = "none";
 
         const btn = document.getElementById("btnMainAction");
-        btn.innerText = "🔄 Guardar Nueva Fecha";
+        btn.innerText = "Confirmar Nueva Fecha 🔄";
         btn.className = "btn-main reschedule-mode";
-
-        // Llevar al calendario
         showTab("agenda");
-        showAlert(
-          "Modo Reprogramación",
-          "Selecciona el NUEVO día y hora en el calendario.",
-          "🗓️",
-        );
+        showAlert("Reprogramación", "Selecciona el NUEVO día y hora.", "🗓️");
       }
 
       function cancelRescheduleMode() {
         isRescheduling = false;
         rescheduleId = null;
         rescheduleData = null;
-
         document.getElementById("editModeBar").style.display = "none";
         document.getElementById("newAppointmentFields").style.display = "block";
         document.getElementById("fileUploadDiv").style.display = "block";
-
         const btn = document.getElementById("btnMainAction");
-        btn.innerText = "✨ Reservar Espacio";
+        btn.innerText = "💖 Reservar Cita";
         btn.className = "btn-main";
       }
 
-      // --- GUARDAR CITA (NUEVA O REPROGRAMADA) ---
       async function confirmarCita() {
         if (!selectedDate)
           return showAlert("Falta Fecha", "Selecciona un día.");
@@ -885,20 +1078,16 @@
         if (!hora) return showAlert("Falta Hora", "Selecciona una hora.");
 
         if (isRescheduling) {
-          // --- UPDATE (REPROGRAMAR) ---
           try {
             const { error } = await client
               .from("citas")
               .update({
                 fecha: selectedDate,
                 hora: hora,
-                estado: "reprogramada", // MARCA PARA EL ADMIN
+                estado: "reprogramada",
               })
               .eq("id", rescheduleId);
-
             if (error) throw error;
-
-            // Guardamos datos para el modal de éxito
             lastCitaData = {
               ...rescheduleData,
               fecha: selectedDate,
@@ -906,22 +1095,18 @@
             };
             document.getElementById("wspRescheduleModal").style.display =
               "flex";
-
-            // Limpieza
             cancelRescheduleMode();
             loadAllAppointments();
           } catch (err) {
             showAlert("Error", err.message, "🚫");
           }
         } else {
-          // --- INSERT (NUEVA CITA) ---
           const tel = document.getElementById("fieldTelefono").value;
           const file = document.getElementById("fieldFile").files[0];
-          if (!tel || !file)
-            return showAlert(
-              "Faltan Datos",
-              "Teléfono y comprobante requeridos.",
-            );
+          if (!tel)
+            return showAlert("Faltan Datos", "El teléfono es obligatorio.");
+          if (!file)
+            return showAlert("Falta Comprobante", "Sube la foto del pago.");
 
           const datos = {
             fecha: selectedDate,
@@ -933,7 +1118,6 @@
             user_id: userProfile.id,
             estado: "pendiente",
           };
-
           const { error } = await client.from("citas").insert([datos]);
           if (error) showAlert("Error", error.message);
           else {
@@ -943,23 +1127,15 @@
         }
       }
 
-      function enviarWhatsAppReprogramacion() {
-        const msg =
-          `Hola, he reprogramado mi cita (ID: ${rescheduleId}).\n` +
-          `👤 Nombre: ${lastCitaData.nombre}\n` +
-          `📅 Nueva Fecha: *${lastCitaData.fecha}*\n` +
-          `🕒 Nueva Hora: *${format12h(lastCitaData.hora)}*\n` +
-          `Gracias por la gestión. ✨`;
-        window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
-          "_blank",
-        );
-        closeModal("wspRescheduleModal");
-        showTab("lista");
-      }
-
+      // --- WHATSAPP LIMPIO ---
       function enviarWhatsAppCliente() {
-        const msg = `Hola! Soy *${lastCitaData.nombre}*.\nServicio: ${lastCitaData.servicio}\nFecha: ${lastCitaData.fecha} - ${format12h(lastCitaData.hora)}\nAdjunto comprobante. ✨`;
+        // Texto plano sin emojis raros
+        const msg =
+          `Hola NailsByNINA. Soy ${lastCitaData.nombre}.\n` +
+          `Cita: ${lastCitaData.fecha} a las ${format12h(lastCitaData.hora)}\n` +
+          `Servicio: ${lastCitaData.servicio}\n` +
+          `Adjunto mi comprobante para confirmar. Gracias.`;
+
         window.open(
           `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
           "_blank",
@@ -968,7 +1144,21 @@
         showTab("lista");
       }
 
-      // --- CANCELAR CITAS (CLIENTE Y ADMIN) ---
+      function enviarWhatsAppReprogramacion() {
+        const msg =
+          `Hola NailsByNINA. Soy ${lastCitaData.nombre}.\n` +
+          `He reprogramado mi cita.\n` +
+          `Nueva Fecha: ${lastCitaData.fecha}\n` +
+          `Nueva Hora: ${format12h(lastCitaData.hora)}\n` +
+          `Quedo atenta a la confirmacion.`;
+        window.open(
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
+          "_blank",
+        );
+        closeModal("wspRescheduleModal");
+        showTab("lista");
+      }
+
       function openCancelModal(id, tel, name, isClient) {
         pendingCancelId = id;
         pendingCancelData = { tel, name, isClient };
@@ -983,20 +1173,15 @@
           .eq("id", pendingCancelId);
         if (error) showAlert("Error", error.message);
         else {
-          // Si es admin, avisa al cliente. Si es cliente, avisa al admin.
           let msg = "";
           let num = "";
-
           if (pendingCancelData.isClient) {
-            // El cliente canceló -> Avisar al admin
-            msg = `Hola, deseo CANCELAR mi cita del día. Nombre: ${pendingCancelData.name}. Disculpa las molestias.`;
+            msg = `Hola NailsByNINA. Debo cancelar mi cita a nombre de ${pendingCancelData.name}. Disculpa las molestias.`;
             num = miWhatsAppAdmin;
           } else {
-            // Admin canceló -> Avisar al cliente
-            msg = `Hola ${pendingCancelData.name}, lamentamos informarte que hemos cancelado tu cita. Por favor contáctanos para reagendar.`;
+            msg = `Hola ${pendingCancelData.name}, te escribimos de NailsByNINA. Lamentamos informarte que hemos cancelado tu cita. Por favor contáctanos.`;
             num = pendingCancelData.tel;
           }
-
           window.open(
             `https://wa.me/${num}?text=${encodeURIComponent(msg)}`,
             "_blank",
@@ -1006,16 +1191,23 @@
         }
       }
 
-      // LISTA DE CITAS
+      async function logout() {
+        await client.auth.signOut();
+        window.location.reload();
+      }
+
       async function loadAllAppointments() {
         let q = client.from("citas").select("*");
         if (userProfile.role !== "admin") q = q.eq("user_id", userProfile.id);
-
         const { data } = await q.order("fecha").order("hora");
         const container = document.getElementById("tablaCitasContainer");
         container.innerHTML = "";
 
-        if (!data) return;
+        if (!data || data.length === 0) {
+          container.innerHTML =
+            "<p style='text-align:center; color:#aaa; margin-top:30px;'>No tienes citas agendadas.</p>";
+          return;
+        }
 
         const hoy = new Date().toISOString().split("T")[0];
 
@@ -1023,48 +1215,42 @@
           const safeName = c.nombre.replace(/'/g, "");
           const isReprogramada = c.estado === "reprogramada";
           const badge = isReprogramada
-            ? `<div class="badge-reprogramada">⚠️ REPROGRAMADA</div>`
-            : "";
+            ? `<div class="status-pill repro">Reprogramada</div>`
+            : `<div class="status-pill" style="background:#e6fffa; color:#00b894; border:1px solid #00b894;">Confirmada</div>`;
           const cardClass = isReprogramada
-            ? "appointment-card reprogramada animate-fade"
-            : "appointment-card animate-fade";
+            ? "appointment-card reprogramada animate-pop"
+            : "appointment-card animate-pop";
 
           let buttonsHtml = "";
-
           if (userProfile.role === "admin") {
-            // BOTONES DE ADMIN
             buttonsHtml = `
-                    <div class="actions-row">
-                        <button class="btn-action btn-remind" onclick="window.open('https://wa.me/${c.telefono}?text=Recordatorio%20cita%20${c.fecha}')">📅 Recordar</button>
-                        <button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', false)">❌</button>
-                    </div>`;
+              <div class="actions-row">
+                <button class="btn-action btn-reschedule" style="background:var(--whatsapp); color:white;" onclick="window.open('https://wa.me/${c.telefono}?text=Hola%20${c.nombre},%20recordatorio%20de%20tu%20cita%20en%20NailsByNINA')">Recordar</button>
+                <button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', false)">Cancelar</button>
+              </div>`;
           } else {
-            // BOTONES DE CLIENTE (Reprogramar y Cancelar)
-            // Solo permitimos acciones si la fecha es hoy o futuro
             if (c.fecha >= hoy) {
               buttonsHtml = `
-                        <div class="actions-row">
-                            <button class="btn-action btn-reschedule" onclick="startReschedule('${c.id}', '${c.fecha}', '${c.hora}', '${c.servicio}', '${safeName}', '${c.telefono}')">🔄 Reprogramar</button>
-                            <button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', true)">❌ Cancelar</button>
-                        </div>
-                      `;
+                <div class="actions-row">
+                  <button class="btn-action btn-reschedule" onclick="startReschedule('${c.id}', '${c.fecha}', '${c.hora}', '${c.servicio}', '${safeName}', '${c.telefono}')">Reprogramar</button>
+                  <button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', true)">Cancelar</button>
+                </div>`;
             }
           }
 
           container.innerHTML += `
-                  <div class="${cardClass}">
-                      ${badge}
-                      <div style="font-weight:bold; color:var(--primary)">🕒 ${format12h(c.hora)} - ${c.fecha}</div>
-                      <div style="font-size:1.1rem; margin:5px 0">👤 ${c.nombre}</div>
-                      <div style="font-size:0.8rem; color:#666">✨ ${c.servicio}</div>
-                      ${userProfile.role === "admin" ? `<div class="admin-data-box">📱 ${c.telefono}<br>📧 ${c.correo}</div>` : ""}
-                      ${buttonsHtml}
-                  </div>
-              `;
+            <div class="${cardClass}">
+               ${badge}
+               <div style="font-size:1.1rem; font-weight:bold; color:var(--text);">${c.servicio}</div>
+               <div style="color:var(--primary); font-weight:bold; margin:5px 0;">${format12h(c.hora)} - ${c.fecha}</div>
+               <div style="font-size:0.9rem; color:#888;">${c.nombre}</div>
+               ${userProfile.role === "admin" ? `<div style="background:#f9f9f9; padding:8px; border-radius:8px; margin-top:8px; font-size:0.8rem;">📱 ${c.telefono}<br>📧 ${c.correo}</div>` : ""}
+               ${buttonsHtml}
+            </div>
+          `;
         });
       }
 
-      // --- CALENDARIO Y HORARIOS (LÓGICA EXISTENTE) ---
       async function fetchSchedule() {
         const { data } = await client.from("horarios_base").select("*");
         if (data) data.forEach((i) => (globalSchedule[i.dia] = i.horas));
@@ -1075,16 +1261,15 @@
         grid.innerHTML = "";
         ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"].forEach(
           (d) =>
-            (grid.innerHTML += `<div style="font-size:0.75rem; text-align:center; color:#bbb">${d}</div>`),
+            (grid.innerHTML += `<div style="font-size:0.8rem; text-align:center; color:var(--primary); font-weight:bold;">${d}</div>`),
         );
-
         const year = viewDate.getFullYear(),
           month = viewDate.getMonth();
         document.getElementById("monthDisplay").innerText = new Date(
           year,
           month,
+          1,
         ).toLocaleString("es-ES", { month: "long", year: "numeric" });
-
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
         const today = new Date();
@@ -1095,7 +1280,6 @@
           const d = document.createElement("div");
           const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           const cDate = new Date(dStr + "T00:00:00");
-
           d.className = "day";
           d.innerText = i;
           d.id = `day-${dStr}`;
@@ -1104,7 +1288,10 @@
             if (cDate.getTime() === today.getTime()) d.classList.add("today");
             d.onclick = () => {
               if (d.classList.contains("full"))
-                return showAlert("Día Cerrado", "No hay citas disponibles.");
+                return showAlert(
+                  "Lo sentimos",
+                  "No prestamos servicio este día.",
+                );
               document
                 .querySelectorAll(".day")
                 .forEach((e) => e.classList.remove("selected"));
@@ -1119,8 +1306,8 @@
       }
 
       async function updateFullDays(y, m, last) {
-        const start = `${y}-${String(m + 1).padStart(2, "0")}-01`,
-          end = `${y}-${String(m + 1).padStart(2, "0")}-${last}`;
+        const start = `${y}-${String(m + 1).padStart(2, "0")}-01`;
+        const end = `${y}-${String(m + 1).padStart(2, "0")}-${last}`;
         const { data: citas } = await client
           .from("citas")
           .select("fecha,hora")
@@ -1131,21 +1318,17 @@
           .select("fecha,hora")
           .gte("fecha", start)
           .lte("fecha", end);
-
         for (let i = 1; i <= last; i++) {
           const dStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           const el = document.getElementById(`day-${dStr}`);
           if (!el || el.classList.contains("disabled")) continue;
-
           const dayW = new Date(dStr + "T00:00:00").getDay();
           const base = globalSchedule[dayW] || [];
           const dayBloq = bloq.some((b) => b.fecha === dStr && b.hora === null);
-
           if (dayBloq || base.length === 0) {
             el.classList.add("full");
             continue;
           }
-
           const taken = [
             ...citas.filter((c) => c.fecha === dStr).map((c) => c.hora),
             ...bloq
@@ -1160,7 +1343,6 @@
       async function checkHoras(fecha) {
         const dayW = new Date(fecha + "T00:00:00").getDay();
         let base = globalSchedule[dayW] ? [...globalSchedule[dayW]].sort() : [];
-
         const { data: citas } = await client
           .from("citas")
           .select("hora")
@@ -1169,26 +1351,24 @@
           .from("bloqueos")
           .select("hora")
           .eq("fecha", fecha);
-
         const taken = [...citas.map((c) => c.hora), ...bloq.map((b) => b.hora)];
         const isDayBloq = bloq.some((b) => b.hora === null);
-
         const sel = document.getElementById("fieldHora");
         sel.innerHTML = "";
         if (base.length === 0 || isDayBloq) {
-          sel.add(new Option("Día Cerrado", ""));
+          sel.add(new Option("No prestamos servicio este día", ""));
           sel.disabled = true;
           return;
         }
-
         sel.disabled = false;
         let any = false;
+        sel.add(new Option("Selecciona una hora...", ""));
         base.forEach((h) => {
           const opt = document.createElement("option");
           opt.value = h;
           if (taken.includes(h)) {
             opt.disabled = true;
-            opt.text = format12h(h) + " (Ocupado)";
+            opt.text = format12h(h) + " - No disponible";
           } else {
             opt.text = format12h(h);
             any = true;
@@ -1197,7 +1377,7 @@
         });
         if (!any) {
           sel.innerHTML = "";
-          sel.add(new Option("Sin cupos", ""));
+          sel.add(new Option("Agenda llena hoy", ""));
           sel.disabled = true;
         }
       }
@@ -1206,25 +1386,23 @@
         viewDate.setMonth(viewDate.getMonth() + v);
         renderCalendar();
       }
+
       function showTab(t) {
-        ["agenda", "lista", "config"].forEach(
-          (x) => (document.getElementById(`view-${x}`).style.display = "none"),
-        );
-        ["agenda", "lista", "config"].forEach(
-          (x) => (document.getElementById(`tab-${x}`).className = "tab-btn"),
-        );
+        ["agenda", "lista", "config"].forEach((x) => {
+          document.getElementById(`view-${x}`).style.display = "none";
+          document.getElementById(`tab-${x}`).className = "tab-btn";
+        });
         document.getElementById(`view-${t}`).style.display =
-          t === "agenda" ? "grid" : t === "config" ? "block" : "block";
+          t === "agenda"
+            ? window.innerWidth > 850
+              ? "grid"
+              : "block"
+            : "block";
         document.getElementById(`tab-${t}`).className = "tab-btn active";
         if (t === "lista") loadAllAppointments();
-        if (t !== "agenda" && isRescheduling) cancelRescheduleMode(); // Cancelar modo edición si sale
-      }
-      async function logout() {
-        await client.auth.signOut();
-        window.location.reload();
+        if (t !== "agenda" && isRescheduling) cancelRescheduleMode();
       }
 
-      // ADMIN CONFIG LOGIC (Simplificada)
       function toggleWeekDay(d) {
         const el = document.getElementById(`d${d}`);
         const idx = selectedWeekDays.indexOf(d);
@@ -1246,7 +1424,7 @@
         const c = document.getElementById("weeklyHours");
         c.innerHTML = "";
         stagedHours.sort().forEach((h) => {
-          c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')">x</span></span>`;
+          c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')" style="cursor:pointer; margin-left:5px;">x</span></span>`;
         });
       }
       function addStagedHour() {
@@ -1270,7 +1448,7 @@
         );
         selectedWeekDays = [];
         document.getElementById("hoursEditor").style.display = "none";
-        showAlert("Guardado", "Horario actualizado");
+        showAlert("Éxito", "Horario actualizado.");
       }
       async function loadAdminDayConfig() {
         const d = document.getElementById("adminDateInput").value;
@@ -1282,20 +1460,16 @@
           .select("*")
           .eq("fecha", d);
         const isFull = data.some((b) => b.hora === null);
-        document.getElementById("btnToggleDay").innerText = isFull
-          ? "🔒 DÍA CERRADO"
-          : "🔓 DÍA ABIERTO";
-        document.getElementById("btnToggleDay").className = isFull
-          ? "btn-block-day is-blocked"
-          : "btn-block-day";
-
+        const btn = document.getElementById("btnToggleDay");
+        btn.innerText = isFull ? "🔓 ABRIR DÍA" : "🔒 CERRAR DÍA COMPLETO";
+        btn.style.background = isFull ? "var(--whatsapp)" : "var(--danger)";
         const dayW = new Date(d + "T00:00:00").getDay();
         const base = globalSchedule[dayW] || [];
         const grid = document.getElementById("adminHourGrid");
         grid.innerHTML = "";
         base.sort().forEach((h) => {
           const isB = data.some((b) => b.hora === h);
-          grid.innerHTML += `<button class="hour-btn ${isB ? "blocked" : "open"}" onclick="toggleBlock('${h}',${isB})">${format12h(h)}</button>`;
+          grid.innerHTML += `<button onclick="toggleBlock('${h}',${isB})" style="padding:10px; border-radius:10px; border:none; background:${isB ? "#ffebee" : "#e8f5e9"}; color:${isB ? "red" : "green"}; font-weight:bold; cursor:pointer;">${format12h(h)} <br> ${isB ? "🚫" : "✅"}</button>`;
         });
       }
       async function toggleFullDayBlock() {
