@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Nails App - Premium Admin</title>
+    <title>Nails App - Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       :root {
@@ -17,6 +17,8 @@
         --text: #4a148c;
         --whatsapp: #25d366;
         --danger: #ff4d4d;
+        --info: #2196f3;
+        --warning: #ff9800;
         --success: #4caf50;
         --full-bg: #ffcdd2;
         --full-text: #b71c1c;
@@ -31,32 +33,7 @@
         -webkit-tap-highlight-color: transparent;
       }
 
-      /* --- MODALES BONITOS --- */
-      .modal-overlay {
-        display: none;
-        position: fixed;
-        z-index: 3000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(74, 20, 140, 0.4);
-        backdrop-filter: blur(4px);
-        animation: fadeIn 0.3s ease;
-        align-items: center;
-        justify-content: center;
-      }
-      .modal-content {
-        background: white;
-        padding: 30px;
-        border-radius: 25px;
-        width: 85%;
-        max-width: 320px;
-        text-align: center;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-        animation: slideUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-        position: relative;
-      }
+      /* ANIMACIONES */
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -67,30 +44,48 @@
       }
       @keyframes slideUp {
         from {
-          transform: translateY(30px) scale(0.9);
+          transform: translateY(20px);
           opacity: 0;
         }
         to {
-          transform: translateY(0) scale(1);
+          transform: translateY(0);
           opacity: 1;
         }
       }
+      .animate-fade {
+        animation: fadeIn 0.4s ease-out;
+      }
 
+      /* MODALES */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 3000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(74, 20, 140, 0.5);
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s ease;
+      }
+      .modal-content {
+        background: white;
+        padding: 25px;
+        border-radius: 25px;
+        width: 85%;
+        max-width: 320px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      }
       .modal-icon {
-        font-size: 3.5rem;
-        margin-bottom: 15px;
+        font-size: 3rem;
+        margin-bottom: 10px;
         display: block;
-        animation: bounce 1s infinite alternate;
       }
-      @keyframes bounce {
-        from {
-          transform: translateY(0);
-        }
-        to {
-          transform: translateY(-5px);
-        }
-      }
-
       .modal-btn-row {
         display: flex;
         gap: 10px;
@@ -104,6 +99,10 @@
         font-weight: bold;
         cursor: pointer;
         font-size: 0.9rem;
+        transition: transform 0.1s;
+      }
+      .btn-modal:active {
+        transform: scale(0.95);
       }
       .btn-modal.primary {
         background: var(--primary);
@@ -117,16 +116,13 @@
         background: var(--whatsapp);
         color: white;
       }
-
-      /* APP INTERFACE */
-      #auth-screen {
-        max-width: 400px;
-        margin: 40px auto;
-        background: white;
-        padding: 30px;
-        border-radius: 25px;
-        border: 2px solid var(--accent);
+      .btn-modal.danger {
+        background: var(--danger);
+        color: white;
       }
+
+      /* ESTILOS BASE */
+      #auth-screen,
       #app-screen {
         display: none;
         max-width: 1000px;
@@ -135,6 +131,13 @@
         border-radius: 25px;
         overflow: hidden;
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      }
+      #auth-screen {
+        display: block;
+        max-width: 400px;
+        margin-top: 40px;
+        padding: 30px;
+        border: 2px solid var(--accent);
       }
 
       .nav-header {
@@ -158,6 +161,7 @@
         cursor: pointer;
         font-weight: bold;
         color: #888;
+        transition: all 0.3s;
       }
       .tab-btn.active {
         color: var(--primary);
@@ -181,7 +185,6 @@
         cursor: pointer;
         border: 1px solid #fff0f5;
         font-size: 0.9rem;
-        position: relative;
         transition: transform 0.1s;
       }
       .day:active {
@@ -196,8 +199,7 @@
         background: var(--primary) !important;
         color: white !important;
         font-weight: bold;
-        border-color: var(--primary) !important;
-        box-shadow: 0 4px 10px rgba(214, 51, 132, 0.4);
+        transform: scale(1.05);
       }
       .day.disabled {
         color: #ddd;
@@ -221,7 +223,6 @@
           grid-template-columns: 1fr;
         }
       }
-
       input,
       select {
         width: 100%;
@@ -230,7 +231,6 @@
         border: 2px solid var(--primary-soft);
         border-radius: 15px;
         box-sizing: border-box;
-        font-family: inherit;
         background: #fafafa;
         font-size: 1rem;
       }
@@ -251,10 +251,39 @@
         font-weight: bold;
         font-size: 1rem;
         margin-top: 10px;
-        box-shadow: 0 4px 15px rgba(214, 51, 132, 0.3);
+        transition: transform 0.1s;
+      }
+      .btn-main:active {
+        transform: scale(0.98);
+      }
+      .btn-main.reschedule-mode {
+        background: var(--info);
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
       }
 
-      /* CARDS DE CITA */
+      /* BARRA DE EDICIÓN */
+      #editModeBar {
+        background: var(--info);
+        color: white;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .btn-cancel-edit {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.8rem;
+      }
+
+      /* CARDS */
       .appointment-card {
         background: white;
         border-left: 6px solid var(--primary);
@@ -262,7 +291,13 @@
         border-radius: 15px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         margin-bottom: 15px;
+        animation: slideUp 0.4s ease forwards;
       }
+      .appointment-card.reprogramada {
+        border-left-color: var(--warning);
+        background: #fffbf0;
+      }
+
       .admin-data-box {
         background: #f8f8f8;
         padding: 10px;
@@ -271,36 +306,55 @@
         font-size: 0.85rem;
         border: 1px dashed var(--accent);
       }
-      .btn-remind {
-        background: var(--whatsapp);
+      .badge-reprogramada {
+        display: inline-block;
+        background: var(--warning);
         color: white;
-        border: none;
-        padding: 10px;
-        border-radius: 10px;
-        cursor: pointer;
-        width: 100%;
-        font-weight: bold;
-        margin-top: 10px;
-      }
-      .role-badge {
-        font-size: 0.6rem;
-        background: white;
-        color: var(--primary);
         padding: 2px 6px;
         border-radius: 4px;
-        vertical-align: middle;
-        margin-left: 5px;
-        text-transform: uppercase;
+        font-size: 0.7rem;
         font-weight: bold;
+        margin-bottom: 5px;
       }
 
-      /* ADMIN CONFIG STYLES MEJORADOS */
+      .actions-row {
+        display: flex;
+        gap: 6px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .btn-action {
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        color: white;
+        flex: 1;
+      }
+      .btn-remind {
+        background: var(--whatsapp);
+      }
+      .btn-reschedule {
+        background: var(--info);
+      }
+      .btn-cancel {
+        background: white;
+        border: 2px solid var(--danger);
+        color: var(--danger);
+        flex: 0.6;
+      }
+
+      /* ADMIN CONFIG */
       .admin-control-panel {
         padding: 20px;
         background: #fff;
       }
-
-      /* SELECTOR SEMANAL MEJORADO */
       .week-selector {
         display: flex;
         justify-content: center;
@@ -318,21 +372,12 @@
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        font-size: 0.85rem;
         cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        user-select: none;
-      }
-      .day-chip:active {
-        transform: scale(0.9);
       }
       .day-chip.active {
         background: var(--primary);
         color: white;
-        box-shadow: 0 4px 10px rgba(214, 51, 132, 0.4);
-        transform: translateY(-2px);
       }
-
       .admin-control-box {
         background: #fff0f5;
         border: 2px dashed var(--primary);
@@ -340,20 +385,13 @@
         padding: 20px;
         margin-top: 20px;
       }
-      .hour-toggle-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        margin-top: 15px;
-      }
       .hour-btn {
         padding: 8px;
         border-radius: 8px;
         border: none;
         cursor: pointer;
         font-weight: bold;
-        transition: 0.2s;
-        font-size: 0.9rem;
+        margin: 2px;
       }
       .hour-btn.open {
         background: white;
@@ -363,146 +401,104 @@
       .hour-btn.blocked {
         background: var(--danger);
         color: white;
-        border: 2px solid var(--danger);
         text-decoration: line-through;
         opacity: 0.7;
-      }
-      .btn-block-day {
-        background: white;
-        border: 2px solid var(--text);
-        color: var(--text);
-        padding: 10px;
-        border-radius: 10px;
-        width: 100%;
-        cursor: pointer;
-        margin-bottom: 15px;
-        font-weight: bold;
-      }
-      .btn-block-day.is-blocked {
-        background: var(--text);
-        color: white;
-      }
-
-      .hours-editor-box {
-        border: 1px solid #eee;
-        padding: 15px;
-        border-radius: 15px;
-        background: #fafafa;
-        animation: slideUp 0.3s ease;
       }
       .hour-tag {
         display: inline-block;
         background: var(--primary);
         color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        margin: 3px;
-        font-size: 0.85rem;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
-      .hour-tag span {
-        margin-left: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        color: #ffcccc;
-      }
-      .add-hour-row {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-        align-items: center;
+        padding: 5px 10px;
+        border-radius: 15px;
+        margin: 2px;
+        font-size: 0.8rem;
       }
     </style>
   </head>
   <body>
-    <div id="generalModal" class="modal-overlay" style="display: none">
+    <div id="generalModal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-icon" id="genModalIcon">🔔</div>
-        <h3 id="genModalTitle">Atención</h3>
-        <p id="genModalMsg" style="color: #666; margin: 10px 0 20px">Mensaje</p>
+        <div class="modal-icon" id="genIcon">🔔</div>
+        <h3 id="genTitle"></h3>
+        <p id="genMsg" style="color: #666; margin: 10px 0 20px"></p>
         <div class="modal-btn-row">
-          <button class="btn-modal primary" onclick="closeGeneralModal()">
+          <button
+            class="btn-modal primary"
+            onclick="closeModal('generalModal')"
+          >
             Entendido
           </button>
         </div>
       </div>
     </div>
 
-    <div id="confirmActionModal" class="modal-overlay" style="display: none">
+    <div id="cancelModal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-icon">🤔</div>
-        <h3 id="confActionTitle">¿Estás seguro?</h3>
-        <p id="confActionMsg" style="color: #666">
-          Esta acción no se puede deshacer.
-        </p>
+        <div class="modal-icon">⚠️</div>
+        <h3>¿Cancelar Cita?</h3>
+        <p style="color: #666">Esta acción es irreversible.</p>
         <div class="modal-btn-row">
           <button
             class="btn-modal secondary"
-            onclick="closeConfirmAction(false)"
+            onclick="closeModal('cancelModal')"
           >
-            Cancelar
-          </button>
-          <button class="btn-modal primary" id="btnConfirmActionYes">
-            Sí, Confirmar
+            Volver</button
+          ><button class="btn-modal danger" onclick="confirmCancelation()">
+            Sí, Cancelar
           </button>
         </div>
       </div>
     </div>
 
-    <div id="wspModal" class="modal-overlay" style="display: none">
+    <div id="wspModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">📩</div>
         <h2>¡Casi listo!</h2>
-        <p>
-          Para agendar tu espacio, <b>debes enviar el comprobante</b> por
-          WhatsApp ahora mismo.
-        </p>
+        <p>Envía el comprobante por WhatsApp.</p>
         <div class="modal-btn-row">
           <button class="btn-modal whatsapp" onclick="enviarWhatsAppCliente()">
-            Enviar Comprobante 📱
+            Enviar 📱
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="wspRescheduleModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-icon">🔄</div>
+        <h2>¡Reprogramada!</h2>
+        <p>Tu nueva fecha está lista. Avisa por WhatsApp para confirmar.</p>
+        <div class="modal-btn-row">
+          <button
+            class="btn-modal whatsapp"
+            onclick="enviarWhatsAppReprogramacion()"
+          >
+            Avisar Cambio 📱
           </button>
         </div>
       </div>
     </div>
 
     <div id="auth-screen">
-      <h1
-        style="text-align: center; color: var(--primary); margin-bottom: 30px"
-      >
-        Nails App
-      </h1>
+      <h1 style="text-align: center; color: var(--primary)">Nails App</h1>
       <div id="login-form">
-        <input type="email" id="loginEmail" placeholder="Correo electrónico" />
+        <input type="email" id="loginEmail" placeholder="Correo" />
         <input type="password" id="loginPass" placeholder="Contraseña" />
         <button class="btn-main" onclick="handleAuth('login')">Entrar</button>
         <p style="text-align: center; font-size: 0.8rem; margin-top: 20px">
           ¿No tienes cuenta?
-          <a
-            href="#"
-            onclick="toggleAuth(false)"
-            style="color: var(--primary); font-weight: bold"
-            >Regístrate</a
-          >
+          <a href="#" onclick="toggleAuth(false)">Regístrate</a>
         </p>
       </div>
       <div id="signup-form" style="display: none">
         <input type="text" id="regNombre" placeholder="Nombre completo" />
-        <input type="email" id="regEmail" placeholder="Correo electrónico" />
-        <input
-          type="password"
-          id="regPass"
-          placeholder="Contraseña (min. 6 carácteres)"
-        />
+        <input type="email" id="regEmail" placeholder="Correo" />
+        <input type="password" id="regPass" placeholder="Contraseña (min 6)" />
         <button class="btn-main" onclick="handleAuth('signup')">
           Crear Cuenta
         </button>
         <p style="text-align: center; font-size: 0.8rem; margin-top: 20px">
-          <a
-            href="#"
-            onclick="toggleAuth(true)"
-            style="color: var(--primary); font-weight: bold"
-            >Ya tengo cuenta</a
-          >
+          <a href="#" onclick="toggleAuth(true)">Ya tengo cuenta</a>
         </p>
       </div>
     </div>
@@ -511,8 +507,11 @@
       <div class="nav-header">
         <span
           >💅 <b id="displayUserName"></b>
-          <span id="adminBadge" class="role-badge" style="display: none"
-            >Admin</span
+          <span
+            id="adminBadge"
+            class="badge-reprogramada"
+            style="display: none; background: white; color: var(--primary)"
+            >ADMIN</span
           ></span
         >
         <button
@@ -521,14 +520,19 @@
             background: none;
             border: 1px solid white;
             color: white;
-            padding: 5px 12px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: bold;
           "
         >
           Salir
+        </button>
+      </div>
+
+      <div id="editModeBar">
+        <span>🔄 MODO REPROGRAMACIÓN</span>
+        <button class="btn-cancel-edit" onclick="cancelRescheduleMode()">
+          Cancelar
         </button>
       </div>
 
@@ -553,7 +557,7 @@
         </button>
       </div>
 
-      <div id="view-agenda" class="main-grid">
+      <div id="view-agenda" class="main-grid animate-fade">
         <div>
           <div
             style="
@@ -568,156 +572,97 @@
               style="
                 border: none;
                 background: none;
-                cursor: pointer;
                 font-size: 1.2rem;
-                color: var(--primary);
+                cursor: pointer;
               "
             >
               ◀
             </button>
-            <b
-              id="monthDisplay"
-              style="font-size: 1.1rem; color: var(--text)"
-            ></b>
+            <b id="monthDisplay"></b>
             <button
               onclick="moveMonth(1)"
               style="
                 border: none;
                 background: none;
-                cursor: pointer;
                 font-size: 1.2rem;
-                color: var(--primary);
+                cursor: pointer;
               "
             >
               ▶
             </button>
           </div>
           <div class="cal-grid" id="calendarGrid"></div>
-          <div
-            style="
-              display: flex;
-              justify-content: center;
-              gap: 15px;
-              font-size: 0.75rem;
-              color: #999;
-              margin-top: 15px;
-            "
-          >
-            <div style="display: flex; align-items: center; gap: 5px">
-              <span
-                style="
-                  display: block;
-                  width: 10px;
-                  height: 10px;
-                  background: var(--full-bg);
-                  border-radius: 3px;
-                "
-              ></span>
-              Ocupado
-            </div>
-            <div style="display: flex; align-items: center; gap: 5px">
-              <span
-                style="
-                  display: block;
-                  width: 10px;
-                  height: 10px;
-                  background: var(--primary);
-                  border-radius: 3px;
-                "
-              ></span>
-              Seleccionado
-            </div>
-          </div>
         </div>
 
         <div class="form-section">
-          <input type="text" id="fieldNombre" placeholder="Nombre de clienta" />
-          <input
-            type="email"
-            id="fieldCorreo"
-            placeholder="Correo electrónico"
-          />
-          <input
-            type="tel"
-            id="fieldTelefono"
-            placeholder="WhatsApp (Solo números)"
-            pattern="[0-9]*"
-            inputmode="numeric"
-            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-          />
+          <div id="newAppointmentFields">
+            <input
+              type="text"
+              id="fieldNombre"
+              placeholder="Nombre de clienta"
+            />
+            <input type="email" id="fieldCorreo" placeholder="Correo" />
+            <input
+              type="tel"
+              id="fieldTelefono"
+              placeholder="WhatsApp"
+              pattern="[0-9]*"
+              oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            />
+            <select id="fieldServicio">
+              <option>Uñas Acrílicas</option>
+              <option>Retoque</option>
+              <option>Semipermanente</option>
+            </select>
+          </div>
 
-          <select id="fieldServicio">
-            <option>Uñas Acrílicas</option>
-            <option>Retoque</option>
-            <option>Semipermanente</option>
-            <option>Manicure Ruso</option>
-          </select>
           <select id="fieldHora"></select>
-          <label
-            style="
-              font-size: 0.75rem;
-              font-weight: bold;
-              margin-left: 5px;
-              color: var(--primary);
-            "
-            >FOTO COMPROBANTE:</label
-          >
-          <input type="file" id="fieldFile" accept="image/*" />
-          <button class="btn-main" onclick="confirmarCita()">
+
+          <div id="fileUploadDiv">
+            <label
+              style="
+                font-size: 0.75rem;
+                font-weight: bold;
+                color: var(--primary);
+              "
+              >FOTO COMPROBANTE:</label
+            >
+            <input type="file" id="fieldFile" accept="image/*" />
+          </div>
+
+          <button id="btnMainAction" class="btn-main" onclick="confirmarCita()">
             ✨ Reservar Espacio
           </button>
         </div>
       </div>
 
-      <div id="view-lista" style="display: none; padding: 20px">
+      <div
+        id="view-lista"
+        style="display: none; padding: 20px"
+        class="animate-fade"
+      >
         <div id="tablaCitasContainer"></div>
       </div>
 
-      <div id="view-config" class="admin-control-panel" style="display: none">
-        <h3 style="color: var(--primary); text-align: center">
-          📅 Configurar Horario Base
+      <div
+        id="view-config"
+        class="admin-control-panel animate-fade"
+        style="display: none"
+      >
+        <h3 style="text-align: center; color: var(--primary)">
+          Horario Base Semanal
         </h3>
-        <p style="font-size: 0.9rem; color: #666; text-align: center">
-          Selecciona los días y asigna las horas.
-        </p>
-
         <div class="week-selector">
-          <div class="day-chip" id="day-btn-1" onclick="toggleWeekDay(1)">
-            Lu
-          </div>
-          <div class="day-chip" id="day-btn-2" onclick="toggleWeekDay(2)">
-            Ma
-          </div>
-          <div class="day-chip" id="day-btn-3" onclick="toggleWeekDay(3)">
-            Mi
-          </div>
-          <div class="day-chip" id="day-btn-4" onclick="toggleWeekDay(4)">
-            Ju
-          </div>
-          <div class="day-chip" id="day-btn-5" onclick="toggleWeekDay(5)">
-            Vi
-          </div>
-          <div class="day-chip" id="day-btn-6" onclick="toggleWeekDay(6)">
-            Sa
-          </div>
-          <div class="day-chip" id="day-btn-0" onclick="toggleWeekDay(0)">
-            Do
-          </div>
+          <div class="day-chip" id="d1" onclick="toggleWeekDay(1)">Lu</div>
+          <div class="day-chip" id="d2" onclick="toggleWeekDay(2)">Ma</div>
+          <div class="day-chip" id="d3" onclick="toggleWeekDay(3)">Mi</div>
+          <div class="day-chip" id="d4" onclick="toggleWeekDay(4)">Ju</div>
+          <div class="day-chip" id="d5" onclick="toggleWeekDay(5)">Vi</div>
+          <div class="day-chip" id="d6" onclick="toggleWeekDay(6)">Sa</div>
+          <div class="day-chip" id="d0" onclick="toggleWeekDay(0)">Do</div>
         </div>
-
-        <div class="hours-editor-box" id="hoursEditorBox" style="display: none">
-          <p
-            style="
-              margin-top: 0;
-              font-size: 0.9rem;
-              font-weight: bold;
-              color: var(--text);
-            "
-          >
-            🕒 Horas a aplicar:
-          </p>
-          <div id="weeklyHoursContainer" style="margin-bottom: 10px"></div>
-
+        <div class="hours-editor-box" id="hoursEditor" style="display: none">
+          <div id="weeklyHours" style="margin-bottom: 10px"></div>
           <div class="add-hour-row">
             <input type="time" id="newHourInput" style="margin: 0" />
             <button
@@ -728,41 +673,31 @@
               +
             </button>
           </div>
-
           <button
             class="btn-main"
             style="background: var(--success); margin-top: 15px"
             onclick="saveWeekSchedule()"
           >
-            💾 Guardar Cambios
+            💾 Guardar
           </button>
-        </div>
-
-        <div
-          id="msgSelectDays"
-          style="text-align: center; padding: 30px; color: #bbb"
-        >
-          👆 Toca los días arriba para editar su horario.
         </div>
 
         <h3
           style="
-            color: var(--primary);
             text-align: center;
+            color: var(--primary);
             margin-top: 40px;
             border-top: 1px solid #eee;
             padding-top: 20px;
           "
         >
-          🚫 Bloqueos por Fecha
+          Bloqueos por Fecha
         </h3>
-
         <input
           type="date"
           id="adminDateInput"
           onchange="loadAdminDayConfig()"
         />
-
         <div
           id="adminPanelControls"
           style="display: none"
@@ -773,35 +708,43 @@
             class="btn-block-day"
             onclick="toggleFullDayBlock()"
           >
-            🔓 El día está ABIERTO
+            🔓 DÍA ABIERTO
           </button>
-
-          <div id="hoursControlContainer">
-            <h4 style="margin: 0">Horas Específicas</h4>
-            <div class="hour-toggle-grid" id="adminHourGrid"></div>
-          </div>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 8px;
+              margin-top: 15px;
+            "
+            id="adminHourGrid"
+          ></div>
         </div>
       </div>
     </div>
 
     <script>
-      // CONFIGURACIÓN SUPABASE
       const sbUrl = "https://jifwtgpchbipxyriirtq.supabase.co";
       const sbKey = "sb_publishable_zF5mj6Ba61zibU_19vnFPQ_a4GDaKwi";
       const client = supabase.createClient(sbUrl, sbKey);
-
       const miWhatsAppAdmin = "573228211246";
 
-      let globalSchedule = {};
-      let selectedWeekDays = [];
-      let stagedHours = [];
-
       let userProfile = null;
+      let globalSchedule = {};
+      let selectedWeekDays = [],
+        stagedHours = [];
+      let viewDate = new Date();
       let selectedDate = null;
       let lastCitaData = null;
-      let viewDate = new Date();
-      let adminSelectedDate = null;
-      let confirmActionCallback = null; // Para el modal de confirmar acción
+
+      // VARIABLES PARA REPROGRAMAR
+      let isRescheduling = false;
+      let rescheduleId = null;
+      let rescheduleData = null;
+
+      // VARIABLES PARA BORRAR
+      let pendingCancelId = null;
+      let pendingCancelData = null; // {tel, name, isClient}
 
       function format12h(h24) {
         if (!h24) return "";
@@ -811,66 +754,48 @@
         return `${h}:${m} ${suf}`;
       }
 
-      // --- SISTEMA DE MODALES ---
-      function showAlert(title, msg, icon = "🔔") {
-        document.getElementById("genModalIcon").innerText = icon;
-        document.getElementById("genModalTitle").innerText = title;
-        document.getElementById("genModalMsg").innerText = msg;
+      function showAlert(t, m, i = "🔔") {
+        document.getElementById("genIcon").innerText = i;
+        document.getElementById("genTitle").innerText = t;
+        document.getElementById("genMsg").innerText = m;
         document.getElementById("generalModal").style.display = "flex";
       }
-      function closeGeneralModal() {
-        document.getElementById("generalModal").style.display = "none";
+      function closeModal(id) {
+        document.getElementById(id).style.display = "none";
       }
 
-      function askConfirm(title, msg, callback) {
-        document.getElementById("confActionTitle").innerText = title;
-        document.getElementById("confActionMsg").innerText = msg;
-        document.getElementById("confirmActionModal").style.display = "flex";
-        confirmActionCallback = callback;
-      }
-
-      document.getElementById("btnConfirmActionYes").onclick = function () {
-        if (confirmActionCallback) confirmActionCallback();
-        closeConfirmAction();
-      };
-
-      function closeConfirmAction() {
-        document.getElementById("confirmActionModal").style.display = "none";
-        confirmActionCallback = null;
-      }
-
-      function toggleAuth(isLogin) {
-        document.getElementById("login-form").style.display = isLogin
+      // AUTH
+      function toggleAuth(l) {
+        document.getElementById("login-form").style.display = l
           ? "block"
           : "none";
-        document.getElementById("signup-form").style.display = isLogin
+        document.getElementById("signup-form").style.display = l
           ? "none"
           : "block";
       }
-
       async function handleAuth(type) {
+        const email = document.getElementById(
+          type === "login" ? "loginEmail" : "regEmail",
+        ).value;
+        const pass = document.getElementById(
+          type === "login" ? "loginPass" : "regPass",
+        ).value;
         if (type === "signup") {
-          const email = document.getElementById("regEmail").value;
-          const pass = document.getElementById("regPass").value;
-          const name = document.getElementById("regNombre").value;
           const { error } = await client.auth.signUp({
             email,
             password: pass,
-            options: { data: { full_name: name } },
+            options: {
+              data: { full_name: document.getElementById("regNombre").value },
+            },
           });
-          if (error) showAlert("Error", error.message, "⚠️");
-          else
-            showAlert(
-              "¡Éxito!",
-              "Cuenta creada. Por favor inicia sesión.",
-              "🎉",
-            );
+          if (error) showAlert("Error", error.message);
+          else showAlert("Éxito", "Cuenta creada. Inicia sesión.");
         } else {
           const { error } = await client.auth.signInWithPassword({
-            email: document.getElementById("loginEmail").value,
-            password: document.getElementById("loginPass").value,
+            email,
+            password: pass,
           });
-          if (error) showAlert("Error de acceso", error.message, "🚫");
+          if (error) showAlert("Error", error.message);
           else checkUser();
         }
       }
@@ -880,119 +805,309 @@
           data: { session },
         } = await client.auth.getSession();
         if (session) {
-          const { data: profile } = await client
+          const { data } = await client
             .from("profiles")
             .select("*")
             .eq("id", session.user.id)
             .single();
-
-          if (!profile) return setTimeout(checkUser, 1000);
-
-          userProfile = profile;
+          if (!data) return setTimeout(checkUser, 500);
+          userProfile = data;
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "block";
-          document.getElementById("displayUserName").innerText =
-            profile.full_name;
+          document.getElementById("displayUserName").innerText = data.full_name;
 
-          const inputN = document.getElementById("fieldNombre");
-          const inputC = document.getElementById("fieldCorreo");
-          inputN.value = profile.full_name;
-          inputC.value = session.user.email;
+          // Prellenar datos
+          document.getElementById("fieldNombre").value = data.full_name;
+          document.getElementById("fieldCorreo").value = session.user.email;
 
-          await fetchGlobalSchedule();
-
-          if (profile.role === "admin") {
+          await fetchSchedule();
+          if (data.role === "admin") {
             document.getElementById("adminBadge").style.display =
               "inline-block";
             document.getElementById("tab-config").style.display = "block";
-            inputN.readOnly = false;
-            inputC.readOnly = false;
-            inputN.style.background = "white";
+            // Admin puede editar campos
+            document.getElementById("fieldNombre").readOnly = false;
+            document.getElementById("fieldCorreo").readOnly = false;
           } else {
-            inputN.readOnly = true;
-            inputC.readOnly = true;
-            inputN.style.background = "#f0f0f0";
+            // Cliente solo lectura en campos clave
+            document.getElementById("fieldNombre").readOnly = true;
+            document.getElementById("fieldCorreo").readOnly = true;
           }
           renderCalendar();
         }
       }
 
-      async function fetchGlobalSchedule() {
-        const { data } = await client.from("horarios_base").select("*");
-        if (data) {
-          data.forEach((item) => {
-            globalSchedule[item.dia] = item.horas;
-          });
+      // --- LÓGICA DE REPROGRAMACIÓN (CLIENTE Y ADMIN) ---
+
+      function startReschedule(id, fecha, hora, servicio, nombre, tel) {
+        // Activar modo edición
+        isRescheduling = true;
+        rescheduleId = id;
+        rescheduleData = { fecha, hora, servicio, nombre, tel };
+
+        // UI Changes
+        document.getElementById("editModeBar").style.display = "flex";
+        document.getElementById("newAppointmentFields").style.display = "none"; // Ocultar datos pers
+        document.getElementById("fileUploadDiv").style.display = "none"; // Ocultar subida de foto
+
+        const btn = document.getElementById("btnMainAction");
+        btn.innerText = "🔄 Guardar Nueva Fecha";
+        btn.className = "btn-main reschedule-mode";
+
+        // Llevar al calendario
+        showTab("agenda");
+        showAlert(
+          "Modo Reprogramación",
+          "Selecciona el NUEVO día y hora en el calendario.",
+          "🗓️",
+        );
+      }
+
+      function cancelRescheduleMode() {
+        isRescheduling = false;
+        rescheduleId = null;
+        rescheduleData = null;
+
+        document.getElementById("editModeBar").style.display = "none";
+        document.getElementById("newAppointmentFields").style.display = "block";
+        document.getElementById("fileUploadDiv").style.display = "block";
+
+        const btn = document.getElementById("btnMainAction");
+        btn.innerText = "✨ Reservar Espacio";
+        btn.className = "btn-main";
+      }
+
+      // --- GUARDAR CITA (NUEVA O REPROGRAMADA) ---
+      async function confirmarCita() {
+        if (!selectedDate)
+          return showAlert("Falta Fecha", "Selecciona un día.");
+        const hora = document.getElementById("fieldHora").value;
+        if (!hora) return showAlert("Falta Hora", "Selecciona una hora.");
+
+        if (isRescheduling) {
+          // --- UPDATE (REPROGRAMAR) ---
+          try {
+            const { error } = await client
+              .from("citas")
+              .update({
+                fecha: selectedDate,
+                hora: hora,
+                estado: "reprogramada", // MARCA PARA EL ADMIN
+              })
+              .eq("id", rescheduleId);
+
+            if (error) throw error;
+
+            // Guardamos datos para el modal de éxito
+            lastCitaData = {
+              ...rescheduleData,
+              fecha: selectedDate,
+              hora: hora,
+            };
+            document.getElementById("wspRescheduleModal").style.display =
+              "flex";
+
+            // Limpieza
+            cancelRescheduleMode();
+            loadAllAppointments();
+          } catch (err) {
+            showAlert("Error", err.message, "🚫");
+          }
+        } else {
+          // --- INSERT (NUEVA CITA) ---
+          const tel = document.getElementById("fieldTelefono").value;
+          const file = document.getElementById("fieldFile").files[0];
+          if (!tel || !file)
+            return showAlert(
+              "Faltan Datos",
+              "Teléfono y comprobante requeridos.",
+            );
+
+          const datos = {
+            fecha: selectedDate,
+            hora,
+            nombre: document.getElementById("fieldNombre").value,
+            correo: document.getElementById("fieldCorreo").value,
+            telefono: tel,
+            servicio: document.getElementById("fieldServicio").value,
+            user_id: userProfile.id,
+            estado: "pendiente",
+          };
+
+          const { error } = await client.from("citas").insert([datos]);
+          if (error) showAlert("Error", error.message);
+          else {
+            lastCitaData = datos;
+            document.getElementById("wspModal").style.display = "flex";
+          }
         }
+      }
+
+      function enviarWhatsAppReprogramacion() {
+        const msg =
+          `Hola, he reprogramado mi cita (ID: ${rescheduleId}).\n` +
+          `👤 Nombre: ${lastCitaData.nombre}\n` +
+          `📅 Nueva Fecha: *${lastCitaData.fecha}*\n` +
+          `🕒 Nueva Hora: *${format12h(lastCitaData.hora)}*\n` +
+          `Gracias por la gestión. ✨`;
+        window.open(
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
+          "_blank",
+        );
+        closeModal("wspRescheduleModal");
+        showTab("lista");
+      }
+
+      function enviarWhatsAppCliente() {
+        const msg = `Hola! Soy *${lastCitaData.nombre}*.\nServicio: ${lastCitaData.servicio}\nFecha: ${lastCitaData.fecha} - ${format12h(lastCitaData.hora)}\nAdjunto comprobante. ✨`;
+        window.open(
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
+          "_blank",
+        );
+        closeModal("wspModal");
+        showTab("lista");
+      }
+
+      // --- CANCELAR CITAS (CLIENTE Y ADMIN) ---
+      function openCancelModal(id, tel, name, isClient) {
+        pendingCancelId = id;
+        pendingCancelData = { tel, name, isClient };
+        document.getElementById("cancelModal").style.display = "flex";
+      }
+
+      async function confirmCancelation() {
+        if (!pendingCancelId) return;
+        const { error } = await client
+          .from("citas")
+          .delete()
+          .eq("id", pendingCancelId);
+        if (error) showAlert("Error", error.message);
+        else {
+          // Si es admin, avisa al cliente. Si es cliente, avisa al admin.
+          let msg = "";
+          let num = "";
+
+          if (pendingCancelData.isClient) {
+            // El cliente canceló -> Avisar al admin
+            msg = `Hola, deseo CANCELAR mi cita del día. Nombre: ${pendingCancelData.name}. Disculpa las molestias.`;
+            num = miWhatsAppAdmin;
+          } else {
+            // Admin canceló -> Avisar al cliente
+            msg = `Hola ${pendingCancelData.name}, lamentamos informarte que hemos cancelado tu cita. Por favor contáctanos para reagendar.`;
+            num = pendingCancelData.tel;
+          }
+
+          window.open(
+            `https://wa.me/${num}?text=${encodeURIComponent(msg)}`,
+            "_blank",
+          );
+          loadAllAppointments();
+          closeModal("cancelModal");
+        }
+      }
+
+      // LISTA DE CITAS
+      async function loadAllAppointments() {
+        let q = client.from("citas").select("*");
+        if (userProfile.role !== "admin") q = q.eq("user_id", userProfile.id);
+
+        const { data } = await q.order("fecha").order("hora");
+        const container = document.getElementById("tablaCitasContainer");
+        container.innerHTML = "";
+
+        if (!data) return;
+
+        const hoy = new Date().toISOString().split("T")[0];
+
+        data.forEach((c) => {
+          const safeName = c.nombre.replace(/'/g, "");
+          const isReprogramada = c.estado === "reprogramada";
+          const badge = isReprogramada
+            ? `<div class="badge-reprogramada">⚠️ REPROGRAMADA</div>`
+            : "";
+          const cardClass = isReprogramada
+            ? "appointment-card reprogramada animate-fade"
+            : "appointment-card animate-fade";
+
+          let buttonsHtml = "";
+
+          if (userProfile.role === "admin") {
+            // BOTONES DE ADMIN
+            buttonsHtml = `
+                    <div class="actions-row">
+                        <button class="btn-action btn-remind" onclick="window.open('https://wa.me/${c.telefono}?text=Recordatorio%20cita%20${c.fecha}')">📅 Recordar</button>
+                        <button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', false)">❌</button>
+                    </div>`;
+          } else {
+            // BOTONES DE CLIENTE (Reprogramar y Cancelar)
+            // Solo permitimos acciones si la fecha es hoy o futuro
+            if (c.fecha >= hoy) {
+              buttonsHtml = `
+                        <div class="actions-row">
+                            <button class="btn-action btn-reschedule" onclick="startReschedule('${c.id}', '${c.fecha}', '${c.hora}', '${c.servicio}', '${safeName}', '${c.telefono}')">🔄 Reprogramar</button>
+                            <button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', true)">❌ Cancelar</button>
+                        </div>
+                      `;
+            }
+          }
+
+          container.innerHTML += `
+                  <div class="${cardClass}">
+                      ${badge}
+                      <div style="font-weight:bold; color:var(--primary)">🕒 ${format12h(c.hora)} - ${c.fecha}</div>
+                      <div style="font-size:1.1rem; margin:5px 0">👤 ${c.nombre}</div>
+                      <div style="font-size:0.8rem; color:#666">✨ ${c.servicio}</div>
+                      ${userProfile.role === "admin" ? `<div class="admin-data-box">📱 ${c.telefono}<br>📧 ${c.correo}</div>` : ""}
+                      ${buttonsHtml}
+                  </div>
+              `;
+        });
+      }
+
+      // --- CALENDARIO Y HORARIOS (LÓGICA EXISTENTE) ---
+      async function fetchSchedule() {
+        const { data } = await client.from("horarios_base").select("*");
+        if (data) data.forEach((i) => (globalSchedule[i.dia] = i.horas));
       }
 
       function renderCalendar() {
         const grid = document.getElementById("calendarGrid");
-        const months = [
-          "Enero",
-          "Febrero",
-          "Marzo",
-          "Abril",
-          "Mayo",
-          "Junio",
-          "Julio",
-          "Agosto",
-          "Septiembre",
-          "Octubre",
-          "Noviembre",
-          "Diciembre",
-        ];
-        const year = viewDate.getFullYear();
-        const month = viewDate.getMonth();
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        document.getElementById("monthDisplay").innerText =
-          `${months[month]} ${year}`;
         grid.innerHTML = "";
-        ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"].forEach(
+        ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"].forEach(
           (d) =>
-            (grid.innerHTML += `<div style="font-size:0.75rem; color:#bbb; text-align:center; font-weight:bold;">${d}</div>`),
+            (grid.innerHTML += `<div style="font-size:0.75rem; text-align:center; color:#bbb">${d}</div>`),
         );
+
+        const year = viewDate.getFullYear(),
+          month = viewDate.getMonth();
+        document.getElementById("monthDisplay").innerText = new Date(
+          year,
+          month,
+        ).toLocaleString("es-ES", { month: "long", year: "numeric" });
 
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
         for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
         for (let i = 1; i <= lastDate; i++) {
           const d = document.createElement("div");
-          const cIter = new Date(year, month, i);
           const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+          const cDate = new Date(dStr + "T00:00:00");
 
           d.className = "day";
-          d.id = `day-${dStr}`;
           d.innerText = i;
-
-          if (cIter < today) d.classList.add("disabled");
+          d.id = `day-${dStr}`;
+          if (cDate < today) d.classList.add("disabled");
           else {
-            if (cIter.getTime() === today.getTime()) d.classList.add("today");
+            if (cDate.getTime() === today.getTime()) d.classList.add("today");
             d.onclick = () => {
-              if (d.classList.contains("full")) {
-                const reason = d.dataset.reason;
-                if (reason === "closed") {
-                  showAlert(
-                    "Día Cerrado",
-                    "Lo sentimos, este día no tenemos servicio disponible.",
-                    "🚫",
-                  );
-                } else {
-                  showAlert(
-                    "Agenda Llena",
-                    "¡Vaya éxito! Todos los espacios de este día ya fueron reservados.",
-                    "📅",
-                  );
-                }
-                return;
-              }
-
+              if (d.classList.contains("full"))
+                return showAlert("Día Cerrado", "No hay citas disponibles.");
               document
                 .querySelectorAll(".day")
-                .forEach((el) => el.classList.remove("selected"));
+                .forEach((e) => e.classList.remove("selected"));
               d.classList.add("selected");
               selectedDate = dStr;
               checkHoras(dStr);
@@ -1000,450 +1115,216 @@
           }
           grid.appendChild(d);
         }
-
-        updateCalendarStatus(year, month, lastDate);
+        updateFullDays(year, month, lastDate);
       }
 
-      async function updateCalendarStatus(year, month, lastDay) {
-        const startStr = `${year}-${String(month + 1).padStart(2, "0")}-01`;
-        const endStr = `${year}-${String(month + 1).padStart(2, "0")}-${lastDay}`;
-
+      async function updateFullDays(y, m, last) {
+        const start = `${y}-${String(m + 1).padStart(2, "0")}-01`,
+          end = `${y}-${String(m + 1).padStart(2, "0")}-${last}`;
         const { data: citas } = await client
           .from("citas")
-          .select("fecha, hora")
-          .gte("fecha", startStr)
-          .lte("fecha", endStr);
-        const { data: bloqueos } = await client
+          .select("fecha,hora")
+          .gte("fecha", start)
+          .lte("fecha", end);
+        const { data: bloq } = await client
           .from("bloqueos")
-          .select("fecha, hora")
-          .gte("fecha", startStr)
-          .lte("fecha", endStr);
+          .select("fecha,hora")
+          .gte("fecha", start)
+          .lte("fecha", end);
 
-        for (let i = 1; i <= lastDay; i++) {
-          const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
-          const element = document.getElementById(`day-${dStr}`);
-          if (!element || element.classList.contains("disabled")) continue;
+        for (let i = 1; i <= last; i++) {
+          const dStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+          const el = document.getElementById(`day-${dStr}`);
+          if (!el || el.classList.contains("disabled")) continue;
 
-          const dayOfWeek = new Date(dStr + "T00:00:00").getDay();
-          const baseHours = globalSchedule[dayOfWeek] || [];
+          const dayW = new Date(dStr + "T00:00:00").getDay();
+          const base = globalSchedule[dayW] || [];
+          const dayBloq = bloq.some((b) => b.fecha === dStr && b.hora === null);
 
-          const isDayBlocked = bloqueos.some(
-            (b) => b.fecha === dStr && b.hora === null,
-          );
-          if (isDayBlocked || baseHours.length === 0) {
-            element.classList.add("full");
-            element.dataset.reason = "closed";
+          if (dayBloq || base.length === 0) {
+            el.classList.add("full");
             continue;
           }
 
-          const blockedHours = bloqueos
-            .filter((b) => b.fecha === dStr && b.hora !== null)
-            .map((b) => b.hora);
-          const bookedHours = citas
-            .filter((c) => c.fecha === dStr)
-            .map((c) => c.hora);
-
-          let availableCount = 0;
-          baseHours.forEach((h) => {
-            if (!blockedHours.includes(h) && !bookedHours.includes(h)) {
-              availableCount++;
-            }
-          });
-
-          if (availableCount === 0) {
-            element.classList.add("full");
-            element.dataset.reason = "full";
-          }
+          const taken = [
+            ...citas.filter((c) => c.fecha === dStr).map((c) => c.hora),
+            ...bloq
+              .filter((b) => b.fecha === dStr && b.hora)
+              .map((b) => b.hora),
+          ];
+          const avail = base.filter((h) => !taken.includes(h));
+          if (avail.length === 0) el.classList.add("full");
         }
       }
 
       async function checkHoras(fecha) {
-        const dayOfWeek = new Date(fecha + "T00:00:00").getDay();
-        let availableHours = globalSchedule[dayOfWeek] || [];
-        availableHours = [...availableHours];
-        availableHours.sort();
+        const dayW = new Date(fecha + "T00:00:00").getDay();
+        let base = globalSchedule[dayW] ? [...globalSchedule[dayW]].sort() : [];
 
         const { data: citas } = await client
           .from("citas")
           .select("hora")
           .eq("fecha", fecha);
-        const { data: bloqueos } = await client
+        const { data: bloq } = await client
           .from("bloqueos")
           .select("hora")
           .eq("fecha", fecha);
 
-        let isDayBlocked = false;
-        let blockedHours = [];
-        if (bloqueos) {
-          bloqueos.forEach((b) => {
-            if (b.hora === null) isDayBlocked = true;
-            else blockedHours.push(b.hora);
-          });
-        }
+        const taken = [...citas.map((c) => c.hora), ...bloq.map((b) => b.hora)];
+        const isDayBloq = bloq.some((b) => b.hora === null);
 
-        const selector = document.getElementById("fieldHora");
-        selector.innerHTML = "";
-
-        if (availableHours.length === 0 || isDayBlocked) {
-          const opt = document.createElement("option");
-          opt.text = "📅 Día Cerrado";
-          opt.disabled = true;
-          selector.appendChild(opt);
+        const sel = document.getElementById("fieldHora");
+        sel.innerHTML = "";
+        if (base.length === 0 || isDayBloq) {
+          sel.add(new Option("Día Cerrado", ""));
+          sel.disabled = true;
           return;
         }
 
-        let hasSlots = false;
-        availableHours.forEach((h) => {
+        sel.disabled = false;
+        let any = false;
+        base.forEach((h) => {
           const opt = document.createElement("option");
           opt.value = h;
-
-          const ocupadoPorCita =
-            citas && citas.some((c) => c.hora.startsWith(h));
-          const bloqueadoAdmin = blockedHours.includes(h);
-
-          if (ocupadoPorCita) {
+          if (taken.includes(h)) {
             opt.disabled = true;
             opt.text = format12h(h) + " (Ocupado)";
-          } else if (bloqueadoAdmin) {
-            opt.disabled = true;
-            opt.text = format12h(h) + " (Bloqueado)";
           } else {
-            opt.disabled = false;
             opt.text = format12h(h);
-            hasSlots = true;
+            any = true;
           }
-          selector.appendChild(opt);
+          sel.appendChild(opt);
         });
-
-        if (!hasSlots) {
-          const opt = document.createElement("option");
-          opt.text = "🚫 Sin cupos hoy";
-          selector.appendChild(opt);
+        if (!any) {
+          sel.innerHTML = "";
+          sel.add(new Option("Sin cupos", ""));
+          sel.disabled = true;
         }
       }
 
-      async function confirmarCita() {
-        if (!selectedDate)
-          return showAlert(
-            "Falta Fecha",
-            "Por favor selecciona una fecha en el calendario.",
-            "📅",
-          );
-        const selectH = document.getElementById("fieldHora");
-        if (
-          selectH.value === "" ||
-          selectH.options[selectH.selectedIndex].disabled
-        )
-          return showAlert(
-            "Falta Hora",
-            "Selecciona una hora disponible.",
-            "⏰",
-          );
-
-        const telefono = document.getElementById("fieldTelefono").value;
-        if (telefono.length < 7)
-          return showAlert(
-            "Teléfono Inválido",
-            "Por favor ingresa un número válido.",
-            "📱",
-          );
-
-        const file = document.getElementById("fieldFile").files[0];
-        if (!file)
-          return showAlert(
-            "Falta Comprobante",
-            "Debes subir la foto del pago.",
-            "📎",
-          );
-
-        const datos = {
-          fecha: selectedDate,
-          hora: document.getElementById("fieldHora").value,
-          nombre: document.getElementById("fieldNombre").value,
-          correo: document.getElementById("fieldCorreo").value,
-          telefono: telefono,
-          servicio: document.getElementById("fieldServicio").value,
-          user_id: userProfile.id,
-        };
-
-        const { error } = await client.from("citas").insert([datos]);
-        if (error) showAlert("Error", error.message, "🚫");
-        else {
-          lastCitaData = datos;
-          document.getElementById("wspModal").style.display = "flex";
-        }
-      }
-
-      function enviarWhatsAppCliente() {
-        const msg =
-          `¡Hola! Soy *${lastCitaData.nombre}*.\n` +
-          `📧 Correo: ${lastCitaData.correo}\n` +
-          `💅 Servicio: *${lastCitaData.servicio}*\n` +
-          `📅 Fecha: *${lastCitaData.fecha}*\n` +
-          `🕒 Hora: *${format12h(lastCitaData.hora)}*\n\n` +
-          `Adjunto el comprobante para confirmar mi espacio. ✨`;
-
-        window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
-          "_blank",
-        );
-        document.getElementById("wspModal").style.display = "none";
-        showTab("lista");
-      }
-
-      async function loadAllAppointments() {
-        let query = client.from("citas").select("*");
-        if (userProfile.role !== "admin")
-          query = query.eq("user_id", userProfile.id);
-
-        const { data } = await query
-          .order("fecha", { ascending: true })
-          .order("hora", { ascending: true });
-
-        const container = document.getElementById("tablaCitasContainer");
-        container.innerHTML = "";
-
-        const mañana = new Date();
-        mañana.setDate(mañana.getDate() + 1);
-        const mañanaStr = mañana.toISOString().split("T")[0];
-
-        if (data)
-          data.forEach((c) => {
-            const esMañana = c.fecha === mañanaStr;
-            let adminInfo = "";
-
-            if (userProfile.role === "admin") {
-              adminInfo = `
-                <div class="admin-data-box">
-                  <b>📱 WhatsApp:</b> ${c.telefono}<br>
-                  <b>📧 Correo:</b> ${c.correo}
-                </div>
-                ${esMañana ? `<button class="btn-remind" onclick="window.open('https://wa.me/${c.telefono}?text=Hola%20${c.nombre}!%20Confirmamos%20tu%20cita%20de%20mañana%20a%20las%20${format12h(c.hora)}')">📱 Recordar Mañana</button>` : ""}
-              `;
-            }
-
-            container.innerHTML += `
-                <div class="appointment-card">
-                  <div style="font-weight:bold; color:var(--primary)">🕒 ${format12h(c.hora)} - ${c.fecha}</div>
-                  <div style="font-size:1.1rem; margin:5px 0;">👤 ${c.nombre}</div>
-                  <div style="font-size:0.8rem; color:#666">✨ ${c.servicio}</div>
-                  ${adminInfo}
-                </div>`;
-          });
-      }
-
-      function showTab(t) {
-        document.getElementById("view-agenda").style.display =
-          t === "agenda" ? "grid" : "none";
-        document.getElementById("view-lista").style.display =
-          t === "lista" ? "block" : "none";
-        document.getElementById("view-config").style.display =
-          t === "config" ? "block" : "none";
-
-        document
-          .getElementById("tab-agenda")
-          .classList.toggle("active", t === "agenda");
-        document
-          .getElementById("tab-lista")
-          .classList.toggle("active", t === "lista");
-        document
-          .getElementById("tab-config")
-          .classList.toggle("active", t === "config");
-
-        if (t === "lista") loadAllAppointments();
-      }
-
-      function moveMonth(d) {
-        viewDate.setMonth(viewDate.getMonth() + d);
+      function moveMonth(v) {
+        viewDate.setMonth(viewDate.getMonth() + v);
         renderCalendar();
       }
+      function showTab(t) {
+        ["agenda", "lista", "config"].forEach(
+          (x) => (document.getElementById(`view-${x}`).style.display = "none"),
+        );
+        ["agenda", "lista", "config"].forEach(
+          (x) => (document.getElementById(`tab-${x}`).className = "tab-btn"),
+        );
+        document.getElementById(`view-${t}`).style.display =
+          t === "agenda" ? "grid" : t === "config" ? "block" : "block";
+        document.getElementById(`tab-${t}`).className = "tab-btn active";
+        if (t === "lista") loadAllAppointments();
+        if (t !== "agenda" && isRescheduling) cancelRescheduleMode(); // Cancelar modo edición si sale
+      }
+      async function logout() {
+        await client.auth.signOut();
+        window.location.reload();
+      }
 
-      // ADMIN FUNCTIONS
-      function toggleWeekDay(dayIndex) {
-        const btn = document.getElementById(`day-btn-${dayIndex}`);
-        const indexInArray = selectedWeekDays.indexOf(dayIndex);
-
-        if (indexInArray > -1) {
-          selectedWeekDays.splice(indexInArray, 1);
-          btn.classList.remove("active");
+      // ADMIN CONFIG LOGIC (Simplificada)
+      function toggleWeekDay(d) {
+        const el = document.getElementById(`d${d}`);
+        const idx = selectedWeekDays.indexOf(d);
+        if (idx > -1) {
+          selectedWeekDays.splice(idx, 1);
+          el.classList.remove("active");
         } else {
           if (selectedWeekDays.length === 0) {
-            stagedHours = globalSchedule[dayIndex]
-              ? [...globalSchedule[dayIndex]]
-              : [];
-            renderStagedHours();
+            stagedHours = globalSchedule[d] ? [...globalSchedule[d]] : [];
+            renderStaged();
           }
-          selectedWeekDays.push(dayIndex);
-          btn.classList.add("active");
+          selectedWeekDays.push(d);
+          el.classList.add("active");
         }
-
-        const editor = document.getElementById("hoursEditorBox");
-        const msg = document.getElementById("msgSelectDays");
-
-        if (selectedWeekDays.length > 0) {
-          editor.style.display = "block";
-          msg.style.display = "none";
-        } else {
-          editor.style.display = "none";
-          msg.style.display = "block";
-        }
+        document.getElementById("hoursEditor").style.display =
+          selectedWeekDays.length ? "block" : "none";
       }
-
-      function renderStagedHours() {
-        const container = document.getElementById("weeklyHoursContainer");
-        container.innerHTML = "";
-        stagedHours.sort();
-
-        if (stagedHours.length === 0) {
-          container.innerHTML =
-            "<em style='color:#bbb; font-size:0.8rem;'>Día marcado como cerrado.</em>";
-          return;
-        }
-
-        stagedHours.forEach((h) => {
-          container.innerHTML += `
-                <div class="hour-tag">
-                    ${format12h(h)}
-                    <span onclick="removeStagedHour('${h}')">×</span>
-                </div>
-             `;
+      function renderStaged() {
+        const c = document.getElementById("weeklyHours");
+        c.innerHTML = "";
+        stagedHours.sort().forEach((h) => {
+          c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')">x</span></span>`;
         });
       }
-
       function addStagedHour() {
-        const timeInput = document.getElementById("newHourInput").value;
-        if (!timeInput)
-          return showAlert(
-            "Oops",
-            "Por favor selecciona una hora en el reloj.",
-            "⏰",
-          );
-        if (stagedHours.includes(timeInput))
-          return showAlert("Repetida", "Esa hora ya está en la lista.", "🔄");
-        stagedHours.push(timeInput);
-        renderStagedHours();
+        const h = document.getElementById("newHourInput").value;
+        if (h && !stagedHours.includes(h)) {
+          stagedHours.push(h);
+          renderStaged();
+        }
       }
-
-      function removeStagedHour(h) {
-        stagedHours = stagedHours.filter((item) => item !== h);
-        renderStagedHours();
+      function remStaged(h) {
+        stagedHours = stagedHours.filter((x) => x !== h);
+        renderStaged();
       }
-
-      function saveWeekSchedule() {
-        if (selectedWeekDays.length === 0) return;
-
-        askConfirm(
-          "¿Guardar Cambios?",
-          `Se aplicará este horario a ${selectedWeekDays.length} días seleccionados.`,
-          async () => {
-            for (let day of selectedWeekDays) {
-              globalSchedule[day] = [...stagedHours];
-              await client
-                .from("horarios_base")
-                .upsert({ dia: day, horas: stagedHours });
-            }
-            showAlert("¡Hecho!", "Horarios actualizados exitosamente.", "✅");
-            selectedWeekDays.forEach((d) =>
-              document
-                .getElementById(`day-btn-${d}`)
-                .classList.remove("active"),
-            );
-            selectedWeekDays = [];
-            document.getElementById("hoursEditorBox").style.display = "none";
-            document.getElementById("msgSelectDays").style.display = "block";
-            renderCalendar();
-          },
+      async function saveWeekSchedule() {
+        for (let d of selectedWeekDays)
+          await client
+            .from("horarios_base")
+            .upsert({ dia: d, horas: stagedHours });
+        selectedWeekDays.forEach((d) =>
+          document.getElementById(`d${d}`).classList.remove("active"),
         );
+        selectedWeekDays = [];
+        document.getElementById("hoursEditor").style.display = "none";
+        showAlert("Guardado", "Horario actualizado");
       }
-
       async function loadAdminDayConfig() {
-        const dateInput = document.getElementById("adminDateInput").value;
-        if (!dateInput) return;
-        adminSelectedDate = dateInput;
-
+        const d = document.getElementById("adminDateInput").value;
+        if (!d) return;
+        adminSelectedDate = d;
         document.getElementById("adminPanelControls").style.display = "block";
-
         const { data } = await client
           .from("bloqueos")
           .select("*")
-          .eq("fecha", adminSelectedDate);
-        const dayBlocked = data.find((b) => b.hora === null);
-        const btnDay = document.getElementById("btnToggleDay");
-        const hoursDiv = document.getElementById("hoursControlContainer");
+          .eq("fecha", d);
+        const isFull = data.some((b) => b.hora === null);
+        document.getElementById("btnToggleDay").innerText = isFull
+          ? "🔒 DÍA CERRADO"
+          : "🔓 DÍA ABIERTO";
+        document.getElementById("btnToggleDay").className = isFull
+          ? "btn-block-day is-blocked"
+          : "btn-block-day";
 
-        if (dayBlocked) {
-          btnDay.className = "btn-block-day is-blocked";
-          btnDay.innerHTML = "🔒 DÍA CERRADO (Click para abrir)";
-          hoursDiv.style.opacity = "0.3";
-          hoursDiv.style.pointerEvents = "none";
-        } else {
-          btnDay.className = "btn-block-day";
-          btnDay.innerHTML = "🔓 DÍA ABIERTO (Click para cerrar)";
-          hoursDiv.style.opacity = "1";
-          hoursDiv.style.pointerEvents = "all";
-        }
-
-        const dayOfWeek = new Date(adminSelectedDate + "T00:00:00").getDay();
-        const baseHours = globalSchedule[dayOfWeek] || [];
-        baseHours.sort();
-
+        const dayW = new Date(d + "T00:00:00").getDay();
+        const base = globalSchedule[dayW] || [];
         const grid = document.getElementById("adminHourGrid");
         grid.innerHTML = "";
-
-        if (baseHours.length === 0) {
-          grid.innerHTML =
-            "<div style='grid-column: span 3; color:#666; font-size:0.8rem;'>No hay horario base para este día de la semana. Configúralo arriba.</div>";
-        } else {
-          baseHours.forEach((h) => {
-            const isBlocked = data.some((b) => b.hora === h);
-            const btn = document.createElement("button");
-            btn.className = isBlocked ? "hour-btn blocked" : "hour-btn open";
-            btn.innerText = format12h(h);
-            btn.onclick = () => toggleAdminHour(h, isBlocked);
-            grid.appendChild(btn);
-          });
-        }
+        base.sort().forEach((h) => {
+          const isB = data.some((b) => b.hora === h);
+          grid.innerHTML += `<button class="hour-btn ${isB ? "blocked" : "open"}" onclick="toggleBlock('${h}',${isB})">${format12h(h)}</button>`;
+        });
       }
-
       async function toggleFullDayBlock() {
         const { data } = await client
           .from("bloqueos")
           .select("*")
           .eq("fecha", adminSelectedDate)
           .is("hora", null);
-        if (data && data.length > 0) {
+        if (data.length)
           await client.from("bloqueos").delete().eq("id", data[0].id);
-        } else {
+        else
           await client
             .from("bloqueos")
             .insert([{ fecha: adminSelectedDate, hora: null }]);
-        }
         loadAdminDayConfig();
-        renderCalendar();
       }
-
-      async function toggleAdminHour(hora, isCurrentlyBlocked) {
-        if (isCurrentlyBlocked) {
+      async function toggleBlock(h, isB) {
+        if (isB)
           await client
             .from("bloqueos")
             .delete()
             .eq("fecha", adminSelectedDate)
-            .eq("hora", hora);
-        } else {
+            .eq("hora", h);
+        else
           await client
             .from("bloqueos")
-            .insert([{ fecha: adminSelectedDate, hora: hora }]);
-        }
+            .insert([{ fecha: adminSelectedDate, hora: h }]);
         loadAdminDayConfig();
-        renderCalendar();
       }
-
-      async function logout() {
-        await client.auth.signOut();
-        window.location.reload();
-      }
-
-      checkUser();
     </script>
   </body>
 </html>
