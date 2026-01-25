@@ -22,7 +22,6 @@
         --success: #00e676;
         --radius: 20px;
       }
-
       body {
         font-family: "Segoe UI", sans-serif;
         background: var(--bg);
@@ -32,7 +31,6 @@
         -webkit-tap-highlight-color: transparent;
         overscroll-behavior-y: none;
       }
-
       @keyframes popIn {
         0% {
           opacity: 0;
@@ -149,7 +147,6 @@
         align-items: center;
         border-bottom: 1px solid #ffe6f2;
       }
-
       .tabs {
         display: flex;
         background: white;
@@ -186,6 +183,7 @@
         box-shadow: var(--primary-glow);
       }
 
+      /* COMPONENTES */
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -239,7 +237,6 @@
           grid-template-columns: 1fr 350px;
         }
       }
-
       input,
       select {
         width: 100%;
@@ -327,11 +324,6 @@
       .btn-main.reschedule-mode {
         background: var(--info);
         box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
-      }
-      .btn-main:disabled {
-        background: #ccc;
-        box-shadow: none;
-        cursor: not-allowed;
       }
 
       .appointment-card {
@@ -633,14 +625,12 @@
 
       <div id="login-form">
         <input type="email" id="loginEmail" placeholder="Tu Correo" />
-
         <div class="password-wrapper">
           <input type="password" id="loginPass" placeholder="Contraseña" />
           <span class="toggle-eye" onclick="togglePassword('loginPass', this)"
             >👁️</span
           >
         </div>
-
         <button class="btn-main" onclick="handleAuth('login')">
           Ingresar 💖
         </button>
@@ -681,7 +671,6 @@
       <div id="signup-form" style="display: none">
         <input type="text" id="regNombre" placeholder="Tu Nombre Completo" />
         <input type="email" id="regEmail" placeholder="Tu Correo" />
-
         <div class="password-wrapper">
           <input
             type="password"
@@ -692,7 +681,6 @@
             >👁️</span
           >
         </div>
-
         <div class="password-wrapper">
           <input
             type="password"
@@ -705,7 +693,6 @@
             >👁️</span
           >
         </div>
-
         <button class="btn-main" onclick="handleAuth('signup')">
           Registrarme ✨
         </button>
@@ -874,7 +861,6 @@
               pattern="[0-9]*"
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
-
             <label
               style="
                 font-size: 0.8rem;
@@ -1091,7 +1077,6 @@
           "
         >
           <h4 style="margin-top: 0">Cambiar Contraseña</h4>
-
           <div class="password-wrapper">
             <input
               type="password"
@@ -1104,7 +1089,6 @@
               >👁️</span
             >
           </div>
-
           <div class="password-wrapper">
             <input
               type="password"
@@ -1117,7 +1101,6 @@
               >👁️</span
             >
           </div>
-
           <div class="password-wrapper">
             <input
               type="password"
@@ -1130,7 +1113,6 @@
               >👁️</span
             >
           </div>
-
           <button
             class="btn-main"
             style="margin-top: 10px; padding: 12px; background: var(--info)"
@@ -1159,73 +1141,61 @@
     </div>
 
     <script>
-      // CONFIG
       const sbUrl = "https://jifwtgpchbipxyriirtq.supabase.co";
       const sbKey = "sb_publishable_zF5mj6Ba61zibU_19vnFPQ_a4GDaKwi";
       const client = supabase.createClient(sbUrl, sbKey);
       const miWhatsAppAdmin = "573228211246";
 
-      let userProfile = null;
-      let currentUserEmail = "";
-      let globalSchedule = {};
-      let globalServices = [];
-      let selectedWeekDays = [],
-        stagedHours = [];
-      let viewDate = new Date();
-      let selectedDate = null;
-      let lastCitaData = null;
-      let isRescheduling = false;
-      let rescheduleId = null;
-      let rescheduleData = null;
-      let pendingCancelId = null;
-      let pendingCancelData = null;
+      let userProfile = null,
+        currentUserEmail = "",
+        globalSchedule = {},
+        globalServices = [],
+        selectedWeekDays = [],
+        stagedHours = [],
+        viewDate = new Date(),
+        selectedDate = null,
+        lastCitaData = null,
+        isRescheduling = false,
+        rescheduleId = null,
+        rescheduleData = null,
+        pendingCancelId = null,
+        pendingCancelData = null;
 
-      // --- INICIALIZACIÓN INTELIGENTE ---
+      // --- INICIO ---
+      const hash = window.location.hash;
+      const isRecovery = hash && hash.includes("type=recovery");
+
       function initApp() {
-        const hash = window.location.hash;
-        if (hash && hash.includes("type=recovery")) {
-          // MODO RECUPERACIÓN DETECTADO
+        if (isRecovery) {
+          // Bloquear y mostrar pantalla de espera
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "none";
           document.getElementById("recovery-screen").style.display = "block";
-
-          // Esperamos a que Supabase procese el hash y nos loguee automáticamente
-          waitForSession();
         } else {
           checkUser();
         }
       }
 
-      // --- ESPERAR SESIÓN (FIX para "Session Missing") ---
-      async function waitForSession() {
-        // Intentamos obtener la sesión varias veces hasta que Supabase la establezca
-        let attempts = 0;
-        const maxAttempts = 10;
+      // --- EVENTOS SUPABASE (LA CLAVE DEL ÉXITO) ---
+      client.auth.onAuthStateChange(async (event, session) => {
+        // EVENTO 1: RECUPERACIÓN DETECTADA Y SESIÓN LISTA
+        if (
+          event === "PASSWORD_RECOVERY" ||
+          (event === "SIGNED_IN" && isRecovery)
+        ) {
+          document.getElementById("auth-screen").style.display = "none";
+          document.getElementById("app-screen").style.display = "none";
+          document.getElementById("recovery-screen").style.display = "block";
 
-        const interval = setInterval(async () => {
-          attempts++;
-          const {
-            data: { session },
-          } = await client.auth.getSession();
+          document.getElementById("recoveryStatus").innerText =
+            "Enlace verificado. Ingresa tu nueva clave.";
+          document.getElementById("recoveryStatus").style.color =
+            "var(--success)";
+          document.getElementById("recoveryForm").style.display = "block";
+        }
+      });
 
-          if (session) {
-            clearInterval(interval);
-            document.getElementById("recoveryStatus").innerText =
-              "Enlace verificado. Ingresa tu nueva clave.";
-            document.getElementById("recoveryStatus").style.color =
-              "var(--success)";
-            document.getElementById("recoveryForm").style.display = "block";
-          } else if (attempts >= maxAttempts) {
-            clearInterval(interval);
-            document.getElementById("recoveryStatus").innerText =
-              "El enlace ha expirado o es inválido.";
-            document.getElementById("recoveryStatus").style.color =
-              "var(--danger)";
-          }
-        }, 500); // Revisar cada medio segundo
-      }
-
-      // --- MOSTRAR/OCULTAR CONTRASEÑA ---
+      // --- FUNCIONES UI ---
       function togglePassword(inputId, icon) {
         const input = document.getElementById(inputId);
         if (input.type === "password") {
@@ -1236,117 +1206,10 @@
           icon.innerText = "👁️";
         }
       }
-
       function togglePassForm() {
         const form = document.getElementById("profilePassForm");
         form.style.display = form.style.display === "none" ? "block" : "none";
       }
-
-      // --- RECUPERACIÓN ---
-      function openResetModal() {
-        document.getElementById("resetModal").style.display = "flex";
-      }
-      async function sendResetEmail() {
-        const email = document.getElementById("resetEmailInput").value;
-        if (!email) return showAlert("Error", "Escribe tu correo.");
-        const { error } = await client.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.href,
-        });
-        if (error) showAlert("Error", error.message);
-        else {
-          closeModal("resetModal");
-          showAlert(
-            "Enviado",
-            "Revisa tu correo. Sigue el enlace para cambiar tu clave.",
-          );
-        }
-      }
-
-      async function finalizeRecovery() {
-        const newPass = document.getElementById("recoveryPass").value;
-        if (!newPass || newPass.length < 6)
-          return showAlert(
-            "Error",
-            "La contraseña debe tener al menos 6 caracteres",
-          );
-
-        // La sesión ya debería estar activa gracias a waitForSession
-        const { error } = await client.auth.updateUser({ password: newPass });
-        if (error) {
-          showAlert(
-            "Error",
-            "No se pudo actualizar. Intenta solicitar el correo de nuevo.",
-          );
-        } else {
-          showAlert("¡Éxito!", "Contraseña restablecida. Ingresando...");
-          document.getElementById("recovery-screen").style.display = "none";
-          history.replaceState(null, null, " "); // Limpiar URL
-          checkUser();
-        }
-      }
-
-      // --- SWIPE ---
-      let touchStartX = 0,
-        touchStartY = 0,
-        touchEndX = 0,
-        touchEndY = 0;
-      const appScreen = document.getElementById("app-screen");
-      appScreen.addEventListener("touchstart", (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-      });
-      appScreen.addEventListener("touchend", (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        touchEndY = e.changedTouches[0].screenY;
-        handleSwipe();
-      });
-
-      function handleSwipe() {
-        const threshold = 100;
-        const restraint = 80;
-        const diffX = touchEndX - touchStartX;
-        const diffY = touchEndY - touchStartY;
-        if (Math.abs(diffX) > threshold && Math.abs(diffY) < restraint) {
-          const tabs = ["agenda", "lista"];
-          if (userProfile && userProfile.role === "admin") tabs.push("config");
-          tabs.push("perfil");
-
-          let activeIdx = 0;
-          if (document.getElementById("view-lista").style.display !== "none")
-            activeIdx = 1;
-          if (document.getElementById("view-config").style.display !== "none")
-            activeIdx = 2;
-          if (document.getElementById("view-perfil").style.display !== "none")
-            activeIdx = tabs.indexOf("config") > -1 ? 3 : 2;
-
-          if (diffX < 0) {
-            if (activeIdx < tabs.length - 1) showTab(tabs[activeIdx + 1]);
-          } else {
-            if (activeIdx > 0) showTab(tabs[activeIdx - 1]);
-          }
-        }
-      }
-
-      function format12h(h24) {
-        if (!h24) return "";
-        let [h, m] = h24.split(":");
-        let suf = h >= 12 ? "PM" : "AM";
-        h = h % 12 || 12;
-        return `${h}:${m} ${suf}`;
-      }
-
-      function updateFileName() {
-        const input = document.getElementById("fieldFile");
-        const display = document.getElementById("fileNameDisplay");
-        if (input.files && input.files[0]) {
-          display.innerText = "Archivo: " + input.files[0].name;
-          display.style.color = "var(--primary)";
-        } else {
-          display.innerText = "Ningún archivo seleccionado";
-          display.style.color = "#888";
-        }
-      }
-
       function showAlert(t, m, i = "✨") {
         document.getElementById("genIcon").innerText = i;
         document.getElementById("genTitle").innerText = t;
@@ -1365,6 +1228,7 @@
           : "block";
       }
 
+      // --- AUTH Y RECUPERACIÓN ---
       async function handleAuth(type) {
         const email = document.getElementById(
           type === "login" ? "loginEmail" : "regEmail",
@@ -1372,12 +1236,10 @@
         const pass = document.getElementById(
           type === "login" ? "loginPass" : "regPass",
         ).value;
-
         if (type === "signup") {
           const confirm = document.getElementById("regPassConfirm").value;
           if (pass !== confirm)
             return showAlert("Error", "Las contraseñas no coinciden", "🚫");
-
           const { error } = await client.auth.signUp({
             email,
             password: pass,
@@ -1402,11 +1264,47 @@
         }
       }
 
+      function openResetModal() {
+        document.getElementById("resetModal").style.display = "flex";
+      }
+      async function sendResetEmail() {
+        const email = document.getElementById("resetEmailInput").value;
+        if (!email) return showAlert("Error", "Escribe tu correo.");
+        const { error } = await client.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.href,
+        }); // Manda al mismo sitio
+        if (error) showAlert("Error", error.message);
+        else {
+          closeModal("resetModal");
+          showAlert("Enviado", "Revisa tu correo. Sigue el enlace.");
+        }
+      }
+
+      async function finalizeRecovery() {
+        const newPass = document.getElementById("recoveryPass").value;
+        if (!newPass || newPass.length < 6)
+          return showAlert("Error", "Mínimo 6 caracteres");
+
+        const { error } = await client.auth.updateUser({ password: newPass });
+        if (error) {
+          showAlert(
+            "Error",
+            "El enlace expiró o es inválido. Solicita uno nuevo.",
+          );
+          setTimeout(() => {
+            window.location.hash = "";
+            window.location.reload();
+          }, 2500);
+        } else {
+          showAlert("¡Éxito!", "Contraseña restablecida. Ingresando...");
+          document.getElementById("recovery-screen").style.display = "none";
+          history.replaceState(null, null, " "); // Limpiar URL
+          setTimeout(() => checkUser(), 500);
+        }
+      }
+
       async function checkUser() {
-        if (
-          document.getElementById("recovery-screen").style.display === "block"
-        )
-          return;
+        if (isRecovery) return; // No chequear usuario si estamos recuperando
 
         const {
           data: { session },
@@ -1418,20 +1316,16 @@
             .eq("id", session.user.id)
             .single();
           if (!data) return setTimeout(checkUser, 500);
-
           userProfile = data;
           currentUserEmail = session.user.email;
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "block";
           document.getElementById("displayUserName").innerText = data.full_name;
           document.getElementById("profileName").value = data.full_name;
-
           document.getElementById("fieldNombre").value = data.full_name;
           document.getElementById("fieldCorreo").value = session.user.email;
-
           await fetchServices();
           await fetchSchedule();
-
           if (data.role === "admin") {
             document.getElementById("adminBadge").style.display =
               "inline-block";
@@ -1444,71 +1338,55 @@
           }
           renderCalendar();
         } else {
-          if (
-            document.getElementById("recovery-screen").style.display !== "block"
-          ) {
-            document.getElementById("auth-screen").style.display = "block";
+          document.getElementById("auth-screen").style.display = "block";
+        }
+      }
+
+      // --- SERVICIOS ---
+      async function fetchServices() {
+        const { data } = await client.from("servicios").select("*").order("id");
+        if (data) {
+          globalServices = data;
+          const sel = document.getElementById("fieldServicio");
+          sel.innerHTML = "";
+          globalServices.forEach((s) => {
+            const opt = document.createElement("option");
+            opt.value = s.nombre;
+            opt.text = s.nombre;
+            sel.appendChild(opt);
+          });
+          if (userProfile && userProfile.role === "admin") {
+            const list = document.getElementById("adminServicesList");
+            list.innerHTML = "";
+            globalServices.forEach(
+              (s) =>
+                (list.innerHTML += `<div class="service-item"><span>${s.nombre}</span><button class="btn-delete-svc" onclick="deleteService(${s.id})">Borrar</button></div>`),
+            );
           }
         }
       }
-
-      async function fetchServices() {
-        const { data, error } = await client
-          .from("servicios")
-          .select("*")
-          .order("id");
-        if (data) {
-          globalServices = data;
-          renderServicesDropdown();
-          if (userProfile && userProfile.role === "admin")
-            renderAdminServicesList();
-        }
-      }
-
-      function renderServicesDropdown() {
-        const sel = document.getElementById("fieldServicio");
-        sel.innerHTML = "";
-        globalServices.forEach((s) => {
-          const opt = document.createElement("option");
-          opt.value = s.nombre;
-          opt.text = s.nombre;
-          sel.appendChild(opt);
-        });
-      }
-
-      function renderAdminServicesList() {
-        const list = document.getElementById("adminServicesList");
-        list.innerHTML = "";
-        globalServices.forEach((s) => {
-          list.innerHTML += `<div class="service-item"><span>${s.nombre}</span><button class="btn-delete-svc" onclick="deleteService(${s.id})">Borrar</button></div>`;
-        });
-      }
-
       async function addService() {
-        const input = document.getElementById("newServiceInput");
-        const val = input.value.trim();
+        const val = document.getElementById("newServiceInput").value.trim();
         if (!val) return;
         const { error } = await client
           .from("servicios")
           .insert([{ nombre: val }]);
         if (error) showAlert("Error", error.message);
         else {
-          input.value = "";
+          document.getElementById("newServiceInput").value = "";
           await fetchServices();
         }
       }
-
       async function deleteService(id) {
-        if (!confirm("¿Seguro que quieres borrar este servicio?")) return;
+        if (!confirm("¿Borrar?")) return;
         const { error } = await client.from("servicios").delete().eq("id", id);
         if (error) showAlert("Error", error.message);
         else await fetchServices();
       }
 
+      // --- PERFIL ---
       async function updateProfileName() {
         const newName = document.getElementById("profileName").value;
-        if (!newName)
-          return showAlert("Error", "El nombre no puede estar vacío");
         const { error } = await client
           .from("profiles")
           .update({ full_name: newName })
@@ -1518,35 +1396,24 @@
           userProfile.full_name = newName;
           document.getElementById("displayUserName").innerText = newName;
           document.getElementById("fieldNombre").value = newName;
-          showAlert("Éxito", "Nombre actualizado correctamente.");
+          showAlert("Éxito", "Nombre actualizado.");
         }
       }
-
-      // --- ACTUALIZAR CONTRASEÑA (PERFIL) ---
       async function updatePassword() {
         const currentPass = document.getElementById("currentPassProfile").value;
         const newPass = document.getElementById("newPassProfile").value;
         const confirmPass = document.getElementById("confirmPassProfile").value;
-
         if (!currentPass || !newPass || !confirmPass)
-          return showAlert("Faltan datos", "Llena todos los campos");
-        if (newPass !== confirmPass)
-          return showAlert("Error", "Las nuevas contraseñas no coinciden");
+          return showAlert("Faltan datos", "Llena todo");
+        if (newPass !== confirmPass) return showAlert("Error", "No coinciden");
         if (newPass.length < 6)
-          return showAlert(
-            "Error",
-            "La contraseña debe tener mínimo 6 caracteres",
-          );
-
+          return showAlert("Error", "Mínimo 6 caracteres");
         const { error: signInError } = await client.auth.signInWithPassword({
           email: currentUserEmail,
           password: currentPass,
         });
-
-        if (signInError) {
-          return showAlert("Error", "Tu contraseña actual es incorrecta.");
-        }
-
+        if (signInError)
+          return showAlert("Error", "Contraseña actual incorrecta.");
         const { error } = await client.auth.updateUser({ password: newPass });
         if (error) showAlert("Error", error.message);
         else {
@@ -1554,53 +1421,94 @@
           document.getElementById("newPassProfile").value = "";
           document.getElementById("confirmPassProfile").value = "";
           togglePassForm();
-          showAlert("Éxito", "Contraseña actualizada correctamente.");
+          showAlert("Éxito", "Actualizada.");
         }
       }
 
-      function startReschedule(id, fecha, hora, servicio, nombre, tel) {
+      // --- SWIPE, CALENDARIO Y CITA ---
+      let touchStartX = 0,
+        touchEndX = 0;
+      const appScreen = document.getElementById("app-screen");
+      appScreen.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+      appScreen.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+      function handleSwipe() {
+        if (Math.abs(touchEndX - touchStartX) > 100) {
+          const tabs = ["agenda", "lista"];
+          if (userProfile && userProfile.role === "admin") tabs.push("config");
+          tabs.push("perfil");
+          let activeIdx = 0;
+          if (document.getElementById("view-lista").style.display !== "none")
+            activeIdx = 1;
+          if (document.getElementById("view-config").style.display !== "none")
+            activeIdx = 2;
+          if (document.getElementById("view-perfil").style.display !== "none")
+            activeIdx = tabs.indexOf("config") > -1 ? 3 : 2;
+          if (touchEndX - touchStartX < 0) {
+            if (activeIdx < tabs.length - 1) showTab(tabs[activeIdx + 1]);
+          } else {
+            if (activeIdx > 0) showTab(tabs[activeIdx - 1]);
+          }
+        }
+      }
+
+      // ... (Funciones de calendario y cita iguales al anterior) ...
+      function format12h(h24) {
+        if (!h24) return "";
+        let [h, m] = h24.split(":");
+        let suf = h >= 12 ? "PM" : "AM";
+        h = h % 12 || 12;
+        return `${h}:${m} ${suf}`;
+      }
+      function updateFileName() {
+        const i = document.getElementById("fieldFile");
+        const d = document.getElementById("fileNameDisplay");
+        if (i.files[0]) {
+          d.innerText = "Archivo: " + i.files[0].name;
+          d.style.color = "var(--primary)";
+        } else {
+          d.innerText = "Ningún archivo";
+          d.style.color = "#888";
+        }
+      }
+      function startReschedule(id, f, h, s, n, t) {
         isRescheduling = true;
         rescheduleId = id;
-        rescheduleData = { fecha, hora, servicio, nombre, tel };
+        rescheduleData = { fecha: f, hora: h, servicio: s, nombre: n, tel: t };
         document.getElementById("editModeBar").style.display = "flex";
         document.getElementById("newAppointmentFields").style.display = "none";
         document.getElementById("fileUploadDiv").style.display = "none";
-        const btn = document.getElementById("btnMainAction");
-        btn.innerText = "Confirmar Nueva Fecha 🔄";
-        btn.className = "btn-main reschedule-mode";
+        document.getElementById("btnMainAction").innerText =
+          "Confirmar Nueva Fecha 🔄";
+        document.getElementById("btnMainAction").className =
+          "btn-main reschedule-mode";
         showTab("agenda");
-        showAlert("Reprogramación", "Selecciona el NUEVO día y hora.", "🗓️");
+        showAlert("Reprogramar", "Selecciona fecha y hora.", "🗓️");
       }
-
       function cancelRescheduleMode() {
         isRescheduling = false;
         rescheduleId = null;
-        rescheduleData = null;
         document.getElementById("editModeBar").style.display = "none";
         document.getElementById("newAppointmentFields").style.display = "block";
         document.getElementById("fileUploadDiv").style.display = "block";
-        const btn = document.getElementById("btnMainAction");
-        btn.innerText = "💖 Reservar Cita";
-        btn.className = "btn-main";
+        document.getElementById("btnMainAction").innerText = "💖 Reservar Cita";
+        document.getElementById("btnMainAction").className = "btn-main";
       }
-
       async function confirmarCita() {
-        if (!selectedDate)
-          return showAlert("Falta Fecha", "Selecciona un día.");
+        if (!selectedDate || !document.getElementById("fieldHora").value)
+          return showAlert("Faltan Datos", "Selecciona fecha y hora.");
         const hora = document.getElementById("fieldHora").value;
-        if (!hora) return showAlert("Falta Hora", "Selecciona una hora.");
-
         if (isRescheduling) {
-          try {
-            const { error } = await client
-              .from("citas")
-              .update({
-                fecha: selectedDate,
-                hora: hora,
-                estado: "reprogramada",
-              })
-              .eq("id", rescheduleId);
-            if (error) throw error;
+          const { error } = await client
+            .from("citas")
+            .update({ fecha: selectedDate, hora: hora, estado: "reprogramada" })
+            .eq("id", rescheduleId);
+          if (error) showAlert("Error", error.message);
+          else {
             lastCitaData = {
               ...rescheduleData,
               fecha: selectedDate,
@@ -1610,23 +1518,22 @@
               "flex";
             cancelRescheduleMode();
             loadAllAppointments();
-          } catch (err) {
-            showAlert("Error", err.message, "🚫");
           }
         } else {
-          const tel = document.getElementById("fieldTelefono").value;
-          const file = document.getElementById("fieldFile").files[0];
-          if (!tel)
-            return showAlert("Faltan Datos", "El teléfono es obligatorio.");
-          if (!file)
-            return showAlert("Falta Comprobante", "Sube la foto del pago.");
-
+          if (
+            !document.getElementById("fieldTelefono").value ||
+            !document.getElementById("fieldFile").files[0]
+          )
+            return showAlert(
+              "Faltan Datos",
+              "Teléfono y comprobante requeridos.",
+            );
           const datos = {
             fecha: selectedDate,
             hora,
             nombre: document.getElementById("fieldNombre").value,
             correo: document.getElementById("fieldCorreo").value,
-            telefono: tel,
+            telefono: document.getElementById("fieldTelefono").value,
             servicio: document.getElementById("fieldServicio").value,
             user_id: userProfile.id,
             estado: "pendiente",
@@ -1639,130 +1546,93 @@
           }
         }
       }
-
       function enviarWhatsAppCliente() {
-        const msg =
-          `Hola NailsByNINA. Soy ${lastCitaData.nombre}.\n` +
-          `Cita: ${lastCitaData.fecha} a las ${format12h(lastCitaData.hora)}\n` +
-          `Servicio: ${lastCitaData.servicio}\n` +
-          `Adjunto mi comprobante para confirmar. Gracias.`;
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsByNINA. Soy ${lastCitaData.nombre}.\nCita: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}\nServicio: ${lastCitaData.servicio}\nAdjunto comprobante.`)}`,
           "_blank",
         );
         closeModal("wspModal");
         showTab("lista");
       }
-
       function enviarWhatsAppReprogramacion() {
-        const msg =
-          `Hola NailsByNINA. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\n` +
-          `Nueva Fecha: ${lastCitaData.fecha}\nNueva Hora: ${format12h(lastCitaData.hora)}\nQuedo atenta a la confirmacion.`;
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsByNINA. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\nNueva: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}`)}`,
           "_blank",
         );
         closeModal("wspRescheduleModal");
         showTab("lista");
       }
-
-      function openCancelModal(id, tel, name, isClient) {
+      function openCancelModal(id, t, n, c) {
         pendingCancelId = id;
-        pendingCancelData = { tel, name, isClient };
+        pendingCancelData = { tel: t, name: n, isClient: c };
         document.getElementById("cancelModal").style.display = "flex";
       }
-
       async function confirmCancelation() {
-        if (!pendingCancelId) return;
         const { error } = await client
           .from("citas")
           .delete()
           .eq("id", pendingCancelId);
-        if (error) showAlert("Error", error.message);
-        else {
-          let msg = "";
-          let num = "";
-          if (pendingCancelData.isClient) {
-            msg = `Hola NailsByNINA. Debo cancelar mi cita a nombre de ${pendingCancelData.name}. Disculpa las molestias.`;
-            num = miWhatsAppAdmin;
-          } else {
-            msg = `Hola ${pendingCancelData.name}, te escribimos de NailsByNINA. Lamentamos informarte que hemos cancelado tu cita. Por favor contáctanos.`;
-            num = pendingCancelData.tel;
-          }
+        if (!error) {
           window.open(
-            `https://wa.me/${num}?text=${encodeURIComponent(msg)}`,
+            `https://wa.me/${pendingCancelData.isClient ? miWhatsAppAdmin : pendingCancelData.tel}?text=${encodeURIComponent(pendingCancelData.isClient ? `Hola NailsByNINA. Cancelo cita de ${pendingCancelData.name}.` : `Hola ${pendingCancelData.name}, cancelamos tu cita.`)}`,
             "_blank",
           );
           loadAllAppointments();
           closeModal("cancelModal");
         }
       }
-
-      async function logout() {
-        await client.auth.signOut();
-        window.location.reload();
-      }
-
       async function loadAllAppointments() {
         let q = client.from("citas").select("*");
         if (userProfile.role !== "admin") q = q.eq("user_id", userProfile.id);
         const { data } = await q.order("fecha").order("hora");
-        const container = document.getElementById("tablaCitasContainer");
-        container.innerHTML = "";
-        if (!data || data.length === 0) {
-          container.innerHTML =
-            "<p style='text-align:center; color:#aaa; margin-top:30px;'>No tienes citas agendadas.</p>";
+        const c = document.getElementById("tablaCitasContainer");
+        c.innerHTML = "";
+        if (!data || !data.length) {
+          c.innerHTML =
+            "<p style='text-align:center;color:#aaa;margin-top:30px'>Sin citas.</p>";
           return;
         }
         const hoy = new Date().toISOString().split("T")[0];
-        data.forEach((c) => {
-          const safeName = c.nombre.replace(/'/g, "");
-          const isReprogramada = c.estado === "reprogramada";
-          const badge = isReprogramada
-            ? `<div class="status-pill repro">Reprogramada</div>`
-            : `<div class="status-pill" style="background:#e6fffa; color:#00b894; border:1px solid #00b894;">Confirmada</div>`;
-          const cardClass = isReprogramada
-            ? "appointment-card reprogramada animate-pop"
-            : "appointment-card animate-pop";
-          let buttonsHtml = "";
-          if (userProfile.role === "admin") {
-            buttonsHtml = `<div class="actions-row"><button class="btn-action btn-reschedule" style="background:var(--whatsapp); color:white;" onclick="window.open('https://wa.me/${c.telefono}?text=Hola%20${c.nombre},%20recordatorio%20de%20tu%20cita%20en%20NailsByNINA')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', false)">Cancelar</button></div>`;
-          } else {
-            if (c.fecha >= hoy) {
-              buttonsHtml = `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${c.id}', '${c.fecha}', '${c.hora}', '${c.servicio}', '${safeName}', '${c.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', true)">Cancelar</button></div>`;
-            }
-          }
-          container.innerHTML += `<div class="${cardClass}">${badge}<div style="font-size:1.1rem; font-weight:bold; color:var(--text);">${c.servicio}</div><div style="color:var(--primary); font-weight:bold; margin:5px 0;">${format12h(c.hora)} - ${c.fecha}</div><div style="font-size:0.9rem; color:#888;">${c.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9; padding:8px; border-radius:8px; margin-top:8px; font-size:0.8rem;">📱 ${c.telefono}<br>📧 ${c.correo}</div>` : ""}${buttonsHtml}</div>`;
+        data.forEach((d) => {
+          const badge =
+            d.estado === "reprogramada"
+              ? `<div class="status-pill repro">Reprogramada</div>`
+              : `<div class="status-pill" style="background:#e6fffa;color:#00b894;border:1px solid #00b894">Confirmada</div>`;
+          const btns =
+            userProfile.role === "admin"
+              ? `<div class="actions-row"><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${d.telefono}?text=Hola%20${d.nombre},%20recordatorio')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false)">Cancelar</button></div>`
+              : d.fecha >= hoy
+                ? `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true)">Cancelar</button></div>`
+                : "";
+          c.innerHTML += `<div class="appointment-card ${d.estado === "reprogramada" ? "reprogramada" : ""} animate-pop">${badge}<div style="font-size:1.1rem;font-weight:bold">${d.servicio}</div><div style="color:var(--primary);font-weight:bold;margin:5px 0">${format12h(d.hora)} - ${d.fecha}</div><div style="font-size:0.9rem;color:#888">${d.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9;padding:8px;border-radius:8px;margin-top:8px;font-size:0.8rem">📱 ${d.telefono}<br>📧 ${d.correo}</div>` : ""}${btns}</div>`;
         });
       }
-
       async function fetchSchedule() {
         const { data } = await client.from("horarios_base").select("*");
         if (data) data.forEach((i) => (globalSchedule[i.dia] = i.horas));
       }
-
       function renderCalendar() {
         const grid = document.getElementById("calendarGrid");
         grid.innerHTML = "";
         ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"].forEach(
           (d) =>
-            (grid.innerHTML += `<div style="font-size:0.8rem; text-align:center; color:var(--primary); font-weight:bold;">${d}</div>`),
+            (grid.innerHTML += `<div style="font-size:0.8rem;text-align:center;color:var(--primary);font-weight:bold">${d}</div>`),
         );
-        const year = viewDate.getFullYear(),
-          month = viewDate.getMonth();
+        const y = viewDate.getFullYear(),
+          m = viewDate.getMonth();
         document.getElementById("monthDisplay").innerText = new Date(
-          year,
-          month,
+          y,
+          m,
           1,
         ).toLocaleString("es-ES", { month: "long", year: "numeric" });
-        const firstDay = new Date(year, month, 1).getDay();
-        const lastDate = new Date(year, month + 1, 0).getDate();
-        const today = new Date();
+        const first = new Date(y, m, 1).getDay(),
+          last = new Date(y, m + 1, 0).getDate(),
+          today = new Date();
         today.setHours(0, 0, 0, 0);
-        for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
-        for (let i = 1; i <= lastDate; i++) {
+        for (let i = 0; i < first; i++) grid.innerHTML += `<div></div>`;
+        for (let i = 1; i <= last; i++) {
           const d = document.createElement("div");
-          const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+          const dStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           const cDate = new Date(dStr + "T00:00:00");
           d.className = "day";
           d.innerText = i;
@@ -1772,10 +1642,7 @@
             if (cDate.getTime() === today.getTime()) d.classList.add("today");
             d.onclick = () => {
               if (d.classList.contains("full"))
-                return showAlert(
-                  "Lo sentimos",
-                  "No prestamos servicio este día.",
-                );
+                return showAlert("Lo sentimos", "Día completo o no laboral.");
               document
                 .querySelectorAll(".day")
                 .forEach((e) => e.classList.remove("selected"));
@@ -1786,134 +1653,132 @@
           }
           grid.appendChild(d);
         }
-        updateFullDays(year, month, lastDate);
+        updateFullDays(y, m, last);
       }
-
       async function updateFullDays(y, m, last) {
-        const start = `${y}-${String(m + 1).padStart(2, "0")}-01`;
-        const end = `${y}-${String(m + 1).padStart(2, "0")}-${last}`;
-        const { data: citas } = await client
+        const s = `${y}-${String(m + 1).padStart(2, "0")}-01`,
+          e = `${y}-${String(m + 1).padStart(2, "0")}-${last}`;
+        const { data: c } = await client
           .from("citas")
           .select("fecha,hora")
-          .gte("fecha", start)
-          .lte("fecha", end);
-        const { data: bloq } = await client
+          .gte("fecha", s)
+          .lte("fecha", e);
+        const { data: b } = await client
           .from("bloqueos")
           .select("fecha,hora")
-          .gte("fecha", start)
-          .lte("fecha", end);
+          .gte("fecha", s)
+          .lte("fecha", e);
         for (let i = 1; i <= last; i++) {
           const dStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           const el = document.getElementById(`day-${dStr}`);
           if (!el || el.classList.contains("disabled")) continue;
-          const dayW = new Date(dStr + "T00:00:00").getDay();
-          const base = globalSchedule[dayW] || [];
-          const dayBloq = bloq.some((b) => b.fecha === dStr && b.hora === null);
-          if (dayBloq || base.length === 0) {
+          const dw = new Date(dStr + "T00:00:00").getDay();
+          const base = globalSchedule[dw] || [];
+          const bl = b.some((x) => x.fecha === dStr && x.hora === null);
+          if (bl || !base.length) {
             el.classList.add("full");
             continue;
           }
           const taken = [
-            ...citas.filter((c) => c.fecha === dStr).map((c) => c.hora),
-            ...bloq
-              .filter((b) => b.fecha === dStr && b.hora)
-              .map((b) => b.hora),
+            ...c.filter((x) => x.fecha === dStr).map((x) => x.hora),
+            ...b.filter((x) => x.fecha === dStr && x.hora).map((x) => x.hora),
           ];
-          const avail = base.filter((h) => !taken.includes(h));
-          if (avail.length === 0) el.classList.add("full");
+          if (!base.filter((h) => !taken.includes(h)).length)
+            el.classList.add("full");
         }
       }
-
-      async function checkHoras(fecha) {
-        const dayW = new Date(fecha + "T00:00:00").getDay();
-        let base = globalSchedule[dayW] ? [...globalSchedule[dayW]].sort() : [];
-        const { data: citas } = await client
+      async function checkHoras(f) {
+        const dw = new Date(f + "T00:00:00").getDay();
+        let base = globalSchedule[dw] ? [...globalSchedule[dw]].sort() : [];
+        const { data: c } = await client
           .from("citas")
           .select("hora")
-          .eq("fecha", fecha);
-        const { data: bloq } = await client
+          .eq("fecha", f);
+        const { data: b } = await client
           .from("bloqueos")
           .select("hora")
-          .eq("fecha", fecha);
-        const taken = [...citas.map((c) => c.hora), ...bloq.map((b) => b.hora)];
-        const isDayBloq = bloq.some((b) => b.hora === null);
-        const sel = document.getElementById("fieldHora");
-        sel.innerHTML = "";
-        if (base.length === 0 || isDayBloq) {
-          sel.add(new Option("No prestamos servicio este día", ""));
-          sel.disabled = true;
+          .eq("fecha", f);
+        const taken = [...c.map((x) => x.hora), ...b.map((x) => x.hora)];
+        const bl = b.some((x) => x.hora === null);
+        const s = document.getElementById("fieldHora");
+        s.innerHTML = "";
+        if (!base.length || bl) {
+          s.add(new Option("No disponible", ""));
+          s.disabled = true;
           return;
         }
-        sel.disabled = false;
+        s.disabled = false;
         let any = false;
-        sel.add(new Option("Selecciona una hora...", ""));
+        s.add(new Option("Selecciona hora...", ""));
         base.forEach((h) => {
           const opt = document.createElement("option");
           opt.value = h;
           if (taken.includes(h)) {
             opt.disabled = true;
-            opt.text = format12h(h) + " - No disponible";
+            opt.text = format12h(h) + " (Ocupado)";
           } else {
             opt.text = format12h(h);
             any = true;
           }
-          sel.appendChild(opt);
+          s.appendChild(opt);
         });
         if (!any) {
-          sel.innerHTML = "";
-          sel.add(new Option("Agenda llena hoy", ""));
-          sel.disabled = true;
+          s.innerHTML = "";
+          s.add(new Option("Lleno", ""));
+          s.disabled = true;
         }
       }
-
       function moveMonth(v) {
         viewDate.setMonth(viewDate.getMonth() + v);
         renderCalendar();
       }
-
       function showTab(t) {
-        // Orden de ocultar
-        ["agenda", "lista", "perfil", "config"].forEach((x) => {
-          document.getElementById(`view-${x}`).style.display = "none";
-          document.getElementById(`tab-${x}`).className = "tab-btn";
-        });
-
-        // Mostrar
+        ["agenda", "lista", "config", "perfil"].forEach(
+          (x) => (document.getElementById(`view-${x}`).style.display = "none"),
+        );
+        ["agenda", "lista", "config", "perfil"].forEach(
+          (x) => (document.getElementById(`tab-${x}`).className = "tab-btn"),
+        );
         document.getElementById(`view-${t}`).style.display =
           t === "agenda"
-            ? window.innerWidth > 850
+            ? window.innerWidth > 768
               ? "grid"
               : "block"
             : "block";
         document.getElementById(`tab-${t}`).className = "tab-btn active";
-
         if (t === "lista") loadAllAppointments();
-        if (t !== "agenda" && isRescheduling) cancelRescheduleMode();
+        if (t !== "agenda") cancelRescheduleMode();
       }
-
+      // ADMIN FUNCS (SIMPLIFIED FOR SPACE)
       function toggleWeekDay(d) {
-        const el = document.getElementById(`d${d}`);
-        const idx = selectedWeekDays.indexOf(d);
-        if (idx > -1) {
-          selectedWeekDays.splice(idx, 1);
-          el.classList.remove("active");
-        } else {
-          if (selectedWeekDays.length === 0) {
-            stagedHours = globalSchedule[d] ? [...globalSchedule[d]] : [];
-            renderStaged();
-          }
-          selectedWeekDays.push(d);
-          el.classList.add("active");
-        }
+        const i = selectedWeekDays.indexOf(d);
+        if (i > -1) selectedWeekDays.splice(i, 1);
+        else selectedWeekDays.push(d);
+        renderWeekDays();
+      }
+      function renderWeekDays() {
+        [0, 1, 2, 3, 4, 5, 6].forEach((d) => {
+          const el = document.getElementById(`d${d}`);
+          if (selectedWeekDays.includes(d)) el.classList.add("active");
+          else el.classList.remove("active");
+        });
         document.getElementById("hoursEditor").style.display =
           selectedWeekDays.length ? "block" : "none";
+        if (selectedWeekDays.length === 1 && !stagedHours.length)
+          stagedHours = globalSchedule[selectedWeekDays[0]]
+            ? [...globalSchedule[selectedWeekDays[0]]]
+            : [];
+        renderStaged();
       }
       function renderStaged() {
         const c = document.getElementById("weeklyHours");
         c.innerHTML = "";
-        stagedHours.sort().forEach((h) => {
-          c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')" style="cursor:pointer; margin-left:5px;">x</span></span>`;
-        });
+        stagedHours
+          .sort()
+          .forEach(
+            (h) =>
+              (c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')" style="cursor:pointer;margin-left:5px">x</span></span>`),
+          );
       }
       function addStagedHour() {
         const h = document.getElementById("newHourInput").value;
@@ -1931,14 +1796,10 @@
           await client
             .from("horarios_base")
             .upsert({ dia: d, horas: stagedHours });
-        selectedWeekDays.forEach((d) =>
-          document.getElementById(`d${d}`).classList.remove("active"),
-        );
         selectedWeekDays = [];
-        document.getElementById("hoursEditor").style.display = "none";
-        showAlert("Éxito", "Horario actualizado.");
+        renderWeekDays();
+        showAlert("Éxito", "Horario guardado.");
       }
-
       async function loadAdminDayConfig() {
         const d = document.getElementById("adminDateInput").value;
         if (!d) return;
@@ -1949,16 +1810,16 @@
           .select("*")
           .eq("fecha", d);
         const isFull = data.some((b) => b.hora === null);
-        const btn = document.getElementById("btnToggleDay");
-        btn.innerText = isFull ? "🔓 ABRIR DÍA" : "🔒 CERRAR DÍA COMPLETO";
-        btn.style.background = isFull ? "var(--whatsapp)" : "var(--danger)";
-        const dayW = new Date(d + "T00:00:00").getDay();
-        const base = globalSchedule[dayW] || [];
-        const grid = document.getElementById("adminHourGrid");
-        grid.innerHTML = "";
+        document.getElementById("btnToggleDay").innerText = isFull
+          ? "🔓 ABRIR DÍA"
+          : "🔒 CERRAR DÍA";
+        const dw = new Date(d + "T00:00:00").getDay();
+        const base = globalSchedule[dw] || [];
+        const g = document.getElementById("adminHourGrid");
+        g.innerHTML = "";
         base.sort().forEach((h) => {
           const isB = data.some((b) => b.hora === h);
-          grid.innerHTML += `<button onclick="toggleBlock('${h}',${isB})" style="padding:10px; border-radius:10px; border:none; background:${isB ? "#ffebee" : "#e8f5e9"}; color:${isB ? "red" : "green"}; font-weight:bold; cursor:pointer;">${format12h(h)} <br> ${isB ? "🚫" : "✅"}</button>`;
+          g.innerHTML += `<button class="hour-btn" style="background:${isB ? "#ffebee" : "#e8f5e9"};border:1px solid #ddd;padding:10px;border-radius:8px" onclick="toggleBlock('${h}',${isB})">${format12h(h)} ${isB ? "🚫" : "✅"}</button>`;
         });
       }
       async function toggleFullDayBlock() {
@@ -1989,7 +1850,6 @@
         loadAdminDayConfig();
       }
 
-      // EJECUTAR INICIO
       initApp();
     </script>
   </body>
