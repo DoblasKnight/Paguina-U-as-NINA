@@ -10,16 +10,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       :root {
-        /* Paleta NailsByNINA */
-        --primary: #ff1493; /* Deep Pink Neón */
+        --primary: #ff1493;
         --primary-glow: 0 0 10px rgba(255, 20, 147, 0.4);
-        --bg: #fff0f5; /* Lavender Blush */
+        --bg: #fff0f5;
         --card-bg: #ffffff;
         --text: #4a148c;
         --text-light: #888;
         --whatsapp: #25d366;
         --danger: #ff3366;
-        --info: #00bfff; /* Deep Sky Blue Neón */
+        --info: #00bfff;
+        --success: #00e676;
         --radius: 20px;
       }
 
@@ -30,11 +30,9 @@
         color: var(--text);
         padding: 15px;
         -webkit-tap-highlight-color: transparent;
-        /* Mejora el comportamiento del scroll */
         overscroll-behavior-y: none;
       }
 
-      /* --- ANIMACIONES --- */
       @keyframes popIn {
         0% {
           opacity: 0;
@@ -45,12 +43,11 @@
           transform: scale(1);
         }
       }
-
       .animate-pop {
         animation: popIn 0.3s ease-out;
       }
 
-      /* --- MODALES --- */
+      /* MODALES */
       .modal-overlay {
         display: none;
         position: fixed;
@@ -117,9 +114,10 @@
         color: white;
       }
 
-      /* --- CONTENEDORES --- */
+      /* LAYOUT */
       #auth-screen,
-      #app-screen {
+      #app-screen,
+      #recovery-screen {
         display: none;
         max-width: 800px;
         margin: 0 auto;
@@ -129,7 +127,8 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
         min-height: 85vh;
       }
-      #auth-screen {
+      #auth-screen,
+      #recovery-screen {
         display: block;
         max-width: 400px;
         margin-top: 40px;
@@ -137,8 +136,10 @@
         border: 2px solid #ffe6f2;
         min-height: auto;
       }
+      #recovery-screen {
+        display: none;
+      }
 
-      /* --- HEADER & NAV --- */
       .nav-header {
         background: white;
         color: var(--primary);
@@ -148,15 +149,19 @@
         align-items: center;
         border-bottom: 1px solid #ffe6f2;
       }
+
       .tabs {
         display: flex;
         background: white;
         padding: 5px;
         border-bottom: 1px solid #f8f8f8;
+        overflow-x: auto;
+        white-space: nowrap;
       }
       .tab-btn {
         flex: 1;
-        padding: 15px;
+        min-width: 70px;
+        padding: 15px 5px;
         border: none;
         background: none;
         cursor: pointer;
@@ -181,7 +186,6 @@
         box-shadow: var(--primary-glow);
       }
 
-      /* --- CALENDARIO --- */
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -224,7 +228,6 @@
         pointer-events: none;
       }
 
-      /* --- FORMULARIO --- */
       .main-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -247,7 +250,6 @@
         box-sizing: border-box;
         background: #fbfbfb;
         font-size: 1rem;
-        transition: border-color 0.3s;
         color: #333;
       }
       input:focus,
@@ -255,10 +257,29 @@
         outline: none;
         border-color: var(--primary);
         background: white;
-        box-shadow: 0 0 0 4px rgba(255, 20, 147, 0.05);
       }
 
-      /* --- UPLOAD --- */
+      .password-wrapper {
+        position: relative;
+        width: 100%;
+        margin: 8px 0;
+      }
+      .password-wrapper input {
+        margin: 0;
+        padding-right: 45px;
+      }
+      .toggle-eye {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: #bbb;
+        user-select: none;
+        z-index: 10;
+      }
+
       .file-upload-wrapper {
         margin: 15px 0;
         text-align: center;
@@ -277,7 +298,6 @@
         font-weight: bold;
         width: 100%;
         box-sizing: border-box;
-        transition: all 0.3s;
       }
       #fileNameDisplay {
         display: block;
@@ -299,9 +319,7 @@
         font-size: 1.05rem;
         margin-top: 15px;
         box-shadow: var(--primary-glow);
-        transition:
-          transform 0.2s,
-          box-shadow 0.2s;
+        transition: transform 0.2s;
       }
       .btn-main:active {
         transform: scale(0.98);
@@ -310,8 +328,12 @@
         background: var(--info);
         box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
       }
+      .btn-main:disabled {
+        background: #ccc;
+        box-shadow: none;
+        cursor: not-allowed;
+      }
 
-      /* --- CARDS --- */
       .appointment-card {
         background: white;
         border: 1px solid #f0f0f0;
@@ -329,13 +351,10 @@
         bottom: 0;
         width: 5px;
         background: var(--primary);
-        box-shadow: var(--primary-glow);
       }
       .appointment-card.reprogramada::before {
         background: var(--info);
-        box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
       }
-
       .status-pill {
         display: inline-block;
         font-size: 0.7rem;
@@ -351,7 +370,6 @@
         color: var(--info);
         border: 1px solid var(--info);
       }
-
       .actions-row {
         display: flex;
         gap: 10px;
@@ -379,7 +397,6 @@
         color: var(--danger);
       }
 
-      /* --- ADMIN --- */
       .admin-control-panel {
         padding: 20px;
         background: white;
@@ -395,12 +412,10 @@
         justify-content: center;
         font-weight: bold;
         cursor: pointer;
-        transition: 0.3s;
       }
       .day-chip.active {
         background: var(--primary);
         color: white;
-        box-shadow: var(--primary-glow);
         transform: translateY(-3px);
       }
       .hour-tag {
@@ -424,6 +439,47 @@
         border-radius: 0 0 15px 15px;
         margin-bottom: 15px;
       }
+      .service-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        border: 1px solid #eee;
+      }
+      .btn-delete-svc {
+        background: #ffebee;
+        color: var(--danger);
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.8rem;
+      }
+      .add-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 15px;
+      }
+      .add-row input {
+        margin: 0;
+        flex: 1;
+        border: 2px solid #ddd;
+      }
+      .add-row button {
+        width: auto;
+        margin: 0;
+        padding: 0 20px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
     </style>
   </head>
   <body>
@@ -441,6 +497,32 @@
             onclick="closeModal('generalModal')"
           >
             Entendido
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="resetModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-icon">📧</div>
+        <h3 style="color: var(--primary); margin: 0">Recuperar Cuenta</h3>
+        <p style="color: #666; margin: 10px 0">
+          Ingresa tu correo y te enviaremos un enlace mágico.
+        </p>
+        <input
+          type="email"
+          id="resetEmailInput"
+          placeholder="tucorreo@ejemplo.com"
+        />
+        <div class="modal-btn-row">
+          <button
+            class="btn-modal secondary"
+            onclick="closeModal('resetModal')"
+          >
+            Cancelar
+          </button>
+          <button class="btn-modal primary" onclick="sendResetEmail()">
+            Enviar
           </button>
         </div>
       </div>
@@ -472,8 +554,7 @@
         <div class="modal-icon">💅</div>
         <h2 style="color: var(--primary); margin: 0">¡Casi Listo!</h2>
         <p style="color: #666; margin: 15px 0">
-          Gracias por elegir <b>NailsByNINA</b>.<br />Para confirmar, envía tu
-          comprobante.
+          Para confirmar, envía tu comprobante.
         </p>
         <div class="modal-btn-row">
           <button class="btn-modal whatsapp" onclick="enviarWhatsAppCliente()">
@@ -488,7 +569,7 @@
         <div class="modal-icon">🔄</div>
         <h2 style="color: var(--info); margin: 0">Cambio Realizado</h2>
         <p style="color: #666; margin: 15px 0">
-          Tu nueva fecha ha sido reservada.<br />Avísanos para actualizar.
+          Nueva fecha reservada. Avísanos.
         </p>
         <div class="modal-btn-row">
           <button
@@ -498,6 +579,40 @@
             Confirmar Cambio
           </button>
         </div>
+      </div>
+    </div>
+
+    <div id="recovery-screen" class="animate-pop">
+      <h1 style="text-align: center; color: var(--primary)">
+        Restablecer Clave
+      </h1>
+      <p
+        id="recoveryStatus"
+        style="text-align: center; color: #666; margin-bottom: 20px"
+      >
+        Verificando enlace...
+      </p>
+
+      <div id="recoveryForm" style="display: none">
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="recoveryPass"
+            placeholder="Nueva contraseña (mín 6)"
+          />
+          <span
+            class="toggle-eye"
+            onclick="togglePassword('recoveryPass', this)"
+            >👁️</span
+          >
+        </div>
+        <button
+          id="btnFinalizeRecovery"
+          class="btn-main"
+          onclick="finalizeRecovery()"
+        >
+          Guardar Nueva Contraseña
+        </button>
       </div>
     </div>
 
@@ -518,10 +633,29 @@
 
       <div id="login-form">
         <input type="email" id="loginEmail" placeholder="Tu Correo" />
-        <input type="password" id="loginPass" placeholder="Contraseña" />
+
+        <div class="password-wrapper">
+          <input type="password" id="loginPass" placeholder="Contraseña" />
+          <span class="toggle-eye" onclick="togglePassword('loginPass', this)"
+            >👁️</span
+          >
+        </div>
+
         <button class="btn-main" onclick="handleAuth('login')">
           Ingresar 💖
         </button>
+        <p style="text-align: center; margin-top: 15px">
+          <a
+            href="#"
+            onclick="openResetModal()"
+            style="
+              color: var(--info);
+              font-size: 0.85rem;
+              text-decoration: none;
+            "
+            >¿Olvidaste tu contraseña?</a
+          >
+        </p>
         <p
           style="
             text-align: center;
@@ -547,7 +681,31 @@
       <div id="signup-form" style="display: none">
         <input type="text" id="regNombre" placeholder="Tu Nombre Completo" />
         <input type="email" id="regEmail" placeholder="Tu Correo" />
-        <input type="password" id="regPass" placeholder="Contraseña (mín 6)" />
+
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="regPass"
+            placeholder="Contraseña (mín 6)"
+          />
+          <span class="toggle-eye" onclick="togglePassword('regPass', this)"
+            >👁️</span
+          >
+        </div>
+
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="regPassConfirm"
+            placeholder="Confirmar Contraseña"
+          />
+          <span
+            class="toggle-eye"
+            onclick="togglePassword('regPassConfirm', this)"
+            >👁️</span
+          >
+        </div>
+
         <button class="btn-main" onclick="handleAuth('signup')">
           Registrarme ✨
         </button>
@@ -597,20 +755,6 @@
             id="displayUserName"
             style="font-size: 0.85rem; color: #888"
           ></span>
-          <button
-            onclick="logout()"
-            style="
-              background: none;
-              border: 1px solid #ffcccc;
-              color: var(--danger);
-              padding: 6px 12px;
-              border-radius: 10px;
-              cursor: pointer;
-              font-size: 0.8rem;
-            "
-          >
-            Salir
-          </button>
         </div>
       </div>
 
@@ -649,6 +793,9 @@
           style="display: none"
         >
           Admin
+        </button>
+        <button id="tab-perfil" class="tab-btn" onclick="showTab('perfil')">
+          Perfil
         </button>
       </div>
 
@@ -705,7 +852,6 @@
           </div>
           <div class="cal-grid" id="calendarGrid"></div>
         </div>
-
         <div class="form-section">
           <h3 style="margin: 0 0 15px 0; color: var(--primary)">
             Detalles de la Cita
@@ -740,14 +886,9 @@
               >Servicio deseado:</label
             >
             <select id="fieldServicio">
-              <option>Uñas Acrílicas</option>
-              <option>Retoque / Mantenimiento</option>
-              <option>Esmaltado Semipermanente</option>
-              <option>Diseño Especial (Nail Art)</option>
-              <option>Press On</option>
+              <option>Cargando servicios...</option>
             </select>
           </div>
-
           <label
             style="
               font-size: 0.8rem;
@@ -761,7 +902,6 @@
           <select id="fieldHora">
             <option value="">Selecciona un día primero</option>
           </select>
-
           <div id="fileUploadDiv" class="file-upload-wrapper">
             <input
               type="file"
@@ -770,12 +910,11 @@
               hidden
               onchange="updateFileName()"
             />
-            <label for="fieldFile" class="custom-file-upload">
-              📸 Subir Comprobante
-            </label>
+            <label for="fieldFile" class="custom-file-upload"
+              >📸 Subir Comprobante</label
+            >
             <span id="fileNameDisplay">Ningún archivo seleccionado</span>
           </div>
-
           <button id="btnMainAction" class="btn-main" onclick="confirmarCita()">
             💖 Reservar Cita
           </button>
@@ -798,8 +937,36 @@
         class="admin-control-panel animate-pop"
         style="display: none"
       >
+        <h3 style="color: var(--primary); margin-top: 0">
+          Gestión de Servicios
+        </h3>
+        <div
+          style="
+            background: #fdfdfd;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px dashed var(--primary);
+            margin-bottom: 30px;
+          "
+        >
+          <div id="adminServicesList"></div>
+          <div class="add-row">
+            <input
+              type="text"
+              id="newServiceInput"
+              placeholder="Nombre del nuevo servicio..."
+            />
+            <button
+              class="btn-main"
+              style="background: var(--success)"
+              onclick="addService()"
+            >
+              <span style="font-size: 1.5rem; line-height: 1">+</span>
+            </button>
+          </div>
+        </div>
         <h3 style="text-align: center; color: var(--primary)">
-          Configuración Semanal
+          Horario Semanal
         </h3>
         <div
           style="
@@ -828,15 +995,9 @@
           "
         >
           <div id="weeklyHours" style="margin-bottom: 10px"></div>
-          <div style="display: flex; gap: 10px">
-            <input type="time" id="newHourInput" style="margin: 0" />
-            <button
-              class="btn-main"
-              style="width: auto; margin: 0; padding: 0 20px"
-              onclick="addStagedHour()"
-            >
-              +
-            </button>
+          <div class="add-row">
+            <input type="time" id="newHourInput" />
+            <button class="btn-main" onclick="addStagedHour()">+</button>
           </div>
           <button
             class="btn-main"
@@ -875,6 +1036,126 @@
           ></div>
         </div>
       </div>
+
+      <div
+        id="view-perfil"
+        style="display: none; padding: 25px"
+        class="animate-pop"
+      >
+        <h3 style="color: var(--primary); text-align: center">Mi Perfil</h3>
+        <div
+          style="
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+          "
+        >
+          <h4 style="margin-top: 0">Datos Personales</h4>
+          <label style="font-size: 0.8rem; color: #888"
+            >Nombre para mostrar:</label
+          >
+          <input type="text" id="profileName" />
+          <button
+            class="btn-main"
+            style="margin-top: 10px; padding: 12px"
+            onclick="updateProfileName()"
+          >
+            Guardar Nombre
+          </button>
+        </div>
+
+        <button
+          class="btn-main"
+          style="
+            background: white;
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            margin-bottom: 20px;
+          "
+          onclick="togglePassForm()"
+        >
+          🔒 Cambiar Contraseña
+        </button>
+
+        <div
+          id="profilePassForm"
+          style="
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+          "
+        >
+          <h4 style="margin-top: 0">Cambiar Contraseña</h4>
+
+          <div class="password-wrapper">
+            <input
+              type="password"
+              id="currentPassProfile"
+              placeholder="Contraseña Actual"
+            />
+            <span
+              class="toggle-eye"
+              onclick="togglePassword('currentPassProfile', this)"
+              >👁️</span
+            >
+          </div>
+
+          <div class="password-wrapper">
+            <input
+              type="password"
+              id="newPassProfile"
+              placeholder="Nueva Contraseña (mín 6)"
+            />
+            <span
+              class="toggle-eye"
+              onclick="togglePassword('newPassProfile', this)"
+              >👁️</span
+            >
+          </div>
+
+          <div class="password-wrapper">
+            <input
+              type="password"
+              id="confirmPassProfile"
+              placeholder="Confirmar Nueva Contraseña"
+            />
+            <span
+              class="toggle-eye"
+              onclick="togglePassword('confirmPassProfile', this)"
+              >👁️</span
+            >
+          </div>
+
+          <button
+            class="btn-main"
+            style="margin-top: 10px; padding: 12px; background: var(--info)"
+            onclick="updatePassword()"
+          >
+            Actualizar Contraseña
+          </button>
+        </div>
+
+        <button
+          onclick="logout()"
+          style="
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--danger);
+            background: white;
+            color: var(--danger);
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+          "
+        >
+          Cerrar Sesión
+        </button>
+      </div>
     </div>
 
     <script>
@@ -885,7 +1166,9 @@
       const miWhatsAppAdmin = "573228211246";
 
       let userProfile = null;
+      let currentUserEmail = "";
       let globalSchedule = {};
+      let globalServices = [];
       let selectedWeekDays = [],
         stagedHours = [];
       let viewDate = new Date();
@@ -897,18 +1180,121 @@
       let pendingCancelId = null;
       let pendingCancelData = null;
 
-      // --- LOGICA SWIPE AJUSTADA ---
-      let touchStartX = 0;
-      let touchStartY = 0;
-      let touchEndX = 0;
-      let touchEndY = 0;
-      const appScreen = document.getElementById("app-screen");
+      // --- INICIALIZACIÓN INTELIGENTE ---
+      function initApp() {
+        const hash = window.location.hash;
+        if (hash && hash.includes("type=recovery")) {
+          // MODO RECUPERACIÓN DETECTADO
+          document.getElementById("auth-screen").style.display = "none";
+          document.getElementById("app-screen").style.display = "none";
+          document.getElementById("recovery-screen").style.display = "block";
 
+          // Esperamos a que Supabase procese el hash y nos loguee automáticamente
+          waitForSession();
+        } else {
+          checkUser();
+        }
+      }
+
+      // --- ESPERAR SESIÓN (FIX para "Session Missing") ---
+      async function waitForSession() {
+        // Intentamos obtener la sesión varias veces hasta que Supabase la establezca
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        const interval = setInterval(async () => {
+          attempts++;
+          const {
+            data: { session },
+          } = await client.auth.getSession();
+
+          if (session) {
+            clearInterval(interval);
+            document.getElementById("recoveryStatus").innerText =
+              "Enlace verificado. Ingresa tu nueva clave.";
+            document.getElementById("recoveryStatus").style.color =
+              "var(--success)";
+            document.getElementById("recoveryForm").style.display = "block";
+          } else if (attempts >= maxAttempts) {
+            clearInterval(interval);
+            document.getElementById("recoveryStatus").innerText =
+              "El enlace ha expirado o es inválido.";
+            document.getElementById("recoveryStatus").style.color =
+              "var(--danger)";
+          }
+        }, 500); // Revisar cada medio segundo
+      }
+
+      // --- MOSTRAR/OCULTAR CONTRASEÑA ---
+      function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+          input.type = "text";
+          icon.innerText = "🙈";
+        } else {
+          input.type = "password";
+          icon.innerText = "👁️";
+        }
+      }
+
+      function togglePassForm() {
+        const form = document.getElementById("profilePassForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+
+      // --- RECUPERACIÓN ---
+      function openResetModal() {
+        document.getElementById("resetModal").style.display = "flex";
+      }
+      async function sendResetEmail() {
+        const email = document.getElementById("resetEmailInput").value;
+        if (!email) return showAlert("Error", "Escribe tu correo.");
+        const { error } = await client.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.href,
+        });
+        if (error) showAlert("Error", error.message);
+        else {
+          closeModal("resetModal");
+          showAlert(
+            "Enviado",
+            "Revisa tu correo. Sigue el enlace para cambiar tu clave.",
+          );
+        }
+      }
+
+      async function finalizeRecovery() {
+        const newPass = document.getElementById("recoveryPass").value;
+        if (!newPass || newPass.length < 6)
+          return showAlert(
+            "Error",
+            "La contraseña debe tener al menos 6 caracteres",
+          );
+
+        // La sesión ya debería estar activa gracias a waitForSession
+        const { error } = await client.auth.updateUser({ password: newPass });
+        if (error) {
+          showAlert(
+            "Error",
+            "No se pudo actualizar. Intenta solicitar el correo de nuevo.",
+          );
+        } else {
+          showAlert("¡Éxito!", "Contraseña restablecida. Ingresando...");
+          document.getElementById("recovery-screen").style.display = "none";
+          history.replaceState(null, null, " "); // Limpiar URL
+          checkUser();
+        }
+      }
+
+      // --- SWIPE ---
+      let touchStartX = 0,
+        touchStartY = 0,
+        touchEndX = 0,
+        touchEndY = 0;
+      const appScreen = document.getElementById("app-screen");
       appScreen.addEventListener("touchstart", (e) => {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
       });
-
       appScreen.addEventListener("touchend", (e) => {
         touchEndX = e.changedTouches[0].screenX;
         touchEndY = e.changedTouches[0].screenY;
@@ -916,30 +1302,26 @@
       });
 
       function handleSwipe() {
-        const threshold = 100; // AUMENTADO: Se requiere deslizar más distancia (antes 50)
-        const restraint = 80; // LIMITE VERTICAL: Si subes/bajas más de 80px, no cuenta como swipe
-
+        const threshold = 100;
+        const restraint = 80;
         const diffX = touchEndX - touchStartX;
         const diffY = touchEndY - touchStartY;
-
-        // Comprobamos:
-        // 1. Que el movimiento horizontal sea mayor al umbral.
-        // 2. Que el movimiento vertical sea PEQUEÑO (menor al restraint), para asegurar que no es scroll.
         if (Math.abs(diffX) > threshold && Math.abs(diffY) < restraint) {
           const tabs = ["agenda", "lista"];
           if (userProfile && userProfile.role === "admin") tabs.push("config");
+          tabs.push("perfil");
 
           let activeIdx = 0;
           if (document.getElementById("view-lista").style.display !== "none")
             activeIdx = 1;
           if (document.getElementById("view-config").style.display !== "none")
             activeIdx = 2;
+          if (document.getElementById("view-perfil").style.display !== "none")
+            activeIdx = tabs.indexOf("config") > -1 ? 3 : 2;
 
           if (diffX < 0) {
-            // Izquierda -> Siguiente
             if (activeIdx < tabs.length - 1) showTab(tabs[activeIdx + 1]);
           } else {
-            // Derecha -> Anterior
             if (activeIdx > 0) showTab(tabs[activeIdx - 1]);
           }
         }
@@ -974,7 +1356,6 @@
       function closeModal(id) {
         document.getElementById(id).style.display = "none";
       }
-
       function toggleAuth(l) {
         document.getElementById("login-form").style.display = l
           ? "block"
@@ -991,7 +1372,12 @@
         const pass = document.getElementById(
           type === "login" ? "loginPass" : "regPass",
         ).value;
+
         if (type === "signup") {
+          const confirm = document.getElementById("regPassConfirm").value;
+          if (pass !== confirm)
+            return showAlert("Error", "Las contraseñas no coinciden", "🚫");
+
           const { error } = await client.auth.signUp({
             email,
             password: pass,
@@ -1017,6 +1403,11 @@
       }
 
       async function checkUser() {
+        if (
+          document.getElementById("recovery-screen").style.display === "block"
+        )
+          return;
+
         const {
           data: { session },
         } = await client.auth.getSession();
@@ -1029,14 +1420,18 @@
           if (!data) return setTimeout(checkUser, 500);
 
           userProfile = data;
+          currentUserEmail = session.user.email;
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "block";
           document.getElementById("displayUserName").innerText = data.full_name;
+          document.getElementById("profileName").value = data.full_name;
 
           document.getElementById("fieldNombre").value = data.full_name;
           document.getElementById("fieldCorreo").value = session.user.email;
 
+          await fetchServices();
           await fetchSchedule();
+
           if (data.role === "admin") {
             document.getElementById("adminBadge").style.display =
               "inline-block";
@@ -1048,6 +1443,118 @@
             document.getElementById("fieldCorreo").readOnly = true;
           }
           renderCalendar();
+        } else {
+          if (
+            document.getElementById("recovery-screen").style.display !== "block"
+          ) {
+            document.getElementById("auth-screen").style.display = "block";
+          }
+        }
+      }
+
+      async function fetchServices() {
+        const { data, error } = await client
+          .from("servicios")
+          .select("*")
+          .order("id");
+        if (data) {
+          globalServices = data;
+          renderServicesDropdown();
+          if (userProfile && userProfile.role === "admin")
+            renderAdminServicesList();
+        }
+      }
+
+      function renderServicesDropdown() {
+        const sel = document.getElementById("fieldServicio");
+        sel.innerHTML = "";
+        globalServices.forEach((s) => {
+          const opt = document.createElement("option");
+          opt.value = s.nombre;
+          opt.text = s.nombre;
+          sel.appendChild(opt);
+        });
+      }
+
+      function renderAdminServicesList() {
+        const list = document.getElementById("adminServicesList");
+        list.innerHTML = "";
+        globalServices.forEach((s) => {
+          list.innerHTML += `<div class="service-item"><span>${s.nombre}</span><button class="btn-delete-svc" onclick="deleteService(${s.id})">Borrar</button></div>`;
+        });
+      }
+
+      async function addService() {
+        const input = document.getElementById("newServiceInput");
+        const val = input.value.trim();
+        if (!val) return;
+        const { error } = await client
+          .from("servicios")
+          .insert([{ nombre: val }]);
+        if (error) showAlert("Error", error.message);
+        else {
+          input.value = "";
+          await fetchServices();
+        }
+      }
+
+      async function deleteService(id) {
+        if (!confirm("¿Seguro que quieres borrar este servicio?")) return;
+        const { error } = await client.from("servicios").delete().eq("id", id);
+        if (error) showAlert("Error", error.message);
+        else await fetchServices();
+      }
+
+      async function updateProfileName() {
+        const newName = document.getElementById("profileName").value;
+        if (!newName)
+          return showAlert("Error", "El nombre no puede estar vacío");
+        const { error } = await client
+          .from("profiles")
+          .update({ full_name: newName })
+          .eq("id", userProfile.id);
+        if (error) showAlert("Error", error.message);
+        else {
+          userProfile.full_name = newName;
+          document.getElementById("displayUserName").innerText = newName;
+          document.getElementById("fieldNombre").value = newName;
+          showAlert("Éxito", "Nombre actualizado correctamente.");
+        }
+      }
+
+      // --- ACTUALIZAR CONTRASEÑA (PERFIL) ---
+      async function updatePassword() {
+        const currentPass = document.getElementById("currentPassProfile").value;
+        const newPass = document.getElementById("newPassProfile").value;
+        const confirmPass = document.getElementById("confirmPassProfile").value;
+
+        if (!currentPass || !newPass || !confirmPass)
+          return showAlert("Faltan datos", "Llena todos los campos");
+        if (newPass !== confirmPass)
+          return showAlert("Error", "Las nuevas contraseñas no coinciden");
+        if (newPass.length < 6)
+          return showAlert(
+            "Error",
+            "La contraseña debe tener mínimo 6 caracteres",
+          );
+
+        const { error: signInError } = await client.auth.signInWithPassword({
+          email: currentUserEmail,
+          password: currentPass,
+        });
+
+        if (signInError) {
+          return showAlert("Error", "Tu contraseña actual es incorrecta.");
+        }
+
+        const { error } = await client.auth.updateUser({ password: newPass });
+        if (error) showAlert("Error", error.message);
+        else {
+          document.getElementById("currentPassProfile").value = "";
+          document.getElementById("newPassProfile").value = "";
+          document.getElementById("confirmPassProfile").value = "";
+          togglePassForm();
+          showAlert("Éxito", "Contraseña actualizada correctamente.");
         }
       }
 
@@ -1055,11 +1562,9 @@
         isRescheduling = true;
         rescheduleId = id;
         rescheduleData = { fecha, hora, servicio, nombre, tel };
-
         document.getElementById("editModeBar").style.display = "flex";
         document.getElementById("newAppointmentFields").style.display = "none";
         document.getElementById("fileUploadDiv").style.display = "none";
-
         const btn = document.getElementById("btnMainAction");
         btn.innerText = "Confirmar Nueva Fecha 🔄";
         btn.className = "btn-main reschedule-mode";
@@ -1135,7 +1640,6 @@
         }
       }
 
-      // --- WHATSAPP LIMPIO ---
       function enviarWhatsAppCliente() {
         const msg =
           `Hola NailsByNINA. Soy ${lastCitaData.nombre}.\n` +
@@ -1152,11 +1656,8 @@
 
       function enviarWhatsAppReprogramacion() {
         const msg =
-          `Hola NailsByNINA. Soy ${lastCitaData.nombre}.\n` +
-          `He reprogramado mi cita.\n` +
-          `Nueva Fecha: ${lastCitaData.fecha}\n` +
-          `Nueva Hora: ${format12h(lastCitaData.hora)}\n` +
-          `Quedo atenta a la confirmacion.`;
+          `Hola NailsByNINA. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\n` +
+          `Nueva Fecha: ${lastCitaData.fecha}\nNueva Hora: ${format12h(lastCitaData.hora)}\nQuedo atenta a la confirmacion.`;
         window.open(
           `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
           "_blank",
@@ -1208,15 +1709,12 @@
         const { data } = await q.order("fecha").order("hora");
         const container = document.getElementById("tablaCitasContainer");
         container.innerHTML = "";
-
         if (!data || data.length === 0) {
           container.innerHTML =
             "<p style='text-align:center; color:#aaa; margin-top:30px;'>No tienes citas agendadas.</p>";
           return;
         }
-
         const hoy = new Date().toISOString().split("T")[0];
-
         data.forEach((c) => {
           const safeName = c.nombre.replace(/'/g, "");
           const isReprogramada = c.estado === "reprogramada";
@@ -1226,34 +1724,15 @@
           const cardClass = isReprogramada
             ? "appointment-card reprogramada animate-pop"
             : "appointment-card animate-pop";
-
           let buttonsHtml = "";
           if (userProfile.role === "admin") {
-            buttonsHtml = `
-              <div class="actions-row">
-                <button class="btn-action btn-reschedule" style="background:var(--whatsapp); color:white;" onclick="window.open('https://wa.me/${c.telefono}?text=Hola%20${c.nombre},%20recordatorio%20de%20tu%20cita%20en%20NailsByNINA')">Recordar</button>
-                <button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', false)">Cancelar</button>
-              </div>`;
+            buttonsHtml = `<div class="actions-row"><button class="btn-action btn-reschedule" style="background:var(--whatsapp); color:white;" onclick="window.open('https://wa.me/${c.telefono}?text=Hola%20${c.nombre},%20recordatorio%20de%20tu%20cita%20en%20NailsByNINA')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', false)">Cancelar</button></div>`;
           } else {
             if (c.fecha >= hoy) {
-              buttonsHtml = `
-                <div class="actions-row">
-                  <button class="btn-action btn-reschedule" onclick="startReschedule('${c.id}', '${c.fecha}', '${c.hora}', '${c.servicio}', '${safeName}', '${c.telefono}')">Reprogramar</button>
-                  <button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', true)">Cancelar</button>
-                </div>`;
+              buttonsHtml = `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${c.id}', '${c.fecha}', '${c.hora}', '${c.servicio}', '${safeName}', '${c.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${c.id}', '${c.telefono}', '${safeName}', true)">Cancelar</button></div>`;
             }
           }
-
-          container.innerHTML += `
-            <div class="${cardClass}">
-               ${badge}
-               <div style="font-size:1.1rem; font-weight:bold; color:var(--text);">${c.servicio}</div>
-               <div style="color:var(--primary); font-weight:bold; margin:5px 0;">${format12h(c.hora)} - ${c.fecha}</div>
-               <div style="font-size:0.9rem; color:#888;">${c.nombre}</div>
-               ${userProfile.role === "admin" ? `<div style="background:#f9f9f9; padding:8px; border-radius:8px; margin-top:8px; font-size:0.8rem;">📱 ${c.telefono}<br>📧 ${c.correo}</div>` : ""}
-               ${buttonsHtml}
-            </div>
-          `;
+          container.innerHTML += `<div class="${cardClass}">${badge}<div style="font-size:1.1rem; font-weight:bold; color:var(--text);">${c.servicio}</div><div style="color:var(--primary); font-weight:bold; margin:5px 0;">${format12h(c.hora)} - ${c.fecha}</div><div style="font-size:0.9rem; color:#888;">${c.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9; padding:8px; border-radius:8px; margin-top:8px; font-size:0.8rem;">📱 ${c.telefono}<br>📧 ${c.correo}</div>` : ""}${buttonsHtml}</div>`;
         });
       }
 
@@ -1280,7 +1759,6 @@
         const lastDate = new Date(year, month + 1, 0).getDate();
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
         for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
         for (let i = 1; i <= lastDate; i++) {
           const d = document.createElement("div");
@@ -1394,10 +1872,13 @@
       }
 
       function showTab(t) {
-        ["agenda", "lista", "config"].forEach((x) => {
+        // Orden de ocultar
+        ["agenda", "lista", "perfil", "config"].forEach((x) => {
           document.getElementById(`view-${x}`).style.display = "none";
           document.getElementById(`tab-${x}`).className = "tab-btn";
         });
+
+        // Mostrar
         document.getElementById(`view-${t}`).style.display =
           t === "agenda"
             ? window.innerWidth > 850
@@ -1405,6 +1886,7 @@
               : "block"
             : "block";
         document.getElementById(`tab-${t}`).className = "tab-btn active";
+
         if (t === "lista") loadAllAppointments();
         if (t !== "agenda" && isRescheduling) cancelRescheduleMode();
       }
@@ -1456,6 +1938,7 @@
         document.getElementById("hoursEditor").style.display = "none";
         showAlert("Éxito", "Horario actualizado.");
       }
+
       async function loadAdminDayConfig() {
         const d = document.getElementById("adminDateInput").value;
         if (!d) return;
@@ -1505,6 +1988,9 @@
             .insert([{ fecha: adminSelectedDate, hora: h }]);
         loadAdminDayConfig();
       }
+
+      // EJECUTAR INICIO
+      initApp();
     </script>
   </body>
 </html>
