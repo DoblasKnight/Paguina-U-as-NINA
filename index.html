@@ -325,6 +325,11 @@
         background: var(--info);
         box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
       }
+      .btn-main:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
 
       .appointment-card {
         background: white;
@@ -1162,36 +1167,44 @@
         pendingCancelData = null;
 
       // --- INICIO ---
-      const hash = window.location.hash;
-      const isRecovery = hash && hash.includes("type=recovery");
-
-      function initApp() {
-        if (isRecovery) {
-          // Bloquear y mostrar pantalla de espera
+      async function initApp() {
+        // Verificar si la URL es de recuperación
+        const hash = window.location.hash;
+        if (hash && hash.includes("type=recovery")) {
+          // Bloquear pantalla
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "none";
           document.getElementById("recovery-screen").style.display = "block";
+
+          // INTENTO 1: Verificar si Supabase ya lo cachó (inmediato)
+          const {
+            data: { session },
+          } = await client.auth.getSession();
+          if (session) {
+            showRecoverySuccess();
+          }
+          // Si no, el listener onAuthStateChange lo cachará
         } else {
           checkUser();
         }
       }
 
-      // --- EVENTOS SUPABASE (LA CLAVE DEL ÉXITO) ---
-      client.auth.onAuthStateChange(async (event, session) => {
-        // EVENTO 1: RECUPERACIÓN DETECTADA Y SESIÓN LISTA
-        if (
-          event === "PASSWORD_RECOVERY" ||
-          (event === "SIGNED_IN" && isRecovery)
-        ) {
-          document.getElementById("auth-screen").style.display = "none";
-          document.getElementById("app-screen").style.display = "none";
-          document.getElementById("recovery-screen").style.display = "block";
+      // --- EL SECRETO: DETECTAR Y MOSTRAR ---
+      function showRecoverySuccess() {
+        document.getElementById("recoveryStatus").innerText =
+          "Enlace verificado. Ingresa tu nueva clave.";
+        document.getElementById("recoveryStatus").style.color =
+          "var(--success)";
+        document.getElementById("recoveryForm").style.display = "block";
+      }
 
-          document.getElementById("recoveryStatus").innerText =
-            "Enlace verificado. Ingresa tu nueva clave.";
-          document.getElementById("recoveryStatus").style.color =
-            "var(--success)";
-          document.getElementById("recoveryForm").style.display = "block";
+      client.auth.onAuthStateChange(async (event, session) => {
+        // Si estamos en recovery mode y llega un evento de sesión (SIGNED_IN o PASSWORD_RECOVERY)
+        if (
+          window.location.hash.includes("type=recovery") &&
+          (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN")
+        ) {
+          showRecoverySuccess();
         }
       });
 
@@ -1272,7 +1285,7 @@
         if (!email) return showAlert("Error", "Escribe tu correo.");
         const { error } = await client.auth.resetPasswordForEmail(email, {
           redirectTo: window.location.href,
-        }); // Manda al mismo sitio
+        });
         if (error) showAlert("Error", error.message);
         else {
           closeModal("resetModal");
@@ -1289,12 +1302,8 @@
         if (error) {
           showAlert(
             "Error",
-            "El enlace expiró o es inválido. Solicita uno nuevo.",
+            "Error al actualizar. Intenta solicitar el enlace de nuevo.",
           );
-          setTimeout(() => {
-            window.location.hash = "";
-            window.location.reload();
-          }, 2500);
         } else {
           showAlert("¡Éxito!", "Contraseña restablecida. Ingresando...");
           document.getElementById("recovery-screen").style.display = "none";
@@ -1304,7 +1313,7 @@
       }
 
       async function checkUser() {
-        if (isRecovery) return; // No chequear usuario si estamos recuperando
+        if (window.location.hash.includes("type=recovery")) return; // No interrumpir recuperación
 
         const {
           data: { session },
@@ -1456,7 +1465,7 @@
         }
       }
 
-      // ... (Funciones de calendario y cita iguales al anterior) ...
+      // ... (Resto de funciones: format12h, updateFileName, startReschedule, confirmCita, etc. igual que antes) ...
       function format12h(h24) {
         if (!h24) return "";
         let [h, m] = h24.split(":");
