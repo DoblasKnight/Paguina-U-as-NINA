@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       :root {
-        /* Paleta NailsByNINA - Neon & Clean */
+        /* Paleta NailsByNINA */
         --primary: #ff1493; /* Deep Pink Neón */
         --primary-glow: 0 0 10px rgba(255, 20, 147, 0.4);
         --bg: #fff0f5; /* Lavender Blush */
@@ -30,7 +30,7 @@
         color: var(--text);
         padding: 15px;
         -webkit-tap-highlight-color: transparent;
-        /* Evita el rebote de scroll para mejorar el swipe */
+        /* Mejora el comportamiento del scroll */
         overscroll-behavior-y: none;
       }
 
@@ -38,7 +38,7 @@
       @keyframes popIn {
         0% {
           opacity: 0;
-          transform: scale(0.95);
+          transform: scale(0.98);
         }
         100% {
           opacity: 1;
@@ -127,7 +127,7 @@
         border-radius: var(--radius);
         overflow: hidden;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
-        min-height: 80vh; /* Altura mínima para capturar swipe cómodamente */
+        min-height: 85vh;
       }
       #auth-screen {
         display: block;
@@ -897,41 +897,49 @@
       let pendingCancelId = null;
       let pendingCancelData = null;
 
-      // --- SWIPE LOGIC (DESLIZAR) ---
+      // --- LOGICA SWIPE AJUSTADA ---
       let touchStartX = 0;
+      let touchStartY = 0;
       let touchEndX = 0;
+      let touchEndY = 0;
       const appScreen = document.getElementById("app-screen");
 
       appScreen.addEventListener("touchstart", (e) => {
         touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
       });
 
       appScreen.addEventListener("touchend", (e) => {
         touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
         handleSwipe();
       });
 
       function handleSwipe() {
-        const threshold = 50; // Mínimo de píxeles para considerar swipe
-        const diff = touchEndX - touchStartX;
+        const threshold = 100; // AUMENTADO: Se requiere deslizar más distancia (antes 50)
+        const restraint = 80; // LIMITE VERTICAL: Si subes/bajas más de 80px, no cuenta como swipe
 
-        // Determinar pestaña actual
-        const tabs = ["agenda", "lista"];
-        if (userProfile && userProfile.role === "admin") tabs.push("config");
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
 
-        // Encontrar cual está activa
-        let activeIdx = 0;
-        if (document.getElementById("view-lista").style.display !== "none")
-          activeIdx = 1;
-        if (document.getElementById("view-config").style.display !== "none")
-          activeIdx = 2;
+        // Comprobamos:
+        // 1. Que el movimiento horizontal sea mayor al umbral.
+        // 2. Que el movimiento vertical sea PEQUEÑO (menor al restraint), para asegurar que no es scroll.
+        if (Math.abs(diffX) > threshold && Math.abs(diffY) < restraint) {
+          const tabs = ["agenda", "lista"];
+          if (userProfile && userProfile.role === "admin") tabs.push("config");
 
-        if (Math.abs(diff) > threshold) {
-          if (diff < 0) {
-            // Deslizar izquierda (Siguiente pestaña)
+          let activeIdx = 0;
+          if (document.getElementById("view-lista").style.display !== "none")
+            activeIdx = 1;
+          if (document.getElementById("view-config").style.display !== "none")
+            activeIdx = 2;
+
+          if (diffX < 0) {
+            // Izquierda -> Siguiente
             if (activeIdx < tabs.length - 1) showTab(tabs[activeIdx + 1]);
           } else {
-            // Deslizar derecha (Pestaña anterior)
+            // Derecha -> Anterior
             if (activeIdx > 0) showTab(tabs[activeIdx - 1]);
           }
         }
@@ -1129,13 +1137,11 @@
 
       // --- WHATSAPP LIMPIO ---
       function enviarWhatsAppCliente() {
-        // Texto plano sin emojis raros
         const msg =
           `Hola NailsByNINA. Soy ${lastCitaData.nombre}.\n` +
           `Cita: ${lastCitaData.fecha} a las ${format12h(lastCitaData.hora)}\n` +
           `Servicio: ${lastCitaData.servicio}\n` +
           `Adjunto mi comprobante para confirmar. Gracias.`;
-
         window.open(
           `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
           "_blank",
