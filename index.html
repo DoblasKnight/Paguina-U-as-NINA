@@ -16,6 +16,10 @@
         --bg: #fff5f8;
         --text: #4a148c;
         --whatsapp: #25d366;
+        --danger: #ff4d4d;
+        --success: #4caf50;
+        --full-bg: #ffcdd2;
+        --full-text: #b71c1c;
       }
 
       body {
@@ -24,9 +28,10 @@
         margin: 0;
         color: var(--text);
         padding: 10px;
+        -webkit-tap-highlight-color: transparent;
       }
 
-      /* MODALES */
+      /* --- MODALES BONITOS --- */
       .modal-overlay {
         display: none;
         position: fixed;
@@ -37,16 +42,80 @@
         height: 100%;
         background: rgba(74, 20, 140, 0.4);
         backdrop-filter: blur(4px);
+        animation: fadeIn 0.3s ease;
+        align-items: center;
+        justify-content: center;
       }
       .modal-content {
         background: white;
-        margin: 12% auto;
-        padding: 35px;
-        border-radius: 30px;
+        padding: 30px;
+        border-radius: 25px;
         width: 85%;
-        max-width: 350px;
+        max-width: 320px;
         text-align: center;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        position: relative;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(30px) scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      .modal-icon {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+        display: block;
+        animation: bounce 1s infinite alternate;
+      }
+      @keyframes bounce {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-5px);
+        }
+      }
+
+      .modal-btn-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .btn-modal {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      .btn-modal.primary {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-modal.secondary {
+        background: #f0f0f0;
+        color: #666;
+      }
+      .btn-modal.whatsapp {
+        background: var(--whatsapp);
+        color: white;
       }
 
       /* APP INTERFACE */
@@ -100,30 +169,44 @@
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 5px;
+        gap: 6px;
         margin-top: 10px;
       }
       .day {
-        padding: 12px 5px;
+        aspect-ratio: 1/1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         border-radius: 12px;
         cursor: pointer;
         border: 1px solid #fff0f5;
-        text-align: center;
+        font-size: 0.9rem;
+        position: relative;
+        transition: transform 0.1s;
+      }
+      .day:active {
+        transform: scale(0.9);
       }
       .day.today {
         border: 2px solid var(--primary);
         color: var(--primary);
+        font-weight: 800;
       }
       .day.selected {
         background: var(--primary) !important;
         color: white !important;
         font-weight: bold;
+        border-color: var(--primary) !important;
+        box-shadow: 0 4px 10px rgba(214, 51, 132, 0.4);
       }
       .day.disabled {
-        color: #ccc;
-        cursor: not-allowed;
-        opacity: 0.4;
+        color: #ddd;
         pointer-events: none;
+      }
+      .day.full {
+        background: var(--full-bg);
+        color: var(--full-text);
+        border: 1px solid var(--full-bg);
       }
 
       /* FORMULARIO */
@@ -142,33 +225,33 @@
       input,
       select {
         width: 100%;
-        padding: 12px;
+        padding: 14px;
         margin: 8px 0;
         border: 2px solid var(--primary-soft);
-        border-radius: 12px;
+        border-radius: 15px;
         box-sizing: border-box;
         font-family: inherit;
+        background: #fafafa;
+        font-size: 1rem;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: white;
       }
       .btn-main {
         background: var(--primary);
         color: white;
         border: none;
-        padding: 15px;
+        padding: 16px;
         width: 100%;
         border-radius: 15px;
         cursor: pointer;
         font-weight: bold;
         font-size: 1rem;
-      }
-      .btn-wa {
-        background: var(--whatsapp);
-        color: white;
-        border: none;
-        padding: 15px;
-        width: 100%;
-        border-radius: 15px;
-        cursor: pointer;
-        font-weight: bold;
+        margin-top: 10px;
+        box-shadow: 0 4px 15px rgba(214, 51, 132, 0.3);
       }
 
       /* CARDS DE CITA */
@@ -179,7 +262,6 @@
         border-radius: 15px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         margin-bottom: 15px;
-        position: relative;
       }
       .admin-data-box {
         background: #f8f8f8;
@@ -211,45 +293,214 @@
         text-transform: uppercase;
         font-weight: bold;
       }
+
+      /* ADMIN CONFIG STYLES MEJORADOS */
+      .admin-control-panel {
+        padding: 20px;
+        background: #fff;
+      }
+
+      /* SELECTOR SEMANAL MEJORADO */
+      .week-selector {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+      .day-chip {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: #f0f0f0;
+        color: #888;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        user-select: none;
+      }
+      .day-chip:active {
+        transform: scale(0.9);
+      }
+      .day-chip.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 10px rgba(214, 51, 132, 0.4);
+        transform: translateY(-2px);
+      }
+
+      .admin-control-box {
+        background: #fff0f5;
+        border: 2px dashed var(--primary);
+        border-radius: 20px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      .hour-toggle-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 15px;
+      }
+      .hour-btn {
+        padding: 8px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+        font-size: 0.9rem;
+      }
+      .hour-btn.open {
+        background: white;
+        border: 2px solid var(--success);
+        color: var(--success);
+      }
+      .hour-btn.blocked {
+        background: var(--danger);
+        color: white;
+        border: 2px solid var(--danger);
+        text-decoration: line-through;
+        opacity: 0.7;
+      }
+      .btn-block-day {
+        background: white;
+        border: 2px solid var(--text);
+        color: var(--text);
+        padding: 10px;
+        border-radius: 10px;
+        width: 100%;
+        cursor: pointer;
+        margin-bottom: 15px;
+        font-weight: bold;
+      }
+      .btn-block-day.is-blocked {
+        background: var(--text);
+        color: white;
+      }
+
+      .hours-editor-box {
+        border: 1px solid #eee;
+        padding: 15px;
+        border-radius: 15px;
+        background: #fafafa;
+        animation: slideUp 0.3s ease;
+      }
+      .hour-tag {
+        display: inline-block;
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        margin: 3px;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .hour-tag span {
+        margin-left: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        color: #ffcccc;
+      }
+      .add-hour-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        align-items: center;
+      }
     </style>
   </head>
   <body>
-    <div id="confirmModal" class="modal-overlay">
+    <div id="generalModal" class="modal-overlay" style="display: none">
       <div class="modal-content">
-        <div style="font-size: 60px">📩</div>
+        <div class="modal-icon" id="genModalIcon">🔔</div>
+        <h3 id="genModalTitle">Atención</h3>
+        <p id="genModalMsg" style="color: #666; margin: 10px 0 20px">Mensaje</p>
+        <div class="modal-btn-row">
+          <button class="btn-modal primary" onclick="closeGeneralModal()">
+            Entendido
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirmActionModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="modal-icon">🤔</div>
+        <h3 id="confActionTitle">¿Estás seguro?</h3>
+        <p id="confActionMsg" style="color: #666">
+          Esta acción no se puede deshacer.
+        </p>
+        <div class="modal-btn-row">
+          <button
+            class="btn-modal secondary"
+            onclick="closeConfirmAction(false)"
+          >
+            Cancelar
+          </button>
+          <button class="btn-modal primary" id="btnConfirmActionYes">
+            Sí, Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="wspModal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="modal-icon">📩</div>
         <h2>¡Casi listo!</h2>
         <p>
-          Para agendar tu espacio, **debes enviar el comprobante** por WhatsApp
-          ahora mismo.
+          Para agendar tu espacio, <b>debes enviar el comprobante</b> por
+          WhatsApp ahora mismo.
         </p>
-        <button class="btn-wa" onclick="enviarWhatsAppCliente()">
-          Enviar Comprobante 📱
-        </button>
+        <div class="modal-btn-row">
+          <button class="btn-modal whatsapp" onclick="enviarWhatsAppCliente()">
+            Enviar Comprobante 📱
+          </button>
+        </div>
       </div>
     </div>
 
     <div id="auth-screen">
-      <h1 style="text-align: center; color: var(--primary)">Nails App</h1>
+      <h1
+        style="text-align: center; color: var(--primary); margin-bottom: 30px"
+      >
+        Nails App
+      </h1>
       <div id="login-form">
-        <input type="email" id="loginEmail" placeholder="Correo" />
+        <input type="email" id="loginEmail" placeholder="Correo electrónico" />
         <input type="password" id="loginPass" placeholder="Contraseña" />
         <button class="btn-main" onclick="handleAuth('login')">Entrar</button>
-        <p style="text-align: center; font-size: 0.8rem">
+        <p style="text-align: center; font-size: 0.8rem; margin-top: 20px">
           ¿No tienes cuenta?
-          <a href="#" onclick="toggleAuth(false)" style="color: var(--primary)"
+          <a
+            href="#"
+            onclick="toggleAuth(false)"
+            style="color: var(--primary); font-weight: bold"
             >Regístrate</a
           >
         </p>
       </div>
       <div id="signup-form" style="display: none">
         <input type="text" id="regNombre" placeholder="Nombre completo" />
-        <input type="email" id="regEmail" placeholder="Correo" />
-        <input type="password" id="regPass" placeholder="Contraseña (min. 6)" />
+        <input type="email" id="regEmail" placeholder="Correo electrónico" />
+        <input
+          type="password"
+          id="regPass"
+          placeholder="Contraseña (min. 6 carácteres)"
+        />
         <button class="btn-main" onclick="handleAuth('signup')">
           Crear Cuenta
         </button>
-        <p style="text-align: center; font-size: 0.8rem">
-          <a href="#" onclick="toggleAuth(true)" style="color: var(--primary)"
+        <p style="text-align: center; font-size: 0.8rem; margin-top: 20px">
+          <a
+            href="#"
+            onclick="toggleAuth(true)"
+            style="color: var(--primary); font-weight: bold"
             >Ya tengo cuenta</a
           >
         </p>
@@ -270,10 +521,11 @@
             background: none;
             border: 1px solid white;
             color: white;
-            padding: 5px 10px;
-            border-radius: 8px;
+            padding: 5px 12px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            font-weight: bold;
           "
         >
           Salir
@@ -289,7 +541,15 @@
           Agendar
         </button>
         <button id="tab-lista" class="tab-btn" onclick="showTab('lista')">
-          Citas
+          Mis Citas
+        </button>
+        <button
+          id="tab-config"
+          class="tab-btn"
+          onclick="showTab('config')"
+          style="display: none"
+        >
+          Configurar
         </button>
       </div>
 
@@ -300,23 +560,74 @@
               display: flex;
               justify-content: space-between;
               align-items: center;
+              margin-bottom: 10px;
             "
           >
             <button
               onclick="moveMonth(-1)"
-              style="border: none; background: none; cursor: pointer"
+              style="
+                border: none;
+                background: none;
+                cursor: pointer;
+                font-size: 1.2rem;
+                color: var(--primary);
+              "
             >
               ◀
             </button>
-            <b id="monthDisplay"></b>
+            <b
+              id="monthDisplay"
+              style="font-size: 1.1rem; color: var(--text)"
+            ></b>
             <button
               onclick="moveMonth(1)"
-              style="border: none; background: none; cursor: pointer"
+              style="
+                border: none;
+                background: none;
+                cursor: pointer;
+                font-size: 1.2rem;
+                color: var(--primary);
+              "
             >
               ▶
             </button>
           </div>
           <div class="cal-grid" id="calendarGrid"></div>
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              gap: 15px;
+              font-size: 0.75rem;
+              color: #999;
+              margin-top: 15px;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 5px">
+              <span
+                style="
+                  display: block;
+                  width: 10px;
+                  height: 10px;
+                  background: var(--full-bg);
+                  border-radius: 3px;
+                "
+              ></span>
+              Ocupado
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px">
+              <span
+                style="
+                  display: block;
+                  width: 10px;
+                  height: 10px;
+                  background: var(--primary);
+                  border-radius: 3px;
+                "
+              ></span>
+              Seleccionado
+            </div>
+          </div>
         </div>
 
         <div class="form-section">
@@ -327,17 +638,28 @@
             placeholder="Correo electrónico"
           />
           <input
-            type="text"
+            type="tel"
             id="fieldTelefono"
-            placeholder="WhatsApp (Ej: 57300...)"
+            placeholder="WhatsApp (Solo números)"
+            pattern="[0-9]*"
+            inputmode="numeric"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
           />
+
           <select id="fieldServicio">
             <option>Uñas Acrílicas</option>
             <option>Retoque</option>
             <option>Semipermanente</option>
+            <option>Manicure Ruso</option>
           </select>
           <select id="fieldHora"></select>
-          <label style="font-size: 0.7rem; font-weight: bold"
+          <label
+            style="
+              font-size: 0.75rem;
+              font-weight: bold;
+              margin-left: 5px;
+              color: var(--primary);
+            "
             >FOTO COMPROBANTE:</label
           >
           <input type="file" id="fieldFile" accept="image/*" />
@@ -350,25 +672,171 @@
       <div id="view-lista" style="display: none; padding: 20px">
         <div id="tablaCitasContainer"></div>
       </div>
+
+      <div id="view-config" class="admin-control-panel" style="display: none">
+        <h3 style="color: var(--primary); text-align: center">
+          📅 Configurar Horario Base
+        </h3>
+        <p style="font-size: 0.9rem; color: #666; text-align: center">
+          Selecciona los días y asigna las horas.
+        </p>
+
+        <div class="week-selector">
+          <div class="day-chip" id="day-btn-1" onclick="toggleWeekDay(1)">
+            Lu
+          </div>
+          <div class="day-chip" id="day-btn-2" onclick="toggleWeekDay(2)">
+            Ma
+          </div>
+          <div class="day-chip" id="day-btn-3" onclick="toggleWeekDay(3)">
+            Mi
+          </div>
+          <div class="day-chip" id="day-btn-4" onclick="toggleWeekDay(4)">
+            Ju
+          </div>
+          <div class="day-chip" id="day-btn-5" onclick="toggleWeekDay(5)">
+            Vi
+          </div>
+          <div class="day-chip" id="day-btn-6" onclick="toggleWeekDay(6)">
+            Sa
+          </div>
+          <div class="day-chip" id="day-btn-0" onclick="toggleWeekDay(0)">
+            Do
+          </div>
+        </div>
+
+        <div class="hours-editor-box" id="hoursEditorBox" style="display: none">
+          <p
+            style="
+              margin-top: 0;
+              font-size: 0.9rem;
+              font-weight: bold;
+              color: var(--text);
+            "
+          >
+            🕒 Horas a aplicar:
+          </p>
+          <div id="weeklyHoursContainer" style="margin-bottom: 10px"></div>
+
+          <div class="add-hour-row">
+            <input type="time" id="newHourInput" style="margin: 0" />
+            <button
+              class="btn-main"
+              style="width: auto; padding: 0 20px; margin: 0; height: 50px"
+              onclick="addStagedHour()"
+            >
+              +
+            </button>
+          </div>
+
+          <button
+            class="btn-main"
+            style="background: var(--success); margin-top: 15px"
+            onclick="saveWeekSchedule()"
+          >
+            💾 Guardar Cambios
+          </button>
+        </div>
+
+        <div
+          id="msgSelectDays"
+          style="text-align: center; padding: 30px; color: #bbb"
+        >
+          👆 Toca los días arriba para editar su horario.
+        </div>
+
+        <h3
+          style="
+            color: var(--primary);
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+          "
+        >
+          🚫 Bloqueos por Fecha
+        </h3>
+
+        <input
+          type="date"
+          id="adminDateInput"
+          onchange="loadAdminDayConfig()"
+        />
+
+        <div
+          id="adminPanelControls"
+          style="display: none"
+          class="admin-control-box"
+        >
+          <button
+            id="btnToggleDay"
+            class="btn-block-day"
+            onclick="toggleFullDayBlock()"
+          >
+            🔓 El día está ABIERTO
+          </button>
+
+          <div id="hoursControlContainer">
+            <h4 style="margin: 0">Horas Específicas</h4>
+            <div class="hour-toggle-grid" id="adminHourGrid"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
+      // CONFIGURACIÓN SUPABASE
       const sbUrl = "https://jifwtgpchbipxyriirtq.supabase.co";
       const sbKey = "sb_publishable_zF5mj6Ba61zibU_19vnFPQ_a4GDaKwi";
       const client = supabase.createClient(sbUrl, sbKey);
 
-      const miWhatsAppAdmin = "573228211246"; // PON TU NÚMERO AQUÍ
+      const miWhatsAppAdmin = "573228211246";
+
+      let globalSchedule = {};
+      let selectedWeekDays = [];
+      let stagedHours = [];
 
       let userProfile = null;
       let selectedDate = null;
       let lastCitaData = null;
       let viewDate = new Date();
+      let adminSelectedDate = null;
+      let confirmActionCallback = null; // Para el modal de confirmar acción
 
       function format12h(h24) {
+        if (!h24) return "";
         let [h, m] = h24.split(":");
         let suf = h >= 12 ? "PM" : "AM";
         h = h % 12 || 12;
         return `${h}:${m} ${suf}`;
+      }
+
+      // --- SISTEMA DE MODALES ---
+      function showAlert(title, msg, icon = "🔔") {
+        document.getElementById("genModalIcon").innerText = icon;
+        document.getElementById("genModalTitle").innerText = title;
+        document.getElementById("genModalMsg").innerText = msg;
+        document.getElementById("generalModal").style.display = "flex";
+      }
+      function closeGeneralModal() {
+        document.getElementById("generalModal").style.display = "none";
+      }
+
+      function askConfirm(title, msg, callback) {
+        document.getElementById("confActionTitle").innerText = title;
+        document.getElementById("confActionMsg").innerText = msg;
+        document.getElementById("confirmActionModal").style.display = "flex";
+        confirmActionCallback = callback;
+      }
+
+      document.getElementById("btnConfirmActionYes").onclick = function () {
+        if (confirmActionCallback) confirmActionCallback();
+        closeConfirmAction();
+      };
+
+      function closeConfirmAction() {
+        document.getElementById("confirmActionModal").style.display = "none";
+        confirmActionCallback = null;
       }
 
       function toggleAuth(isLogin) {
@@ -390,14 +858,19 @@
             password: pass,
             options: { data: { full_name: name } },
           });
-          if (error) alert(error.message);
-          else alert("Cuenta creada. ¡Inicia sesión!");
+          if (error) showAlert("Error", error.message, "⚠️");
+          else
+            showAlert(
+              "¡Éxito!",
+              "Cuenta creada. Por favor inicia sesión.",
+              "🎉",
+            );
         } else {
           const { error } = await client.auth.signInWithPassword({
             email: document.getElementById("loginEmail").value,
             password: document.getElementById("loginPass").value,
           });
-          if (error) alert("Error: " + error.message);
+          if (error) showAlert("Error de acceso", error.message, "🚫");
           else checkUser();
         }
       }
@@ -412,6 +885,7 @@
             .select("*")
             .eq("id", session.user.id)
             .single();
+
           if (!profile) return setTimeout(checkUser, 1000);
 
           userProfile = profile;
@@ -420,24 +894,35 @@
           document.getElementById("displayUserName").innerText =
             profile.full_name;
 
-          // REGLAS ADMIN VS CLIENTE
           const inputN = document.getElementById("fieldNombre");
           const inputC = document.getElementById("fieldCorreo");
           inputN.value = profile.full_name;
           inputC.value = session.user.email;
 
+          await fetchGlobalSchedule();
+
           if (profile.role === "admin") {
             document.getElementById("adminBadge").style.display =
               "inline-block";
+            document.getElementById("tab-config").style.display = "block";
             inputN.readOnly = false;
             inputC.readOnly = false;
             inputN.style.background = "white";
           } else {
             inputN.readOnly = true;
-            inputC.readOnly = false;
+            inputC.readOnly = true;
             inputN.style.background = "#f0f0f0";
           }
           renderCalendar();
+        }
+      }
+
+      async function fetchGlobalSchedule() {
+        const { data } = await client.from("horarios_base").select("*");
+        if (data) {
+          data.forEach((item) => {
+            globalSchedule[item.dia] = item.horas;
+          });
         }
       }
 
@@ -467,7 +952,7 @@
         grid.innerHTML = "";
         ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"].forEach(
           (d) =>
-            (grid.innerHTML += `<div style="font-size:0.7rem; color:#bbb; text-align:center;">${d}</div>`),
+            (grid.innerHTML += `<div style="font-size:0.75rem; color:#bbb; text-align:center; font-weight:bold;">${d}</div>`),
         );
 
         const firstDay = new Date(year, month, 1).getDay();
@@ -480,11 +965,31 @@
           const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
 
           d.className = "day";
+          d.id = `day-${dStr}`;
           d.innerText = i;
+
           if (cIter < today) d.classList.add("disabled");
           else {
             if (cIter.getTime() === today.getTime()) d.classList.add("today");
             d.onclick = () => {
+              if (d.classList.contains("full")) {
+                const reason = d.dataset.reason;
+                if (reason === "closed") {
+                  showAlert(
+                    "Día Cerrado",
+                    "Lo sentimos, este día no tenemos servicio disponible.",
+                    "🚫",
+                  );
+                } else {
+                  showAlert(
+                    "Agenda Llena",
+                    "¡Vaya éxito! Todos los espacios de este día ya fueron reservados.",
+                    "📅",
+                  );
+                }
+                return;
+              }
+
               document
                 .querySelectorAll(".day")
                 .forEach((el) => el.classList.remove("selected"));
@@ -495,55 +1000,194 @@
           }
           grid.appendChild(d);
         }
+
+        updateCalendarStatus(year, month, lastDate);
+      }
+
+      async function updateCalendarStatus(year, month, lastDay) {
+        const startStr = `${year}-${String(month + 1).padStart(2, "0")}-01`;
+        const endStr = `${year}-${String(month + 1).padStart(2, "0")}-${lastDay}`;
+
+        const { data: citas } = await client
+          .from("citas")
+          .select("fecha, hora")
+          .gte("fecha", startStr)
+          .lte("fecha", endStr);
+        const { data: bloqueos } = await client
+          .from("bloqueos")
+          .select("fecha, hora")
+          .gte("fecha", startStr)
+          .lte("fecha", endStr);
+
+        for (let i = 1; i <= lastDay; i++) {
+          const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+          const element = document.getElementById(`day-${dStr}`);
+          if (!element || element.classList.contains("disabled")) continue;
+
+          const dayOfWeek = new Date(dStr + "T00:00:00").getDay();
+          const baseHours = globalSchedule[dayOfWeek] || [];
+
+          const isDayBlocked = bloqueos.some(
+            (b) => b.fecha === dStr && b.hora === null,
+          );
+          if (isDayBlocked || baseHours.length === 0) {
+            element.classList.add("full");
+            element.dataset.reason = "closed";
+            continue;
+          }
+
+          const blockedHours = bloqueos
+            .filter((b) => b.fecha === dStr && b.hora !== null)
+            .map((b) => b.hora);
+          const bookedHours = citas
+            .filter((c) => c.fecha === dStr)
+            .map((c) => c.hora);
+
+          let availableCount = 0;
+          baseHours.forEach((h) => {
+            if (!blockedHours.includes(h) && !bookedHours.includes(h)) {
+              availableCount++;
+            }
+          });
+
+          if (availableCount === 0) {
+            element.classList.add("full");
+            element.dataset.reason = "full";
+          }
+        }
       }
 
       async function checkHoras(fecha) {
-        const { data } = await client
+        const dayOfWeek = new Date(fecha + "T00:00:00").getDay();
+        let availableHours = globalSchedule[dayOfWeek] || [];
+        availableHours = [...availableHours];
+        availableHours.sort();
+
+        const { data: citas } = await client
           .from("citas")
           .select("hora")
           .eq("fecha", fecha);
+        const { data: bloqueos } = await client
+          .from("bloqueos")
+          .select("hora")
+          .eq("fecha", fecha);
+
+        let isDayBlocked = false;
+        let blockedHours = [];
+        if (bloqueos) {
+          bloqueos.forEach((b) => {
+            if (b.hora === null) isDayBlocked = true;
+            else blockedHours.push(b.hora);
+          });
+        }
+
         const selector = document.getElementById("fieldHora");
         selector.innerHTML = "";
-        ["09:00", "11:00", "14:00", "16:00"].forEach((h) => {
+
+        if (availableHours.length === 0 || isDayBlocked) {
+          const opt = document.createElement("option");
+          opt.text = "📅 Día Cerrado";
+          opt.disabled = true;
+          selector.appendChild(opt);
+          return;
+        }
+
+        let hasSlots = false;
+        availableHours.forEach((h) => {
           const opt = document.createElement("option");
           opt.value = h;
-          const ocupado = data && data.some((c) => c.hora.startsWith(h));
-          opt.disabled = ocupado;
-          opt.text = format12h(h) + (ocupado ? " (Ocupado)" : "");
+
+          const ocupadoPorCita =
+            citas && citas.some((c) => c.hora.startsWith(h));
+          const bloqueadoAdmin = blockedHours.includes(h);
+
+          if (ocupadoPorCita) {
+            opt.disabled = true;
+            opt.text = format12h(h) + " (Ocupado)";
+          } else if (bloqueadoAdmin) {
+            opt.disabled = true;
+            opt.text = format12h(h) + " (Bloqueado)";
+          } else {
+            opt.disabled = false;
+            opt.text = format12h(h);
+            hasSlots = true;
+          }
           selector.appendChild(opt);
         });
+
+        if (!hasSlots) {
+          const opt = document.createElement("option");
+          opt.text = "🚫 Sin cupos hoy";
+          selector.appendChild(opt);
+        }
       }
 
       async function confirmarCita() {
-        if (!selectedDate) return alert("Selecciona fecha");
+        if (!selectedDate)
+          return showAlert(
+            "Falta Fecha",
+            "Por favor selecciona una fecha en el calendario.",
+            "📅",
+          );
+        const selectH = document.getElementById("fieldHora");
+        if (
+          selectH.value === "" ||
+          selectH.options[selectH.selectedIndex].disabled
+        )
+          return showAlert(
+            "Falta Hora",
+            "Selecciona una hora disponible.",
+            "⏰",
+          );
+
+        const telefono = document.getElementById("fieldTelefono").value;
+        if (telefono.length < 7)
+          return showAlert(
+            "Teléfono Inválido",
+            "Por favor ingresa un número válido.",
+            "📱",
+          );
+
         const file = document.getElementById("fieldFile").files[0];
-        if (!file) return alert("Sube el comprobante");
+        if (!file)
+          return showAlert(
+            "Falta Comprobante",
+            "Debes subir la foto del pago.",
+            "📎",
+          );
 
         const datos = {
           fecha: selectedDate,
           hora: document.getElementById("fieldHora").value,
           nombre: document.getElementById("fieldNombre").value,
           correo: document.getElementById("fieldCorreo").value,
-          telefono: document.getElementById("fieldTelefono").value,
+          telefono: telefono,
           servicio: document.getElementById("fieldServicio").value,
           user_id: userProfile.id,
         };
 
         const { error } = await client.from("citas").insert([datos]);
-        if (error) alert(error.message);
+        if (error) showAlert("Error", error.message, "🚫");
         else {
           lastCitaData = datos;
-          document.getElementById("confirmModal").style.display = "block";
+          document.getElementById("wspModal").style.display = "flex";
         }
       }
 
       function enviarWhatsAppCliente() {
-        const msg = `¡Hola! Soy *${lastCitaData.nombre}*. Agendé cita para *${lastCitaData.servicio}* el *${lastCitaData.fecha}* a las *${format12h(lastCitaData.hora)}*. Adjunto comprobante. ✨`;
+        const msg =
+          `¡Hola! Soy *${lastCitaData.nombre}*.\n` +
+          `📧 Correo: ${lastCitaData.correo}\n` +
+          `💅 Servicio: *${lastCitaData.servicio}*\n` +
+          `📅 Fecha: *${lastCitaData.fecha}*\n` +
+          `🕒 Hora: *${format12h(lastCitaData.hora)}*\n\n` +
+          `Adjunto el comprobante para confirmar mi espacio. ✨`;
+
         window.open(
           `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
           "_blank",
         );
-        document.getElementById("confirmModal").style.display = "none";
+        document.getElementById("wspModal").style.display = "none";
         showTab("lista");
       }
 
@@ -555,6 +1199,7 @@
         const { data } = await query
           .order("fecha", { ascending: true })
           .order("hora", { ascending: true });
+
         const container = document.getElementById("tablaCitasContainer");
         container.innerHTML = "";
 
@@ -569,21 +1214,21 @@
 
             if (userProfile.role === "admin") {
               adminInfo = `
-                        <div class="admin-data-box">
-                            <b>📱 WhatsApp:</b> ${c.telefono}<br>
-                            <b>📧 Correo:</b> ${c.correo}
-                        </div>
-                        ${esMañana ? `<button class="btn-remind" onclick="window.open('https://wa.me/${c.telefono}?text=Hola%20${c.nombre}!%20Confirmamos%20tu%20cita%20de%20mañana%20a%20las%20${format12h(c.hora)}')">📱 Recordar Mañana</button>` : ""}
-                    `;
+                <div class="admin-data-box">
+                  <b>📱 WhatsApp:</b> ${c.telefono}<br>
+                  <b>📧 Correo:</b> ${c.correo}
+                </div>
+                ${esMañana ? `<button class="btn-remind" onclick="window.open('https://wa.me/${c.telefono}?text=Hola%20${c.nombre}!%20Confirmamos%20tu%20cita%20de%20mañana%20a%20las%20${format12h(c.hora)}')">📱 Recordar Mañana</button>` : ""}
+              `;
             }
 
             container.innerHTML += `
-                    <div class="appointment-card">
-                        <div style="font-weight:bold; color:var(--primary)">🕒 ${format12h(c.hora)} - ${c.fecha}</div>
-                        <div style="font-size:1.1rem; margin:5px 0;">👤 ${c.nombre}</div>
-                        <div style="font-size:0.8rem; color:#666">✨ ${c.servicio}</div>
-                        ${adminInfo}
-                    </div>`;
+                <div class="appointment-card">
+                  <div style="font-weight:bold; color:var(--primary)">🕒 ${format12h(c.hora)} - ${c.fecha}</div>
+                  <div style="font-size:1.1rem; margin:5px 0;">👤 ${c.nombre}</div>
+                  <div style="font-size:0.8rem; color:#666">✨ ${c.servicio}</div>
+                  ${adminInfo}
+                </div>`;
           });
       }
 
@@ -592,12 +1237,19 @@
           t === "agenda" ? "grid" : "none";
         document.getElementById("view-lista").style.display =
           t === "lista" ? "block" : "none";
+        document.getElementById("view-config").style.display =
+          t === "config" ? "block" : "none";
+
         document
           .getElementById("tab-agenda")
           .classList.toggle("active", t === "agenda");
         document
           .getElementById("tab-lista")
           .classList.toggle("active", t === "lista");
+        document
+          .getElementById("tab-config")
+          .classList.toggle("active", t === "config");
+
         if (t === "lista") loadAllAppointments();
       }
 
@@ -605,10 +1257,192 @@
         viewDate.setMonth(viewDate.getMonth() + d);
         renderCalendar();
       }
+
+      // ADMIN FUNCTIONS
+      function toggleWeekDay(dayIndex) {
+        const btn = document.getElementById(`day-btn-${dayIndex}`);
+        const indexInArray = selectedWeekDays.indexOf(dayIndex);
+
+        if (indexInArray > -1) {
+          selectedWeekDays.splice(indexInArray, 1);
+          btn.classList.remove("active");
+        } else {
+          if (selectedWeekDays.length === 0) {
+            stagedHours = globalSchedule[dayIndex]
+              ? [...globalSchedule[dayIndex]]
+              : [];
+            renderStagedHours();
+          }
+          selectedWeekDays.push(dayIndex);
+          btn.classList.add("active");
+        }
+
+        const editor = document.getElementById("hoursEditorBox");
+        const msg = document.getElementById("msgSelectDays");
+
+        if (selectedWeekDays.length > 0) {
+          editor.style.display = "block";
+          msg.style.display = "none";
+        } else {
+          editor.style.display = "none";
+          msg.style.display = "block";
+        }
+      }
+
+      function renderStagedHours() {
+        const container = document.getElementById("weeklyHoursContainer");
+        container.innerHTML = "";
+        stagedHours.sort();
+
+        if (stagedHours.length === 0) {
+          container.innerHTML =
+            "<em style='color:#bbb; font-size:0.8rem;'>Día marcado como cerrado.</em>";
+          return;
+        }
+
+        stagedHours.forEach((h) => {
+          container.innerHTML += `
+                <div class="hour-tag">
+                    ${format12h(h)}
+                    <span onclick="removeStagedHour('${h}')">×</span>
+                </div>
+             `;
+        });
+      }
+
+      function addStagedHour() {
+        const timeInput = document.getElementById("newHourInput").value;
+        if (!timeInput)
+          return showAlert(
+            "Oops",
+            "Por favor selecciona una hora en el reloj.",
+            "⏰",
+          );
+        if (stagedHours.includes(timeInput))
+          return showAlert("Repetida", "Esa hora ya está en la lista.", "🔄");
+        stagedHours.push(timeInput);
+        renderStagedHours();
+      }
+
+      function removeStagedHour(h) {
+        stagedHours = stagedHours.filter((item) => item !== h);
+        renderStagedHours();
+      }
+
+      function saveWeekSchedule() {
+        if (selectedWeekDays.length === 0) return;
+
+        askConfirm(
+          "¿Guardar Cambios?",
+          `Se aplicará este horario a ${selectedWeekDays.length} días seleccionados.`,
+          async () => {
+            for (let day of selectedWeekDays) {
+              globalSchedule[day] = [...stagedHours];
+              await client
+                .from("horarios_base")
+                .upsert({ dia: day, horas: stagedHours });
+            }
+            showAlert("¡Hecho!", "Horarios actualizados exitosamente.", "✅");
+            selectedWeekDays.forEach((d) =>
+              document
+                .getElementById(`day-btn-${d}`)
+                .classList.remove("active"),
+            );
+            selectedWeekDays = [];
+            document.getElementById("hoursEditorBox").style.display = "none";
+            document.getElementById("msgSelectDays").style.display = "block";
+            renderCalendar();
+          },
+        );
+      }
+
+      async function loadAdminDayConfig() {
+        const dateInput = document.getElementById("adminDateInput").value;
+        if (!dateInput) return;
+        adminSelectedDate = dateInput;
+
+        document.getElementById("adminPanelControls").style.display = "block";
+
+        const { data } = await client
+          .from("bloqueos")
+          .select("*")
+          .eq("fecha", adminSelectedDate);
+        const dayBlocked = data.find((b) => b.hora === null);
+        const btnDay = document.getElementById("btnToggleDay");
+        const hoursDiv = document.getElementById("hoursControlContainer");
+
+        if (dayBlocked) {
+          btnDay.className = "btn-block-day is-blocked";
+          btnDay.innerHTML = "🔒 DÍA CERRADO (Click para abrir)";
+          hoursDiv.style.opacity = "0.3";
+          hoursDiv.style.pointerEvents = "none";
+        } else {
+          btnDay.className = "btn-block-day";
+          btnDay.innerHTML = "🔓 DÍA ABIERTO (Click para cerrar)";
+          hoursDiv.style.opacity = "1";
+          hoursDiv.style.pointerEvents = "all";
+        }
+
+        const dayOfWeek = new Date(adminSelectedDate + "T00:00:00").getDay();
+        const baseHours = globalSchedule[dayOfWeek] || [];
+        baseHours.sort();
+
+        const grid = document.getElementById("adminHourGrid");
+        grid.innerHTML = "";
+
+        if (baseHours.length === 0) {
+          grid.innerHTML =
+            "<div style='grid-column: span 3; color:#666; font-size:0.8rem;'>No hay horario base para este día de la semana. Configúralo arriba.</div>";
+        } else {
+          baseHours.forEach((h) => {
+            const isBlocked = data.some((b) => b.hora === h);
+            const btn = document.createElement("button");
+            btn.className = isBlocked ? "hour-btn blocked" : "hour-btn open";
+            btn.innerText = format12h(h);
+            btn.onclick = () => toggleAdminHour(h, isBlocked);
+            grid.appendChild(btn);
+          });
+        }
+      }
+
+      async function toggleFullDayBlock() {
+        const { data } = await client
+          .from("bloqueos")
+          .select("*")
+          .eq("fecha", adminSelectedDate)
+          .is("hora", null);
+        if (data && data.length > 0) {
+          await client.from("bloqueos").delete().eq("id", data[0].id);
+        } else {
+          await client
+            .from("bloqueos")
+            .insert([{ fecha: adminSelectedDate, hora: null }]);
+        }
+        loadAdminDayConfig();
+        renderCalendar();
+      }
+
+      async function toggleAdminHour(hora, isCurrentlyBlocked) {
+        if (isCurrentlyBlocked) {
+          await client
+            .from("bloqueos")
+            .delete()
+            .eq("fecha", adminSelectedDate)
+            .eq("hora", hora);
+        } else {
+          await client
+            .from("bloqueos")
+            .insert([{ fecha: adminSelectedDate, hora: hora }]);
+        }
+        loadAdminDayConfig();
+        renderCalendar();
+      }
+
       async function logout() {
         await client.auth.signOut();
         window.location.reload();
       }
+
       checkUser();
     </script>
   </body>
