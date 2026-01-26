@@ -111,7 +111,7 @@
         color: white;
       }
 
-      /* LAYOUT PRINCIPAL */
+      /* LAYOUT */
       #auth-screen,
       #app-screen,
       #recovery-screen {
@@ -155,10 +155,10 @@
         gap: 8px;
       }
 
-      /* CÍRCULO DE PERFIL (HEADER) */
+      /* EL CIRCULITO DE PERFIL */
       .header-avatar {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         background: var(--primary);
         color: white;
@@ -170,12 +170,13 @@
         cursor: pointer;
         border: 2px solid #ffcce6;
         transition: transform 0.2s;
+        box-shadow: 0 4px 10px rgba(255, 20, 147, 0.2);
       }
       .header-avatar:active {
         transform: scale(0.9);
       }
 
-      /* TABS (SIN PERFIL) */
+      /* TABS (SIN PERFIL ABAJO) */
       .tabs {
         display: flex;
         background: white;
@@ -209,7 +210,7 @@
         box-shadow: var(--primary-glow);
       }
 
-      /* VISTAS Y COMPONENTES */
+      /* COMPONENTES */
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -260,7 +261,6 @@
           grid-template-columns: 1fr 350px;
         }
       }
-
       input,
       select {
         width: 100%;
@@ -404,12 +404,17 @@
         color: var(--danger);
       }
 
-      /* ADMIN PANEL - HORAS SEMANALES */
+      /* ADMIN - DISTRIBUCIÓN */
+      .admin-control-panel {
+        padding: 20px;
+        background: white;
+      }
+
       .week-selector {
         display: flex;
         justify-content: center;
         gap: 5px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         flex-wrap: wrap;
       }
       .day-chip {
@@ -437,7 +442,7 @@
         padding: 20px;
         border-radius: 15px;
         border: 1px dashed var(--primary);
-        margin-bottom: 30px;
+        margin-bottom: 20px;
       }
       .hour-tag {
         display: inline-block;
@@ -447,22 +452,6 @@
         border-radius: 20px;
         margin: 4px;
         font-size: 0.85rem;
-      }
-      .add-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-top: 15px;
-      }
-      .add-row input {
-        margin: 0;
-        flex: 1;
-      }
-      .add-row button {
-        width: auto;
-        margin: 0;
-        padding: 0 20px;
-        height: 56px;
       }
 
       .service-item {
@@ -484,6 +473,23 @@
         cursor: pointer;
         font-weight: bold;
         font-size: 0.8rem;
+      }
+
+      .add-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 15px;
+      }
+      .add-row input {
+        margin: 0;
+        flex: 1;
+      }
+      .add-row button {
+        width: auto;
+        margin: 0;
+        padding: 0 20px;
+        height: 56px;
       }
 
       /* PERFIL ESTILIZADO */
@@ -616,8 +622,7 @@
             type="password"
             id="recoveryPass"
             placeholder="Nueva contraseña (mín 6)"
-          />
-          <span
+          /><span
             class="toggle-eye"
             onclick="togglePassword('recoveryPass', this)"
             >👁️</span
@@ -637,8 +642,9 @@
       <div id="login-form">
         <input type="email" id="loginEmail" placeholder="Tu Correo" />
         <div class="password-wrapper">
-          <input type="password" id="loginPass" placeholder="Contraseña" />
-          <span class="toggle-eye" onclick="togglePassword('loginPass', this)"
+          <input type="password" id="loginPass" placeholder="Contraseña" /><span
+            class="toggle-eye"
+            onclick="togglePassword('loginPass', this)"
             >👁️</span
           >
         </div>
@@ -881,34 +887,7 @@
         class="admin-control-panel animate-pop"
         style="display: none"
       >
-        <h3 style="text-align: center; color: var(--primary)">
-          Horario Semanal Base
-        </h3>
-        <div class="week-selector">
-          <div class="day-chip" id="d1" onclick="toggleWeekDay(1)">Lu</div>
-          <div class="day-chip" id="d2" onclick="toggleWeekDay(2)">Ma</div>
-          <div class="day-chip" id="d3" onclick="toggleWeekDay(3)">Mi</div>
-          <div class="day-chip" id="d4" onclick="toggleWeekDay(4)">Ju</div>
-          <div class="day-chip" id="d5" onclick="toggleWeekDay(5)">Vi</div>
-          <div class="day-chip" id="d6" onclick="toggleWeekDay(6)">Sa</div>
-          <div class="day-chip" id="d0" onclick="toggleWeekDay(0)">Do</div>
-        </div>
-        <div id="hoursEditor" class="hours-editor-box" style="display: none">
-          <div id="weeklyHours" style="margin-bottom: 10px"></div>
-          <div class="add-row">
-            <input type="time" id="newHourInput" />
-            <button class="btn-main" onclick="addStagedHour()">+</button>
-          </div>
-          <button
-            class="btn-main"
-            style="background: var(--whatsapp); margin-top: 10px"
-            onclick="saveWeekSchedule()"
-          >
-            Guardar Horario
-          </button>
-        </div>
-
-        <h3 style="color: var(--primary); margin-top: 30px">Servicios</h3>
+        <h3 style="color: var(--primary); margin-top: 0">Servicios</h3>
         <div
           style="
             background: #f9f9f9;
@@ -936,6 +915,33 @@
         </div>
 
         <h3 style="text-align: center; color: var(--primary)">
+          Horario Semanal
+        </h3>
+        <div class="week-selector">
+          <div class="day-chip" id="d1" onclick="toggleWeekDay(1)">Lu</div>
+          <div class="day-chip" id="d2" onclick="toggleWeekDay(2)">Ma</div>
+          <div class="day-chip" id="d3" onclick="toggleWeekDay(3)">Mi</div>
+          <div class="day-chip" id="d4" onclick="toggleWeekDay(4)">Ju</div>
+          <div class="day-chip" id="d5" onclick="toggleWeekDay(5)">Vi</div>
+          <div class="day-chip" id="d6" onclick="toggleWeekDay(6)">Sa</div>
+          <div class="day-chip" id="d0" onclick="toggleWeekDay(0)">Do</div>
+        </div>
+        <div id="hoursEditor" class="hours-editor-box" style="display: none">
+          <div id="weeklyHours" style="margin-bottom: 10px"></div>
+          <div class="add-row">
+            <input type="time" id="newHourInput" />
+            <button class="btn-main" onclick="addStagedHour()">+</button>
+          </div>
+          <button
+            class="btn-main"
+            style="background: var(--whatsapp); margin-top: 10px"
+            onclick="saveWeekSchedule()"
+          >
+            Guardar Horario
+          </button>
+        </div>
+
+        <h3 style="text-align: center; color: var(--primary); margin-top: 30px">
           Bloquear Fecha
         </h3>
         <input
@@ -1105,7 +1111,6 @@
         pendingCancelId = null,
         pendingCancelData = null;
 
-      // --- INICIO ACELERADO ---
       const hash = window.location.hash;
       const isRecovery = hash && hash.includes("type=recovery");
 
@@ -1115,7 +1120,6 @@
           document.getElementById("app-screen").style.display = "none";
           document.getElementById("recovery-screen").style.display = "block";
 
-          // CHECK AGRESIVO
           let checks = 0;
           const checkSession = async () => {
             const { data } = await client.auth.getSession();
@@ -1129,10 +1133,7 @@
             }
             return false;
           };
-
-          if (await checkSession()) return; // Check inmediato
-
-          // Check repetitivo rápido (cada 500ms durante 4s)
+          if (await checkSession()) return;
           const interval = setInterval(async () => {
             checks++;
             if ((await checkSession()) || checks > 8) clearInterval(interval);
@@ -1142,7 +1143,6 @@
         }
       }
 
-      // --- PERFIL UI ---
       function renderProfileUI() {
         if (!userProfile) return;
         const names = userProfile.full_name.split(" ");
@@ -1160,7 +1160,6 @@
           userProfile.full_name;
       }
 
-      // --- AUTH ---
       async function checkUser() {
         if (isRecovery) return;
         const {
@@ -1178,7 +1177,6 @@
 
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "block";
-
           document.getElementById("fieldNombre").value = data.full_name;
           document.getElementById("fieldCorreo").value = session.user.email;
 
@@ -1202,7 +1200,7 @@
         }
       }
 
-      // --- FUNCIONES COMUNES ---
+      // FUNCIONES COMUNES
       function togglePassword(id, icon) {
         const i = document.getElementById(id);
         if (i.type === "password") {
@@ -1295,7 +1293,7 @@
         }
       }
 
-      // --- ADMIN PANEL ---
+      // ADMIN Y DATOS
       async function fetchServices() {
         const { data } = await client.from("servicios").select("*").order("id");
         if (data) {
@@ -1336,7 +1334,6 @@
         }
       }
 
-      // --- PERFIL ---
       async function updateProfileName() {
         const n = document.getElementById("profileNameInput").value;
         const { error } = await client
@@ -1373,7 +1370,7 @@
         window.location.href = window.location.origin;
       }
 
-      // --- LOGICA CITA/CALENDARIO (Misma funcionalidad) ---
+      // GESTOS Y NAVEGACIÓN
       let touchStartX = 0,
         touchEndX = 0;
       document
@@ -1394,6 +1391,8 @@
               i = 1;
             if (document.getElementById("view-config").style.display !== "none")
               i = 2;
+            if (document.getElementById("view-perfil").style.display !== "none")
+              return;
             if (touchEndX < touchStartX) {
               if (i < tabs.length - 1) showTab(tabs[i + 1]);
             } else {
@@ -1438,7 +1437,7 @@
         if (t !== "agenda") cancelRescheduleMode();
       }
 
-      // ADMIN WEEK
+      // ADMIN CALENDARIO
       function toggleWeekDay(d) {
         const i = selectedWeekDays.indexOf(d);
         if (i > -1) selectedWeekDays.splice(i, 1);
@@ -1489,7 +1488,6 @@
         renderWeekDays();
         showAlert("Éxito", "Horario guardado.");
       }
-
       async function loadAdminDayConfig() {
         const d = document.getElementById("adminDateInput").value;
         if (!d) return;
