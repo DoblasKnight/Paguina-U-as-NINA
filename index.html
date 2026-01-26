@@ -300,33 +300,6 @@
         z-index: 10;
       }
 
-      .file-upload-wrapper {
-        margin: 15px 0;
-        text-align: center;
-      }
-      .custom-file-upload {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 12px 20px;
-        cursor: pointer;
-        border: 2px dashed var(--primary);
-        border-radius: 15px;
-        background: rgba(255, 20, 147, 0.03);
-        color: var(--primary);
-        font-weight: bold;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      #fileNameDisplay {
-        display: block;
-        font-size: 0.8rem;
-        color: #888;
-        margin-top: 5px;
-        font-style: italic;
-      }
-
       .btn-main {
         background: var(--primary);
         color: white;
@@ -840,7 +813,7 @@
             <input
               type="tel"
               id="fieldTelefono"
-              placeholder="WhatsApp"
+              placeholder="WhatsApp (Sin +57)"
               pattern="[0-9]*"
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
@@ -851,19 +824,7 @@
           <select id="fieldHora">
             <option value="">Selecciona día...</option>
           </select>
-          <div id="fileUploadDiv" class="file-upload-wrapper">
-            <input
-              type="file"
-              id="fieldFile"
-              accept="image/*"
-              hidden
-              onchange="updateFileName()"
-            />
-            <label for="fieldFile" class="custom-file-upload"
-              >📸 Subir Comprobante</label
-            >
-            <span id="fileNameDisplay">Sin archivo</span>
-          </div>
+
           <button id="btnMainAction" class="btn-main" onclick="confirmarCita()">
             💖 Reservar Cita
           </button>
@@ -1403,17 +1364,6 @@
         hr = hr % 12 || 12;
         return `${hr}:${m} ${suf}`;
       }
-      function updateFileName() {
-        const i = document.getElementById("fieldFile");
-        const d = document.getElementById("fileNameDisplay");
-        if (i.files[0]) {
-          d.innerText = "Archivo: " + i.files[0].name;
-          d.style.color = "var(--primary)";
-        } else {
-          d.innerText = "Ningún archivo";
-          d.style.color = "#888";
-        }
-      }
       function showTab(t) {
         ["agenda", "lista", "config", "perfil"].forEach(
           (x) => (document.getElementById(`view-${x}`).style.display = "none"),
@@ -1540,7 +1490,6 @@
         rescheduleData = { fecha: f, hora: h, servicio: s, nombre: n, tel: t };
         document.getElementById("editModeBar").style.display = "flex";
         document.getElementById("newAppointmentFields").style.display = "none";
-        document.getElementById("fileUploadDiv").style.display = "none";
         document.getElementById("btnMainAction").innerText =
           "Confirmar Nueva Fecha 🔄";
         document.getElementById("btnMainAction").className =
@@ -1553,7 +1502,6 @@
         rescheduleId = null;
         document.getElementById("editModeBar").style.display = "none";
         document.getElementById("newAppointmentFields").style.display = "block";
-        document.getElementById("fileUploadDiv").style.display = "block";
         document.getElementById("btnMainAction").innerText = "💖 Reservar Cita";
         document.getElementById("btnMainAction").className = "btn-main";
       }
@@ -1579,20 +1527,17 @@
             loadAllAppointments();
           }
         } else {
-          if (
-            !document.getElementById("fieldTelefono").value ||
-            !document.getElementById("fieldFile").files[0]
-          )
-            return showAlert(
-              "Faltan Datos",
-              "Teléfono y comprobante requeridos.",
-            );
+          if (!document.getElementById("fieldTelefono").value)
+            return showAlert("Faltan Datos", "Teléfono requerido.");
+          const cleanTel = document
+            .getElementById("fieldTelefono")
+            .value.replace(/\D/g, "");
           const datos = {
             fecha: selectedDate,
             hora,
             nombre: document.getElementById("fieldNombre").value,
             correo: document.getElementById("fieldCorreo").value,
-            telefono: document.getElementById("fieldTelefono").value,
+            telefono: cleanTel,
             servicio: document.getElementById("fieldServicio").value,
             user_id: userProfile.id,
             estado: "pendiente",
@@ -1608,7 +1553,7 @@
       function enviarWhatsAppCliente() {
         const cleanTel = lastCitaData.telefono.replace(/\D/g, "");
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\nCita: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}\nServicio: ${lastCitaData.servicio}\nAdjunto comprobante.`)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\nCita: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}\nServicio: ${lastCitaData.servicio}\nTe envío el comprobante por aquí.`)}`,
           "_blank",
         );
         closeModal("wspModal");
