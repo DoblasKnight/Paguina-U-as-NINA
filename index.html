@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>NailsByNINA - App</title>
+    <title>NailsbyNiNa - App</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
       :root {
@@ -176,7 +176,7 @@
         transform: scale(0.9);
       }
 
-      /* TABS (SIN PERFIL ABAJO) */
+      /* TABS */
       .tabs {
         display: flex;
         background: white;
@@ -409,7 +409,6 @@
         padding: 20px;
         background: white;
       }
-
       .week-selector {
         display: flex;
         justify-content: center;
@@ -436,7 +435,6 @@
         transform: translateY(-2px);
         box-shadow: var(--primary-glow);
       }
-
       .hours-editor-box {
         background: #fffbfd;
         padding: 20px;
@@ -453,7 +451,6 @@
         margin: 4px;
         font-size: 0.85rem;
       }
-
       .service-item {
         display: flex;
         justify-content: space-between;
@@ -474,7 +471,6 @@
         font-weight: bold;
         font-size: 0.8rem;
       }
-
       .add-row {
         display: flex;
         gap: 10px;
@@ -635,7 +631,7 @@
     </div>
 
     <div id="auth-screen" class="animate-pop">
-      <h1 style="text-align: center; color: var(--primary)">NailsByNINA</h1>
+      <h1 style="text-align: center; color: var(--primary)">NailsbyNiNa</h1>
       <p style="text-align: center; color: #aaa; margin-bottom: 30px">
         Agenda tu momento de brillo ✨
       </p>
@@ -724,7 +720,7 @@
     <div id="app-screen" class="animate-pop">
       <div class="nav-header">
         <div class="brand-title">
-          💅 NailsByNINA
+          💅 NailsbyNiNa
           <span
             id="adminBadge"
             style="
@@ -1610,8 +1606,9 @@
         }
       }
       function enviarWhatsAppCliente() {
+        const cleanTel = lastCitaData.telefono.replace(/\D/g, "");
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsByNINA. Soy ${lastCitaData.nombre}.\nCita: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}\nServicio: ${lastCitaData.servicio}\nAdjunto comprobante.`)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\nCita: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}\nServicio: ${lastCitaData.servicio}\nAdjunto comprobante.`)}`,
           "_blank",
         );
         closeModal("wspModal");
@@ -1619,7 +1616,7 @@
       }
       function enviarWhatsAppReprogramacion() {
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsByNINA. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\nNueva: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}`)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\nNueva: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}`)}`,
           "_blank",
         );
         closeModal("wspRescheduleModal");
@@ -1636,8 +1633,9 @@
           .delete()
           .eq("id", pendingCancelId);
         if (!error) {
+          const cleanTel = pendingCancelData.tel.replace(/\D/g, "");
           window.open(
-            `https://wa.me/${pendingCancelData.isClient ? miWhatsAppAdmin : pendingCancelData.tel}?text=${encodeURIComponent(pendingCancelData.isClient ? `Hola NailsByNINA. Cancelo cita de ${pendingCancelData.name}.` : `Hola ${pendingCancelData.name}, cancelamos tu cita.`)}`,
+            `https://wa.me/${pendingCancelData.isClient ? miWhatsAppAdmin : cleanTel}?text=${encodeURIComponent(pendingCancelData.isClient ? `Hola NailsbyNiNa. Cancelo cita de ${pendingCancelData.name}.` : `Hola ${pendingCancelData.name}, cancelamos tu cita.`)}`,
             "_blank",
           );
           loadAllAppointments();
@@ -1657,13 +1655,14 @@
         }
         const hoy = new Date().toISOString().split("T")[0];
         data.forEach((d) => {
+          const cleanTel = d.telefono.replace(/\D/g, "");
           const badge =
             d.estado === "reprogramada"
               ? `<div class="status-pill repro">Reprogramada</div>`
               : `<div class="status-pill" style="background:#e6fffa;color:#00b894;border:1px solid #00b894">Confirmada</div>`;
           const btns =
             userProfile.role === "admin"
-              ? `<div class="actions-row"><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${d.telefono}?text=Hola%20${d.nombre},%20recordatorio')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false)">Cancelar</button></div>`
+              ? `<div class="actions-row"><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${cleanTel}?text=Hola%20${d.nombre},%20recordatorio')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false)">Cancelar</button></div>`
               : d.fecha >= hoy
                 ? `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true)">Cancelar</button></div>`
                 : "";
