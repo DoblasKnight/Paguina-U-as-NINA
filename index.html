@@ -137,7 +137,7 @@
         display: none;
       }
 
-      /* CABECERA CON PERFIL */
+      /* HEADER & PERFIL */
       .nav-header {
         background: white;
         color: var(--primary);
@@ -154,8 +154,6 @@
         align-items: center;
         gap: 8px;
       }
-
-      /* EL CIRCULITO DE PERFIL */
       .header-avatar {
         width: 42px;
         height: 42px;
@@ -210,6 +208,31 @@
         box-shadow: var(--primary-glow);
       }
 
+      /* SUB-TABS */
+      .sub-tabs {
+        display: flex;
+        background: #f8f8f8;
+        padding: 5px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+      }
+      .sub-tab-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        background: transparent;
+        color: #888;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 12px;
+        transition: all 0.2s;
+      }
+      .sub-tab-btn.active {
+        background: white;
+        color: var(--primary);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
       /* COMPONENTES */
       .cal-grid {
         display: grid;
@@ -248,6 +271,7 @@
       .day.disabled {
         opacity: 0.3;
         pointer-events: none;
+        background: #fcfcfc;
       }
 
       .main-grid {
@@ -262,7 +286,8 @@
         }
       }
       input,
-      select {
+      select,
+      textarea {
         width: 100%;
         padding: 16px;
         margin: 8px 0;
@@ -272,9 +297,11 @@
         background: #fbfbfb;
         font-size: 1rem;
         color: #333;
+        font-family: inherit;
       }
       input:focus,
-      select:focus {
+      select:focus,
+      textarea:focus {
         outline: none;
         border-color: var(--primary);
         background: white;
@@ -318,6 +345,7 @@
         box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
       }
 
+      /* CITA CARD */
       .appointment-card {
         background: white;
         border: 1px solid #f0f0f0;
@@ -339,6 +367,19 @@
       .appointment-card.reprogramada::before {
         background: var(--info);
       }
+      .appointment-card.completada::before {
+        background: var(--success);
+      }
+
+      .appointment-card.past {
+        background: #fbfbfb;
+        opacity: 0.7;
+        border-color: #eee;
+      }
+      .appointment-card.past::before {
+        background: #ccc;
+      }
+
       .status-pill {
         display: inline-block;
         font-size: 0.7rem;
@@ -354,10 +395,17 @@
         color: var(--info);
         border: 1px solid var(--info);
       }
+      .status-pill.done {
+        background: #e8f5e9;
+        color: var(--success);
+        border: 1px solid var(--success);
+      }
+
       .actions-row {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         margin-top: 15px;
+        flex-wrap: wrap;
       }
       .btn-action {
         border: none;
@@ -365,8 +413,14 @@
         border-radius: 10px;
         cursor: pointer;
         font-weight: 600;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         flex: 1;
+        min-width: 80px;
+        transition: all 0.2s ease;
+      }
+      .btn-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       }
       .btn-reschedule {
         background: #eeffff;
@@ -375,6 +429,27 @@
       .btn-cancel {
         background: #fff5f5;
         color: var(--danger);
+      }
+      .btn-arrive {
+        background: #e8f5e9;
+        color: var(--success);
+        border: 1px solid #c8e6c9;
+      }
+
+      .list-section-title {
+        font-size: 1.1rem;
+        color: var(--primary);
+        font-weight: 800;
+        margin: 30px 0 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .list-section-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #ffdaeb;
       }
 
       /* ADMIN - DISTRIBUCIÓN */
@@ -424,6 +499,7 @@
         margin: 4px;
         font-size: 0.85rem;
       }
+
       .service-item {
         display: flex;
         justify-content: space-between;
@@ -433,6 +509,25 @@
         border-radius: 12px;
         margin-bottom: 8px;
         border: 1px solid #eee;
+      }
+      .service-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .svc-icon {
+        font-size: 1.4rem;
+        cursor: pointer;
+        padding: 5px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s;
+      }
+      .svc-icon:active {
+        transform: scale(1.2);
       }
       .btn-delete-svc {
         background: #ffebee;
@@ -444,6 +539,7 @@
         font-weight: bold;
         font-size: 0.8rem;
       }
+
       .add-row {
         display: flex;
         gap: 10px;
@@ -454,6 +550,12 @@
         margin: 0;
         flex: 1;
       }
+      .add-row select {
+        width: 130px;
+        margin: 0;
+        padding: 15px 5px;
+        font-size: 0.8rem;
+      }
       .add-row button {
         width: auto;
         margin: 0;
@@ -461,7 +563,22 @@
         height: 56px;
       }
 
-      /* PERFIL ESTILIZADO */
+      .msg-config-box {
+        background: #fff;
+        padding: 15px;
+        border-radius: 15px;
+        border: 1px solid #eee;
+        margin-top: 15px;
+      }
+      .msg-label {
+        display: block;
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      /* PERFIL */
       .profile-header-large {
         display: flex;
         flex-direction: column;
@@ -505,6 +622,25 @@
         <button class="btn-main" onclick="closeModal('generalModal')">
           Entendido
         </button>
+      </div>
+    </div>
+
+    <div id="deleteServiceModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-icon">🗑️</div>
+        <h3 style="color: var(--danger); margin: 0">¿Borrar Servicio?</h3>
+        <p style="color: #666; margin: 10px 0">Esta acción es permanente.</p>
+        <div class="modal-btn-row">
+          <button
+            class="btn-modal secondary"
+            onclick="closeModal('deleteServiceModal')"
+          >
+            Cancelar
+          </button>
+          <button class="btn-modal danger" onclick="confirmDeleteService()">
+            Sí, Borrar
+          </button>
+        </div>
       </div>
     </div>
 
@@ -824,7 +960,6 @@
           <select id="fieldHora">
             <option value="">Selecciona día...</option>
           </select>
-
           <button id="btnMainAction" class="btn-main" onclick="confirmarCita()">
             💖 Reservar Cita
           </button>
@@ -836,7 +971,24 @@
         style="display: none; padding: 20px"
         class="animate-pop"
       >
-        <div id="tablaCitasContainer"></div>
+        <div class="sub-tabs">
+          <button
+            id="subtab-upcoming"
+            class="sub-tab-btn active"
+            onclick="switchListTab('upcoming')"
+          >
+            📅 Próximas
+          </button>
+          <button
+            id="subtab-history"
+            class="sub-tab-btn"
+            onclick="switchListTab('history')"
+          >
+            🕒 Historial
+          </button>
+        </div>
+        <div id="list-upcoming-container"></div>
+        <div id="list-history-container" style="display: none"></div>
       </div>
 
       <div
@@ -861,12 +1013,60 @@
               id="newServiceInput"
               placeholder="Nuevo servicio..."
             />
+            <select id="newServiceType">
+              <option value="basico">🩷 Básico</option>
+              <option value="diseno">💖 Diseño</option>
+            </select>
             <button
               class="btn-main"
               style="background: var(--success)"
               onclick="addService()"
             >
               +
+            </button>
+          </div>
+          <p style="font-size: 0.7rem; color: #888; margin-top: 5px">
+            * Toca el corazón (🩷/💖) para cambiar el tipo.
+          </p>
+
+          <div class="msg-config-box">
+            <label class="msg-label">🩷 Mensaje Final (Servicio Básico):</label>
+            <textarea
+              id="adminMsgBasic"
+              rows="2"
+              style="
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 10px;
+              "
+            ></textarea>
+
+            <label class="msg-label" style="margin-top: 10px"
+              >💖 Mensaje Final (Servicio Diseño):</label
+            >
+            <textarea
+              id="adminMsgDesign"
+              rows="2"
+              style="
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 10px;
+              "
+            ></textarea>
+
+            <button
+              class="btn-main"
+              style="
+                margin-top: 10px;
+                padding: 10px;
+                font-size: 0.9rem;
+                background: var(--info);
+              "
+              onclick="saveMsgConfig()"
+            >
+              Guardar Mensajes
             </button>
           </div>
         </div>
@@ -887,7 +1087,7 @@
           <div id="weeklyHours" style="margin-bottom: 10px"></div>
           <div class="add-row">
             <input type="time" id="newHourInput" />
-            <button class="btn-main" onclick="addStagedHour()">+</button>
+            <button class="btn-main" onclick="addHourToSelected()">+</button>
           </div>
           <button
             class="btn-main"
@@ -939,7 +1139,6 @@
           </h2>
           <p style="color: #aaa; margin: 5px" id="displayProfileEmail">...</p>
         </div>
-
         <div
           style="
             background: white;
@@ -961,7 +1160,6 @@
             </button>
           </div>
         </div>
-
         <button
           class="btn-main"
           style="
@@ -974,7 +1172,6 @@
         >
           🔒 Cambiar Contraseña
         </button>
-
         <div
           id="profilePassForm"
           style="
@@ -1028,7 +1225,6 @@
             Actualizar
           </button>
         </div>
-
         <button
           onclick="logout()"
           style="
@@ -1067,16 +1263,57 @@
         rescheduleData = null,
         pendingCancelId = null,
         pendingCancelData = null;
+      let pendingServiceDeleteId = null;
+      let msgBasic = "Te envío el comprobante por aquí.";
+      let msgDesign = "Te envío el diseño que tengo en mente y el comprobante.";
 
       const hash = window.location.hash;
       const isRecovery = hash && hash.includes("type=recovery");
+
+      function formatDateText(dateStr) {
+        const dias = [
+          "Domingo",
+          "Lunes",
+          "Martes",
+          "Miércoles",
+          "Jueves",
+          "Viernes",
+          "Sábado",
+        ];
+        const meses = [
+          "Enero",
+          "Febrero",
+          "Marzo",
+          "Abril",
+          "Mayo",
+          "Junio",
+          "Julio",
+          "Agosto",
+          "Septiembre",
+          "Octubre",
+          "Noviembre",
+          "Diciembre",
+        ];
+        const date = new Date(dateStr + "T00:00:00");
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        let prefix = "";
+        if (date.toDateString() === today.toDateString()) prefix = "Hoy, ";
+        else if (date.toDateString() === tomorrow.toDateString())
+          prefix = "Mañana, ";
+        return (
+          prefix +
+          `${dias[date.getDay()]}, ${date.getDate()} de ${meses[date.getMonth()]}`
+        );
+      }
 
       async function initApp() {
         if (isRecovery) {
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "none";
           document.getElementById("recovery-screen").style.display = "block";
-
           let checks = 0;
           const checkSession = async () => {
             const { data } = await client.auth.getSession();
@@ -1131,15 +1368,28 @@
             .single();
           if (!data) return setTimeout(checkUser, 500);
           userProfile = data;
-
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "block";
           document.getElementById("fieldNombre").value = data.full_name;
           document.getElementById("fieldCorreo").value = session.user.email;
-
           renderProfileUI();
           await fetchServices();
           await fetchSchedule();
+
+          const { data: cfg } = await client
+            .from("textos_app")
+            .select("*")
+            .eq("id", 1)
+            .single();
+          if (cfg) {
+            msgBasic = cfg.final_basico || msgBasic;
+            msgDesign = cfg.final_diseno || msgDesign;
+            document.getElementById("adminMsgBasic").value = msgBasic;
+            document.getElementById("adminMsgDesign").value = msgDesign;
+          } else {
+            document.getElementById("adminMsgBasic").value = msgBasic;
+            document.getElementById("adminMsgDesign").value = msgDesign;
+          }
 
           if (data.role === "admin") {
             document.getElementById("adminBadge").style.display =
@@ -1152,12 +1402,30 @@
             document.getElementById("fieldCorreo").readOnly = true;
           }
           renderCalendar();
+
+          setInterval(() => {
+            if (document.getElementById("view-lista").style.display !== "none")
+              loadAllAppointments();
+          }, 30000);
         } else {
           document.getElementById("auth-screen").style.display = "block";
         }
       }
 
-      // FUNCIONES COMUNES
+      async function saveMsgConfig() {
+        const b = document.getElementById("adminMsgBasic").value;
+        const d = document.getElementById("adminMsgDesign").value;
+        const { error } = await client
+          .from("textos_app")
+          .upsert({ id: 1, final_basico: b, final_diseno: d });
+        if (error) showAlert("Error", "Falta crear la tabla en DB.");
+        else {
+          msgBasic = b;
+          msgDesign = d;
+          showAlert("Éxito", "Mensajes actualizados.");
+        }
+      }
+
       function togglePassword(id, icon) {
         const i = document.getElementById(id);
         if (i.type === "password") {
@@ -1189,6 +1457,7 @@
           ? "none"
           : "block";
       }
+
       async function handleAuth(t) {
         const e = document.getElementById(
           t === "login" ? "loginEmail" : "regEmail",
@@ -1250,7 +1519,6 @@
         }
       }
 
-      // ADMIN Y DATOS
       async function fetchServices() {
         const { data } = await client.from("servicios").select("*").order("id");
         if (data) {
@@ -1263,32 +1531,50 @@
             o.text = i.nombre;
             s.appendChild(o);
           });
+
           if (userProfile?.role === "admin") {
             const l = document.getElementById("adminServicesList");
             l.innerHTML = "";
-            globalServices.forEach(
-              (i) =>
-                (l.innerHTML += `<div class="service-item"><span>${i.nombre}</span><button class="btn-delete-svc" onclick="deleteService(${i.id})">Borrar</button></div>`),
-            );
+            globalServices.forEach((i) => {
+              const icon = i.tipo === "diseno" ? "💖" : "🩷";
+              l.innerHTML += `<div class="service-item"><div class="service-info"><span class="svc-icon" onclick="toggleServiceType(${i.id}, '${i.tipo}')">${icon}</span> <span>${i.nombre}</span></div><button class="btn-delete-svc" onclick="askDeleteService(${i.id})">Borrar</button></div>`;
+            });
           }
         }
       }
+
       async function addService() {
         const v = document.getElementById("newServiceInput").value.trim();
+        const t = document.getElementById("newServiceType").value;
         if (!v) return;
         const { error } = await client
           .from("servicios")
-          .insert([{ nombre: v }]);
+          .insert([{ nombre: v, tipo: t }]);
         if (!error) {
           document.getElementById("newServiceInput").value = "";
           await fetchServices();
         }
       }
-      async function deleteService(id) {
-        if (confirm("¿Borrar?")) {
-          await client.from("servicios").delete().eq("id", id);
-          await fetchServices();
-        }
+
+      async function toggleServiceType(id, currentType) {
+        const newType = currentType === "diseno" ? "basico" : "diseno";
+        await client.from("servicios").update({ tipo: newType }).eq("id", id);
+        await fetchServices();
+      }
+
+      function askDeleteService(id) {
+        pendingServiceDeleteId = id;
+        document.getElementById("deleteServiceModal").style.display = "flex";
+      }
+      async function confirmDeleteService() {
+        if (!pendingServiceDeleteId) return;
+        await client
+          .from("servicios")
+          .delete()
+          .eq("id", pendingServiceDeleteId);
+        closeModal("deleteServiceModal");
+        pendingServiceDeleteId = null;
+        await fetchServices();
       }
 
       async function updateProfileName() {
@@ -1327,7 +1613,6 @@
         window.location.href = window.location.origin;
       }
 
-      // GESTOS Y NAVEGACIÓN
       let touchStartX = 0,
         touchEndX = 0;
       document
@@ -1383,57 +1668,70 @@
         if (t !== "agenda") cancelRescheduleMode();
       }
 
-      // ADMIN CALENDARIO
+      // NUEVA LOGICA DE HORARIOS INDEPENDIENTES
       function toggleWeekDay(d) {
         const i = selectedWeekDays.indexOf(d);
         if (i > -1) selectedWeekDays.splice(i, 1);
         else selectedWeekDays.push(d);
         renderWeekDays();
       }
+
       function renderWeekDays() {
         [0, 1, 2, 3, 4, 5, 6].forEach((d) => {
           const el = document.getElementById(`d${d}`);
           if (selectedWeekDays.includes(d)) el.classList.add("active");
           else el.classList.remove("active");
         });
+
         document.getElementById("hoursEditor").style.display =
           selectedWeekDays.length ? "block" : "none";
-        if (selectedWeekDays.length === 1 && !stagedHours.length)
-          stagedHours = globalSchedule[selectedWeekDays[0]]
-            ? [...globalSchedule[selectedWeekDays[0]]]
-            : [];
         renderStaged();
       }
+
       function renderStaged() {
         const c = document.getElementById("weeklyHours");
         c.innerHTML = "";
-        stagedHours
-          .sort()
-          .forEach(
-            (h) =>
-              (c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')" style="cursor:pointer;margin-left:5px">x</span></span>`),
-          );
+        let allHours = new Set();
+        selectedWeekDays.forEach((day) => {
+          if (globalSchedule[day])
+            globalSchedule[day].forEach((h) => allHours.add(h));
+        });
+        const sortedHours = Array.from(allHours).sort();
+        sortedHours.forEach((h) => {
+          c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')" style="cursor:pointer;margin-left:5px">x</span></span>`;
+        });
       }
-      function addStagedHour() {
+
+      function addHourToSelected() {
         const h = document.getElementById("newHourInput").value;
-        if (h && !stagedHours.includes(h)) {
-          stagedHours.push(h);
-          renderStaged();
-        }
-      }
-      function remStaged(h) {
-        stagedHours = stagedHours.filter((x) => x !== h);
+        if (!h) return;
+        selectedWeekDays.forEach((day) => {
+          if (!globalSchedule[day]) globalSchedule[day] = [];
+          if (!globalSchedule[day].includes(h)) globalSchedule[day].push(h);
+        });
         renderStaged();
       }
+
+      function remStaged(h) {
+        selectedWeekDays.forEach((day) => {
+          if (globalSchedule[day]) {
+            globalSchedule[day] = globalSchedule[day].filter((x) => x !== h);
+          }
+        });
+        renderStaged();
+      }
+
       async function saveWeekSchedule() {
         for (let d of selectedWeekDays)
           await client
             .from("horarios_base")
-            .upsert({ dia: d, horas: stagedHours });
+            .upsert({ dia: d, horas: globalSchedule[d] || [] });
         selectedWeekDays = [];
         renderWeekDays();
+        await fetchSchedule();
         showAlert("Éxito", "Horario guardado.");
       }
+
       async function loadAdminDayConfig() {
         const d = document.getElementById("adminDateInput").value;
         if (!d) return;
@@ -1505,7 +1803,6 @@
         document.getElementById("btnMainAction").innerText = "💖 Reservar Cita";
         document.getElementById("btnMainAction").className = "btn-main";
       }
-
       async function confirmarCita() {
         if (!selectedDate || !document.getElementById("fieldHora").value)
           return showAlert("Faltan Datos", "Selecciona fecha y hora.");
@@ -1530,7 +1827,6 @@
         } else {
           if (!document.getElementById("fieldTelefono").value)
             return showAlert("Faltan Datos", "Teléfono requerido.");
-          // LIMPIEZA 1: AL GUARDAR (SOLO NUMEROS)
           const cleanTel = document
             .getElementById("fieldTelefono")
             .value.replace(/\D/g, "");
@@ -1554,9 +1850,18 @@
       }
 
       function enviarWhatsAppCliente() {
-        const cleanTel = lastCitaData.telefono.replace(/\D/g, "");
+        const serviceObj = globalServices.find(
+          (s) => s.nombre === lastCitaData.servicio,
+        );
+        const finalPhrase =
+          serviceObj && serviceObj.tipo === "diseno" ? msgDesign : msgBasic;
+        const msg =
+          `Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\n` +
+          `Cita: ${formatDateText(lastCitaData.fecha)} ${format12h(lastCitaData.hora)}\n` +
+          `Servicio: ${lastCitaData.servicio}\n` +
+          finalPhrase;
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\nCita: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}\nServicio: ${lastCitaData.servicio}\nTe envío el comprobante por aquí.`)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
           "_blank",
         );
         closeModal("wspModal");
@@ -1564,31 +1869,34 @@
       }
       function enviarWhatsAppReprogramacion() {
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\nNueva: ${lastCitaData.fecha} ${format12h(lastCitaData.hora)}`)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\nNueva: ${formatDateText(lastCitaData.fecha)} ${format12h(lastCitaData.hora)}`)}`,
           "_blank",
         );
         closeModal("wspRescheduleModal");
         showTab("lista");
       }
 
-      function openCancelModal(id, t, n, c) {
+      function openCancelModal(id, t, n, c, h) {
         pendingCancelId = id;
-        pendingCancelData = { tel: t, name: n, isClient: c };
+        pendingCancelData = { tel: t, name: n, isClient: c, hour: h };
         document.getElementById("cancelModal").style.display = "flex";
       }
-
       async function confirmCancelation() {
         const { error } = await client
           .from("citas")
           .delete()
           .eq("id", pendingCancelId);
         if (!error) {
-          // LIMPIEZA 2: AL CANCELAR (PARCHE 57)
           let rawTel = pendingCancelData.tel.replace(/\D/g, "");
           if (!rawTel.startsWith("57")) rawTel = "57" + rawTel;
-
+          let msg = "";
+          if (pendingCancelData.isClient) {
+            msg = `Hola NailsbyNiNa. Cancelo cita de ${pendingCancelData.name}.`;
+          } else {
+            msg = `Hola! ¿Cómo estás?\nHan pasado 20 minutos o más desde la hora de tu cita, debido a esto, será cancelada la cita que tenías para el día de hoy a las ${format12h(pendingCancelData.hour)}\nSi deseas agendar un nuevo turno hazmelo saber para que juntas revisemos la agenda 💅🏻`;
+          }
           window.open(
-            `https://wa.me/${pendingCancelData.isClient ? miWhatsAppAdmin : rawTel}?text=${encodeURIComponent(pendingCancelData.isClient ? `Hola NailsbyNiNa. Cancelo cita de ${pendingCancelData.name}.` : `Hola ${pendingCancelData.name}, cancelamos tu cita.`)}`,
+            `https://wa.me/${pendingCancelData.isClient ? miWhatsAppAdmin : rawTel}?text=${encodeURIComponent(msg)}`,
             "_blank",
           );
           loadAllAppointments();
@@ -1596,36 +1904,110 @@
         }
       }
 
+      async function markArrived(id) {
+        await client
+          .from("citas")
+          .update({ estado: "completada" })
+          .eq("id", id);
+        loadAllAppointments();
+      }
+
+      function switchListTab(tab) {
+        document
+          .querySelectorAll(".sub-tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(`subtab-${tab}`).classList.add("active");
+        if (tab === "upcoming") {
+          document.getElementById("list-upcoming-container").style.display =
+            "block";
+          document.getElementById("list-history-container").style.display =
+            "none";
+        } else {
+          document.getElementById("list-upcoming-container").style.display =
+            "none";
+          document.getElementById("list-history-container").style.display =
+            "block";
+        }
+      }
+
       async function loadAllAppointments() {
         let q = client.from("citas").select("*");
         if (userProfile.role !== "admin") q = q.eq("user_id", userProfile.id);
-        const { data } = await q.order("fecha").order("hora");
-        const c = document.getElementById("tablaCitasContainer");
-        c.innerHTML = "";
+        const { data } = await q
+          .order("fecha", { ascending: false })
+          .order("hora");
+
+        const cUp = document.getElementById("list-upcoming-container");
+        const cHist = document.getElementById("list-history-container");
+        cUp.innerHTML = "";
+        cHist.innerHTML = "";
+
         if (!data || !data.length) {
-          c.innerHTML =
+          cUp.innerHTML =
             "<p style='text-align:center;color:#aaa;margin-top:30px'>Sin citas.</p>";
           return;
         }
-        const hoy = new Date().toISOString().split("T")[0];
+
+        const now = new Date();
+        const upcomingData = [];
+        const historyData = [];
+
         data.forEach((d) => {
-          // LIMPIEZA 3: AL MOSTRAR LISTA (PARCHE 57)
+          const apptTime = new Date(d.fecha + "T" + d.hora);
+          const threshold = new Date(apptTime.getTime() + 20 * 60000);
+          if (threshold < now || d.estado === "completada") historyData.push(d);
+          else upcomingData.push(d);
+        });
+
+        // Ordenar próximas por cercanía
+        upcomingData.sort(
+          (a, b) =>
+            new Date(a.fecha + "T" + a.hora) - new Date(b.fecha + "T" + b.hora),
+        );
+
+        const renderCard = (d, isPast) => {
           let rawTel = d.telefono.replace(/\D/g, "");
           if (!rawTel.startsWith("57")) rawTel = "57" + rawTel;
+          const reminderMsg =
+            `Hola ${d.nombre}!\n` +
+            `Fecha: ${formatDateText(d.fecha)}.\n` +
+            `Hora: ${format12h(d.hora)}\n` +
+            `Lugar: Carrera 81d #68-03sur Bosa Palestina\n` +
+            `Servicio: ${d.servicio}.\n\n` +
+            `*Recuerda que tenemos 20 minutos de tolerancia si no llegas tu cita será cancelada.`;
 
-          const badge =
-            d.estado === "reprogramada"
-              ? `<div class="status-pill repro">Reprogramada</div>`
-              : `<div class="status-pill" style="background:#e6fffa;color:#00b894;border:1px solid #00b894">Confirmada</div>`;
-          const btns =
-            userProfile.role === "admin"
-              ? `<div class="actions-row"><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=Hola%20${d.nombre},%20recordatorio')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false)">Cancelar</button></div>`
-              : d.fecha >= hoy
-                ? `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true)">Cancelar</button></div>`
-                : "";
-          c.innerHTML += `<div class="appointment-card ${d.estado === "reprogramada" ? "reprogramada" : ""} animate-pop">${badge}<div style="font-size:1.1rem;font-weight:bold">${d.servicio}</div><div style="color:var(--primary);font-weight:bold;margin:5px 0">${format12h(d.hora)} - ${d.fecha}</div><div style="font-size:0.9rem;color:#888">${d.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9;padding:8px;border-radius:8px;margin-top:8px;font-size:0.8rem">📱 ${d.telefono}<br>📧 ${d.correo}</div>` : ""}${btns}</div>`;
-        });
+          let badgeClass = "status-pill";
+          let badgeText = "Confirmada";
+          if (d.estado === "reprogramada") {
+            badgeClass += " repro";
+            badgeText = "Reprogramada";
+          } else if (d.estado === "completada") {
+            badgeClass += " done";
+            badgeText = "Completada";
+          }
+
+          let btns = "";
+          if (!isPast) {
+            btns =
+              userProfile.role === "admin"
+                ? `<div class="actions-row"><button class="btn-action btn-arrive" onclick="markArrived('${d.id}')">✅ Llegó</button><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=${encodeURIComponent(reminderMsg)}')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">Cancelar</button></div>`
+                : `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true, '${d.hora}')">Cancelar</button></div>`;
+          }
+          return `<div class="appointment-card ${d.estado === "reprogramada" ? "reprogramada" : ""} ${d.estado === "completada" ? "completada" : ""} ${isPast ? "past" : ""} animate-pop"><div class="${badgeClass}">${badgeText}</div><div style="font-size:1.1rem;font-weight:bold">${d.servicio}</div><div style="color:var(--primary);font-weight:bold;margin:5px 0">${formatDateText(d.fecha)} - ${format12h(d.hora)}</div><div style="font-size:0.9rem;color:#888">${d.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9;padding:8px;border-radius:8px;margin-top:8px;font-size:0.8rem">📱 ${d.telefono}<br>📧 ${d.correo}</div>` : ""}${btns}</div>`;
+        };
+
+        if (upcomingData.length)
+          upcomingData.forEach((d) => (cUp.innerHTML += renderCard(d, false)));
+        else
+          cUp.innerHTML =
+            "<p style='text-align:center;color:#ccc;margin-top:20px'>No tienes citas próximas.</p>";
+        if (historyData.length)
+          historyData.forEach((d) => (cHist.innerHTML += renderCard(d, true)));
+        else
+          cHist.innerHTML =
+            "<p style='text-align:center;color:#ccc;margin-top:20px'>No hay historial reciente.</p>";
       }
+
       async function fetchSchedule() {
         const { data } = await client.from("horarios_base").select("*");
         if (data) data.forEach((i) => (globalSchedule[i.dia] = i.horas));
@@ -1648,15 +2030,17 @@
           last = new Date(y, m + 1, 0).getDate(),
           today = new Date();
         today.setHours(0, 0, 0, 0);
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() + 2);
         for (let i = 0; i < first; i++) grid.innerHTML += `<div></div>`;
         for (let i = 1; i <= last; i++) {
-          const d = document.createElement("div");
           const dStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           const cDate = new Date(dStr + "T00:00:00");
+          const d = document.createElement("div");
           d.className = "day";
           d.innerText = i;
           d.id = `day-${dStr}`;
-          if (cDate < today) d.classList.add("disabled");
+          if (cDate < today || cDate > maxDate) d.classList.add("disabled");
           else {
             if (cDate.getTime() === today.getTime()) d.classList.add("today");
             d.onclick = () => {
@@ -1673,6 +2057,21 @@
           grid.appendChild(d);
         }
         updateFullDays(y, m, last);
+      }
+      function moveMonth(v) {
+        const nextDate = new Date(viewDate);
+        nextDate.setMonth(nextDate.getMonth() + v);
+        const today = new Date();
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() + 2);
+        if (v > 0 && nextDate > maxDate) return;
+        if (
+          v < 0 &&
+          nextDate < new Date(today.getFullYear(), today.getMonth(), 1)
+        )
+          return;
+        viewDate.setMonth(viewDate.getMonth() + v);
+        renderCalendar();
       }
       async function updateFullDays(y, m, last) {
         const s = `${y}-${String(m + 1).padStart(2, "0")}-01`,
@@ -1732,9 +2131,19 @@
         base.forEach((h) => {
           const opt = document.createElement("option");
           opt.value = h;
+          // LOGICA DE HORAS PASADAS (MISMO DIA)
+          const now = new Date();
+          const isToday =
+            new Date(f + "T00:00:00").toDateString() === now.toDateString();
+          const currentMins = now.getHours() * 60 + now.getMinutes();
+          const [hb, mb] = h.split(":").map(Number);
+          const slotMins = hb * 60 + mb;
           if (taken.includes(h)) {
             opt.disabled = true;
             opt.text = format12h(h) + " (Ocupado)";
+          } else if (isToday && slotMins <= currentMins) {
+            opt.disabled = true;
+            opt.text = format12h(h) + " (Pasada)";
           } else {
             opt.text = format12h(h);
             any = true;
@@ -1743,13 +2152,9 @@
         });
         if (!any) {
           s.innerHTML = "";
-          s.add(new Option("Lleno", ""));
+          s.add(new Option("Lleno / Pasado", ""));
           s.disabled = true;
         }
-      }
-      function moveMonth(v) {
-        viewDate.setMonth(viewDate.getMonth() + v);
-        renderCalendar();
       }
 
       initApp();
