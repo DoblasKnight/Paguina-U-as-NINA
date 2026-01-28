@@ -20,6 +20,7 @@
         --danger: #ff3366;
         --info: #00bfff;
         --success: #00e676;
+        --warning: #ff9800;
         --radius: 20px;
       }
       body {
@@ -327,6 +328,33 @@
         z-index: 10;
       }
 
+      .file-upload-wrapper {
+        margin: 15px 0;
+        text-align: center;
+      }
+      .custom-file-upload {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 20px;
+        cursor: pointer;
+        border: 2px dashed var(--primary);
+        border-radius: 15px;
+        background: rgba(255, 20, 147, 0.03);
+        color: var(--primary);
+        font-weight: bold;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      #fileNameDisplay {
+        display: block;
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 5px;
+        font-style: italic;
+      }
+
       .btn-main {
         background: var(--primary);
         color: white;
@@ -370,14 +398,14 @@
       .appointment-card.completada::before {
         background: var(--success);
       }
+      .appointment-card.vencida::before {
+        background: var(--danger);
+      }
 
       .appointment-card.past {
         background: #fbfbfb;
-        opacity: 0.7;
+        opacity: 0.85;
         border-color: #eee;
-      }
-      .appointment-card.past::before {
-        background: #ccc;
       }
 
       .status-pill {
@@ -399,6 +427,11 @@
         background: #e8f5e9;
         color: var(--success);
         border: 1px solid var(--success);
+      }
+      .status-pill.late {
+        background: #ffebee;
+        color: var(--danger);
+        border: 1px solid var(--danger);
       }
 
       .actions-row {
@@ -435,6 +468,11 @@
         color: var(--success);
         border: 1px solid #c8e6c9;
       }
+      .btn-notify-late {
+        background: var(--danger);
+        color: white;
+        box-shadow: 0 2px 5px rgba(255, 50, 100, 0.3);
+      }
 
       .list-section-title {
         font-size: 1.1rem;
@@ -452,7 +490,7 @@
         background: #ffdaeb;
       }
 
-      /* ADMIN - DISTRIBUCIÓN */
+      /* ADMIN */
       .admin-control-panel {
         padding: 20px;
         background: white;
@@ -499,7 +537,6 @@
         margin: 4px;
         font-size: 0.85rem;
       }
-
       .service-item {
         display: flex;
         justify-content: space-between;
@@ -539,7 +576,6 @@
         font-weight: bold;
         font-size: 0.8rem;
       }
-
       .add-row {
         display: flex;
         gap: 10px;
@@ -562,7 +598,6 @@
         padding: 0 20px;
         height: 56px;
       }
-
       .msg-config-box {
         background: #fff;
         padding: 15px;
@@ -1959,7 +1994,6 @@
           else upcomingData.push(d);
         });
 
-        // Ordenar próximas por cercanía
         upcomingData.sort(
           (a, b) =>
             new Date(a.fecha + "T" + a.hora) - new Date(b.fecha + "T" + b.hora),
@@ -1986,14 +2020,31 @@
             badgeText = "Completada";
           }
 
+          // ESTADO ESPECIAL: VENCIDA (PASADA Y NO COMPLETADA)
+          if (isPast && d.estado !== "completada") {
+            badgeClass += " late";
+            badgeText = "Vencida (No Llegó)";
+          }
+
           let btns = "";
-          if (!isPast) {
+          if (!isPast && d.estado !== "completada") {
             btns =
               userProfile.role === "admin"
                 ? `<div class="actions-row"><button class="btn-action btn-arrive" onclick="markArrived('${d.id}')">✅ Llegó</button><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=${encodeURIComponent(reminderMsg)}')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">Cancelar</button></div>`
                 : `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true, '${d.hora}')">Cancelar</button></div>`;
+          } else if (
+            isPast &&
+            d.estado !== "completada" &&
+            userProfile.role === "admin"
+          ) {
+            // BOTON DE NOTIFICAR CANCELACION EN HISTORIAL
+            btns = `<div class="actions-row"><button class="btn-action btn-notify-late" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">📢 Notificar Cancelación</button></div>`;
           }
-          return `<div class="appointment-card ${d.estado === "reprogramada" ? "reprogramada" : ""} ${d.estado === "completada" ? "completada" : ""} ${isPast ? "past" : ""} animate-pop"><div class="${badgeClass}">${badgeText}</div><div style="font-size:1.1rem;font-weight:bold">${d.servicio}</div><div style="color:var(--primary);font-weight:bold;margin:5px 0">${formatDateText(d.fecha)} - ${format12h(d.hora)}</div><div style="font-size:0.9rem;color:#888">${d.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9;padding:8px;border-radius:8px;margin-top:8px;font-size:0.8rem">📱 ${d.telefono}<br>📧 ${d.correo}</div>` : ""}${btns}</div>`;
+
+          const card = `<div class="appointment-card ${d.estado === "reprogramada" ? "reprogramada" : ""} ${d.estado === "completada" ? "completada" : ""} ${isPast && d.estado !== "completada" ? "vencida past" : isPast ? "past" : ""} animate-pop"><div class="${badgeClass}">${badgeText}</div><div style="font-size:1.1rem;font-weight:bold">${d.servicio}</div><div style="color:var(--primary);font-weight:bold;margin:5px 0">${formatDateText(d.fecha)} - ${format12h(d.hora)}</div><div style="font-size:0.9rem;color:#888">${d.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9;padding:8px;border-radius:8px;margin-top:8px;font-size:0.8rem">📱 ${d.telefono}<br>📧 ${d.correo}</div>` : ""}${btns}</div>`;
+
+          if (isPast || d.estado === "completada") return card;
+          else return card;
         };
 
         if (upcomingData.length)
@@ -2131,22 +2182,25 @@
         base.forEach((h) => {
           const opt = document.createElement("option");
           opt.value = h;
-          // LOGICA DE HORAS PASADAS (MISMO DIA)
-          const now = new Date();
-          const isToday =
-            new Date(f + "T00:00:00").toDateString() === now.toDateString();
-          const currentMins = now.getHours() * 60 + now.getMinutes();
-          const [hb, mb] = h.split(":").map(Number);
-          const slotMins = hb * 60 + mb;
           if (taken.includes(h)) {
             opt.disabled = true;
             opt.text = format12h(h) + " (Ocupado)";
-          } else if (isToday && slotMins <= currentMins) {
-            opt.disabled = true;
-            opt.text = format12h(h) + " (Pasada)";
           } else {
-            opt.text = format12h(h);
-            any = true;
+            // VALIDAR HORA PASADA EN EL MISMO DIA
+            const now = new Date();
+            const isToday =
+              new Date(f + "T00:00:00").toDateString() === now.toDateString();
+            const currentMins = now.getHours() * 60 + now.getMinutes();
+            const [hb, mb] = h.split(":").map(Number);
+            const slotMins = hb * 60 + mb;
+
+            if (isToday && slotMins <= currentMins) {
+              opt.disabled = true;
+              opt.text = format12h(h) + " (Pasada)";
+            } else {
+              opt.text = format12h(h);
+              any = true;
+            }
           }
           s.appendChild(opt);
         });
