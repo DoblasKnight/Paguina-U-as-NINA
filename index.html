@@ -283,6 +283,14 @@
         text-decoration: line-through;
         pointer-events: none;
       }
+      /* ESTILO DIA CERRADO */
+      .day.blocked-day {
+        background: #ffebee !important;
+        color: #ff5252 !important;
+        border: 1px solid #ffcdd2;
+        opacity: 1;
+        pointer-events: auto;
+      }
       .day.disabled {
         opacity: 0.3;
         pointer-events: none;
@@ -323,8 +331,6 @@
         border-color: var(--primary);
         background: white;
       }
-
-      /* ESTADO DESHABILITADO */
       input:disabled,
       select:disabled {
         background-color: var(--disabled);
@@ -332,8 +338,6 @@
         border-color: #eee;
         cursor: not-allowed;
       }
-
-      /* OPCIONES DESHABILITADAS EN SELECT */
       option:disabled {
         color: #ccc;
         background-color: #f9f9f9;
@@ -504,6 +508,7 @@
         padding: 20px;
         background: white;
       }
+
       .service-item {
         display: flex;
         justify-content: space-between;
@@ -532,9 +537,6 @@
         cursor: pointer;
         font-size: 0.9rem;
         transition: 0.2s;
-      }
-      .btn-icon:hover {
-        background: #f0f0f0;
       }
       .btn-delete-svc {
         background: #ffebee;
@@ -728,6 +730,27 @@
           </button>
           <button class="btn-modal danger" onclick="confirmDeleteSurcharge()">
             Sí, Borrar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="deleteBlockModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-icon">🔓</div>
+        <h3 style="color: var(--text); margin: 0">¿Desbloquear?</h3>
+        <p style="color: #666; margin: 10px 0">
+          Se abrirá este espacio en la agenda.
+        </p>
+        <div class="modal-btn-row">
+          <button
+            class="btn-modal secondary"
+            onclick="closeModal('deleteBlockModal')"
+          >
+            Cancelar
+          </button>
+          <button class="btn-modal primary" onclick="confirmDeleteBlock()">
+            Sí, Abrir
           </button>
         </div>
       </div>
@@ -1278,19 +1301,36 @@
             id="btnToggleDay"
             onclick="toggleFullDayBlock()"
             class="btn-main"
-            style="background: #888"
+            style="background: #888; margin-bottom: 15px"
           >
             CERRAR DÍA
           </button>
+
           <div
-            id="adminHourGrid"
             style="
-              display: grid;
-              grid-template-columns: repeat(3, 1fr);
-              gap: 8px;
-              margin-top: 15px;
+              background: #ffebee;
+              padding: 15px;
+              border-radius: 15px;
+              border: 1px solid #ffcdd2;
             "
-          ></div>
+          >
+            <h4 style="margin: 0 0 10px 0; color: var(--danger)">
+              Bloquear Horas (Descanso/Personal)
+            </h4>
+            <div class="add-row">
+              <input type="time" id="blockStartTime" style="flex: 1" />
+              <span>-</span>
+              <input type="time" id="blockEndTime" style="flex: 1" />
+              <button
+                class="btn-main"
+                style="background: var(--danger); width: auto; padding: 0 20px"
+                onclick="addBlockRange()"
+              >
+                Bloquear
+              </button>
+            </div>
+            <div id="adminBlockList" style="margin-top: 10px"></div>
+          </div>
         </div>
       </div>
 
@@ -1432,10 +1472,12 @@
         pendingCancelData = null;
       let pendingServiceDeleteId = null;
       let pendingSurchargeId = null;
+      let pendingBlockId = null;
       let msgBasic = "Te envío el comprobante por aquí.";
       let msgDesign = "Te envío el diseño que tengo en mente y el comprobante.";
       let globalSurcharges = [];
       let globalClosingTimes = {};
+      let adminSelectedDate = null;
 
       const hash = window.location.hash;
       const isRecovery = hash && hash.includes("type=recovery");
@@ -1823,22 +1865,14 @@
         if (data) {
           globalServices = data;
           const s = document.getElementById("fieldServicio");
-          // Mantener "Selecciona un día..." hasta que se seleccione
-          if (s.options[0].text.includes("Cargando")) s.innerHTML = "";
-
-          if (s.options.length <= 1) {
-            // Populate only if empty
-            s.innerHTML = "";
-            s.add(new Option("1. Toca un día en el calendario 👆", ""));
-            globalServices.forEach((i) => {
-              const o = document.createElement("option");
-              o.value = i.nombre;
-              o.text = i.nombre;
-              s.appendChild(o);
-            });
-            // Keep disabled until day selected
-            s.disabled = true;
-          }
+          s.innerHTML = "";
+          s.add(new Option("Selecciona un día primero...", ""));
+          globalServices.forEach((i) => {
+            const o = document.createElement("option");
+            o.value = i.nombre;
+            o.text = i.nombre;
+            s.appendChild(o);
+          });
 
           if (userProfile?.role === "admin") {
             const l = document.getElementById("adminServicesList");
@@ -2127,45 +2161,78 @@
           .from("bloqueos")
           .select("*")
           .eq("fecha", d);
-        const isFull = data.some((b) => b.hora === null);
+        const isFull = data.some((b) => b.hora_inicio === null);
         document.getElementById("btnToggleDay").innerText = isFull
           ? "🔓 ABRIR DÍA"
           : "🔒 CERRAR DÍA";
-        const dw = new Date(d + "T00:00:00").getDay();
-        const base = globalSchedule[dw] ? globalSchedule[dw].horas : [];
-        const g = document.getElementById("adminHourGrid");
-        g.innerHTML = "";
-        base.sort().forEach((h) => {
-          const isB = data.some((b) => b.hora === h);
-          g.innerHTML += `<button class="hour-btn" style="background:${isB ? "#ffebee" : "#e8f5e9"};border:1px solid #ddd;padding:10px;border-radius:8px" onclick="toggleBlock('${h}',${isB})">${format12h(h)} ${isB ? "🚫" : "✅"}</button>`;
+        renderBlockedRanges(data);
+      }
+
+      function renderBlockedRanges(data) {
+        const container = document.getElementById("adminBlockList");
+        container.innerHTML = "";
+        if (!data) return;
+        data.forEach((b) => {
+          if (b.hora_inicio !== null) {
+            // Rango especifico
+            const s = b.hora_inicio.substring(0, 5);
+            const e = b.hora_fin.substring(0, 5);
+            container.innerHTML += `<div class="service-item" style="background:white; border:1px solid #ffcdd2"><span>🚫 ${format12h(s)} - ${format12h(e)}</span><button class="btn-delete-svc" onclick="askDeleteBlock(${b.id})">Abrir</button></div>`;
+          }
         });
       }
+
+      async function addBlockRange() {
+        if (!adminSelectedDate) return;
+        const start = document.getElementById("blockStartTime").value;
+        const end = document.getElementById("blockEndTime").value;
+        if (!start || !end) {
+          showAlert("Falta hora", "Selecciona inicio y fin.");
+          return;
+        }
+
+        await client
+          .from("bloqueos")
+          .insert({
+            fecha: adminSelectedDate,
+            hora_inicio: start,
+            hora_fin: end,
+          });
+        document.getElementById("blockStartTime").value = "";
+        document.getElementById("blockEndTime").value = "";
+        loadAdminDayConfig();
+        renderCalendar(); // REFRESH CALENDAR GRID
+      }
+
+      function askDeleteBlock(id) {
+        pendingBlockId = id;
+        document.getElementById("deleteBlockModal").style.display = "flex";
+      }
+
+      async function confirmDeleteBlock() {
+        if (!pendingBlockId) return;
+        await client.from("bloqueos").delete().eq("id", pendingBlockId);
+        closeModal("deleteBlockModal");
+        loadAdminDayConfig();
+        renderCalendar(); // REFRESH CALENDAR GRID
+      }
+
       async function toggleFullDayBlock() {
         const { data } = await client
           .from("bloqueos")
           .select("*")
           .eq("fecha", adminSelectedDate)
-          .is("hora", null);
+          .is("hora_inicio", null);
         if (data.length)
           await client.from("bloqueos").delete().eq("id", data[0].id);
         else
           await client
             .from("bloqueos")
-            .insert([{ fecha: adminSelectedDate, hora: null }]);
+            .insert([
+              { fecha: adminSelectedDate, hora_inicio: null, hora_fin: null },
+            ]);
         loadAdminDayConfig();
-      }
-      async function toggleBlock(h, isB) {
-        if (isB)
-          await client
-            .from("bloqueos")
-            .delete()
-            .eq("fecha", adminSelectedDate)
-            .eq("hora", h);
-        else
-          await client
-            .from("bloqueos")
-            .insert([{ fecha: adminSelectedDate, hora: h }]);
-        loadAdminDayConfig();
+        renderCalendar();
       }
 
       function startReschedule(id, f, h, s, n, t) {
@@ -2189,15 +2256,14 @@
         document.getElementById("btnMainAction").innerText = "💖 Reservar Cita";
         document.getElementById("btnMainAction").className = "btn-main";
       }
+
       async function confirmarCita() {
         if (!selectedDate || !document.getElementById("fieldHora").value)
           return showAlert("Faltan Datos", "Selecciona fecha y hora.");
         const hora = document.getElementById("fieldHora").value;
-
         const svcName = document.getElementById("fieldServicio").value;
         const svcObj = globalServices.find((s) => s.nombre === svcName);
         const duration = svcObj ? svcObj.duracion_minutos || 60 : 60;
-
         const cleanTel = document
           .getElementById("fieldTelefono")
           .value.replace(/\D/g, "");
@@ -2462,6 +2528,12 @@
             d.onclick = () => {
               if (d.classList.contains("full"))
                 return showAlert("Lo sentimos", "Día completo o no laboral.");
+              // BLOCK CHECK DAY
+              if (d.classList.contains("blocked-day")) {
+                showAlert("Día Cerrado", "No hay servicio este día.");
+                return;
+              }
+
               document
                 .querySelectorAll(".day")
                 .forEach((e) => e.classList.remove("selected"));
@@ -2515,23 +2587,31 @@
           .lte("fecha", e);
         const { data: b } = await client
           .from("bloqueos")
-          .select("fecha,hora")
+          .select("fecha,hora_inicio")
           .gte("fecha", s)
           .lte("fecha", e);
         for (let i = 1; i <= last; i++) {
           const dStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           const el = document.getElementById(`day-${dStr}`);
           if (!el || el.classList.contains("disabled")) continue;
+          // CHECK ADMIN FULL DAY BLOCK
+          const isBlockedDay = b.some(
+            (x) => x.fecha === dStr && x.hora_inicio === null,
+          );
+          if (isBlockedDay) {
+            el.classList.add("blocked-day");
+            continue;
+          }
+
           const dw = new Date(dStr + "T00:00:00").getDay();
           const base = globalSchedule[dw] ? globalSchedule[dw].horas : [];
-          const bl = b.some((x) => x.fecha === dStr && x.hora === null);
+          const bl = b.some((x) => x.fecha === dStr && x.hora_inicio === null);
           if (bl || !base.length) {
             el.classList.add("full");
             continue;
           }
           const taken = [
             ...c.filter((x) => x.fecha === dStr).map((x) => x.hora),
-            ...b.filter((x) => x.fecha === dStr && x.hora).map((x) => x.hora),
           ];
           if (!base.filter((h) => !taken.includes(h)).length)
             el.classList.add("full");
@@ -2573,7 +2653,7 @@
           .eq("fecha", f);
         const { data: b } = await client
           .from("bloqueos")
-          .select("hora")
+          .select("hora_inicio, hora_fin")
           .eq("fecha", f);
 
         // CALCULAR OCUPACION
@@ -2588,9 +2668,10 @@
           });
         if (b)
           b.forEach((bk) => {
-            if (bk.hora) {
-              const start = timeToMins(bk.hora);
-              busyRanges.push({ start, end: start + 60 });
+            if (bk.hora_inicio) {
+              const start = timeToMins(bk.hora_inicio);
+              const end = timeToMins(bk.hora_fin);
+              busyRanges.push({ start, end });
             }
           });
 
@@ -2621,11 +2702,12 @@
             const endMins = startMins + reqDur + 30; // +Buffer
 
             if (isToday && startMins <= nowMins) continue;
-            if (endMins - 30 > closingMins) continue;
+            if (startMins + reqDur > closingMins) continue;
 
             let collision = false;
             for (let r of busyRanges) {
-              if (startMins < r.end && endMins > r.start) {
+              // Overlap check
+              if (startMins < r.end && startMins + reqDur + 30 > r.start) {
                 collision = true;
                 break;
               }
@@ -2661,7 +2743,7 @@
           .eq("fecha", f);
         const { data: b } = await client
           .from("bloqueos")
-          .select("hora")
+          .select("hora_inicio, hora_fin")
           .eq("fecha", f);
 
         const svcName = document.getElementById("fieldServicio").value;
@@ -2676,6 +2758,8 @@
         const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
 
         let busyRanges = [];
+
+        // Citas Ocupadas
         if (c && c.length > 0) {
           c.forEach((appt) => {
             const s = globalServices.find((x) => x.nombre === appt.servicio);
@@ -2685,11 +2769,13 @@
             busyRanges.push({ start, end });
           });
         }
+        // Bloqueos Admin (Rangos)
         if (b && b.length > 0) {
           b.forEach((bk) => {
-            if (bk.hora) {
-              const start = timeToMins(bk.hora);
-              busyRanges.push({ start, end: start + 60 });
+            if (bk.hora_inicio) {
+              const start = timeToMins(bk.hora_inicio);
+              const end = timeToMins(bk.hora_fin);
+              busyRanges.push({ start, end });
             }
           });
         }
@@ -2711,9 +2797,32 @@
         s.add(new Option("Selecciona hora...", ""));
 
         availableList.forEach((h) => {
+          // HIDE EXPLICITLY BLOCKED HOURS
+          // Logic: If h is INSIDE any admin block range (from b), hide it.
           const startMins = timeToMins(h);
-          const endMins = startMins + reqDuration + 30; // +Buffer
+          const endMins = startMins + reqDuration;
 
+          // Check if falls inside ANY admin block
+          let isAdminBlocked = false;
+          if (b) {
+            for (let bk of b) {
+              if (bk.hora_inicio) {
+                const bS = timeToMins(bk.hora_inicio);
+                const bE = timeToMins(bk.hora_fin);
+                // If start time is inside block OR if service end overlaps block
+                // Actually, if it overlaps at all with block, it's invalid.
+                // But user specifically asked: "desaparezcan de ese dia" if blocked.
+                // So if it collides with admin block -> Hide.
+                if (startMins < bE && endMins > bS) {
+                  isAdminBlocked = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (isAdminBlocked) return; // Skip showing this option
+
+          // Validar pasado
           if (isToday && startMins <= nowMins) {
             const opt = document.createElement("option");
             opt.value = h;
@@ -2723,31 +2832,37 @@
             return;
           }
 
-          if (endMins - 30 > closingMins) {
+          // Validar cierre (strict finish)
+          if (endMins > closingMins) {
             return;
           }
 
+          // Validar Colision (Con buffer) with existing APPOINTMENTS (not blocks, checked above)
           let collision = false;
+          // Only check vs real appointments now? No, check vs all busyRanges to be safe for overlap logic
           for (let r of busyRanges) {
-            if (startMins < r.end && endMins > r.start) {
+            // New: [start, end+buffer] vs Existing: [r.start, r.end]
+            if (startMins < r.end && endMins + 30 > r.start) {
               collision = true;
               break;
             }
           }
 
-          const opt = document.createElement("option");
-          opt.value = h;
-
-          if (collision) {
+          if (!collision) {
+            const opt = document.createElement("option");
+            opt.value = h;
+            opt.text = format12h(h);
+            any = true;
+            s.appendChild(opt);
+          } else {
+            // If collision with appointment, show Ocupado
             if (base.includes(h)) {
+              const opt = document.createElement("option");
+              opt.value = h;
               opt.text = format12h(h) + " (Ocupado)";
               opt.disabled = true;
               s.appendChild(opt);
             }
-          } else {
-            opt.text = format12h(h);
-            any = true;
-            s.appendChild(opt);
           }
         });
 
