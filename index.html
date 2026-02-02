@@ -278,17 +278,15 @@
         font-weight: bold;
       }
       .day.full {
-        background: #f8f8f8;
-        color: #ddd;
-        text-decoration: line-through;
+        background: #ffcdd2;
+        color: #b71c1c;
+        border: 1px solid #e57373;
         pointer-events: none;
       }
-      /* ESTILO DIA CERRADO */
       .day.blocked-day {
-        background: #ffebee !important;
-        color: #ff5252 !important;
-        border: 1px solid #ffcdd2;
-        opacity: 1;
+        background: #eeeeee;
+        color: #999;
+        text-decoration: line-through;
         pointer-events: auto;
       }
       .day.disabled {
@@ -537,6 +535,9 @@
         cursor: pointer;
         font-size: 0.9rem;
         transition: 0.2s;
+      }
+      .btn-icon:hover {
+        background: #f0f0f0;
       }
       .btn-delete-svc {
         background: #ffebee;
@@ -1667,7 +1668,9 @@
             document.getElementById("fieldNombre").readOnly = true;
             document.getElementById("fieldCorreo").readOnly = true;
           }
+
           renderCalendar();
+
           setInterval(() => {
             if (document.getElementById("view-lista").style.display !== "none")
               loadAllAppointments();
@@ -1866,13 +1869,9 @@
           globalServices = data;
           const s = document.getElementById("fieldServicio");
           s.innerHTML = "";
-          s.add(new Option("Selecciona un día primero...", ""));
-          globalServices.forEach((i) => {
-            const o = document.createElement("option");
-            o.value = i.nombre;
-            o.text = i.nombre;
-            s.appendChild(o);
-          });
+          // 1. Placeholder inicial
+          s.add(new Option("1. Toca un día en el calendario 👆", ""));
+          s.disabled = true; // Empieza deshabilitado
 
           if (userProfile?.role === "admin") {
             const l = document.getElementById("adminServicesList");
@@ -2161,7 +2160,7 @@
           .from("bloqueos")
           .select("*")
           .eq("fecha", d);
-        const isFull = data.some((b) => b.hora_inicio === null);
+        const isFull = data.some((b) => b.hora === null);
         document.getElementById("btnToggleDay").innerText = isFull
           ? "🔓 ABRIR DÍA"
           : "🔒 CERRAR DÍA";
@@ -2304,13 +2303,27 @@
             lastCitaData = datos;
             document.getElementById("wspModal").style.display = "flex";
 
-            // RESET FIELDS AFTER BOOKING
+            // RESET ABSOLUTO AL AGENDAR
+            selectedDate = null;
+            document
+              .querySelectorAll(".day")
+              .forEach((e) => e.classList.remove("selected"));
+
+            // *** FIX: REINICIAR SELECT DE SERVICIOS ***
             const s = document.getElementById("fieldServicio");
-            s.value = "";
+            s.innerHTML = "";
+            s.add(new Option("1. Toca un día en el calendario 👆", ""));
+            s.disabled = true;
+
             const h = document.getElementById("fieldHora");
-            h.innerHTML =
-              '<option value="">Luego selecciona servicio...</option>';
+            h.value = "";
             h.disabled = true;
+            h.innerHTML =
+              '<option value="">2. Luego selecciona servicio...</option>';
+            document.getElementById("surchargeAlert").style.display = "none";
+
+            // RECALCULAR DIAS FULL
+            renderCalendar();
           }
         }
       }
@@ -2542,6 +2555,15 @@
 
               // RESET Y FEEDBACK VISUAL
               const s = document.getElementById("fieldServicio");
+              s.innerHTML = "";
+              s.add(new Option("Selecciona servicio...", ""));
+              globalServices.forEach((i) => {
+                const o = document.createElement("option");
+                o.value = i.nombre;
+                o.text = i.nombre;
+                s.appendChild(o);
+              });
+
               s.disabled = false;
               s.classList.add("highlight-input");
               setTimeout(() => s.classList.remove("highlight-input"), 500);
@@ -2559,6 +2581,8 @@
           }
           grid.appendChild(d);
         }
+
+        // CALL NEW MASSIVE UPDATE FUNCTION
         updateFullDays(y, m, last);
       }
 
@@ -2577,24 +2601,40 @@
         viewDate.setMonth(viewDate.getMonth() + v);
         renderCalendar();
       }
+
+      // NUEVA FUNCION INTELIGENTE: UPDATE FULL DAYS MASIVO
       async function updateFullDays(y, m, last) {
-        const s = `${y}-${String(m + 1).padStart(2, "0")}-01`,
-          e = `${y}-${String(m + 1).padStart(2, "0")}-${last}`;
+        // 1. OBTENER RANGO MES
+        const s = `${y}-${String(m + 1).padStart(2, "0")}-01`;
+        const e = `${y}-${String(m + 1).padStart(2, "0")}-${last}`;
+
+        // 2. FETCH MASIVO
         const { data: c } = await client
           .from("citas")
-          .select("fecha,hora")
+          .select("fecha,hora,servicio")
           .gte("fecha", s)
           .lte("fecha", e);
         const { data: b } = await client
           .from("bloqueos")
-          .select("fecha,hora_inicio")
+          .select("fecha,hora_inicio,hora_fin")
           .gte("fecha", s)
           .lte("fecha", e);
+
+        // 3. CALCULAR MINIMA DURACION DE SERVICIO (O 60 POR DEFECTO)
+        let minServiceDuration = 60;
+        if (globalServices.length > 0) {
+          minServiceDuration = Math.min(
+            ...globalServices.map((svc) => svc.duracion_minutos || 60),
+          );
+        }
+
+        // 4. ITERAR DIAS DEL MES
         for (let i = 1; i <= last; i++) {
           const dStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           const el = document.getElementById(`day-${dStr}`);
           if (!el || el.classList.contains("disabled")) continue;
-          // CHECK ADMIN FULL DAY BLOCK
+
+          // A. DIA CERRADO ADMIN?
           const isBlockedDay = b.some(
             (x) => x.fecha === dStr && x.hora_inicio === null,
           );
@@ -2603,18 +2643,75 @@
             continue;
           }
 
+          // B. ANALIZAR SI CABE EL SERVICIO MAS CORTO
           const dw = new Date(dStr + "T00:00:00").getDay();
           const base = globalSchedule[dw] ? globalSchedule[dw].horas : [];
-          const bl = b.some((x) => x.fecha === dStr && x.hora_inicio === null);
-          if (bl || !base.length) {
+
+          if (!base.length) {
             el.classList.add("full");
             continue;
+          } // Si no hay horario base, dia cerrado
+
+          const closingStr = globalClosingTimes[dw] || "20:00";
+          const closingMins = timeToMins(closingStr);
+
+          // Filtrar eventos de este dia
+          const dayCitas = c.filter((x) => x.fecha === dStr);
+          const dayBlocks = b.filter(
+            (x) => x.fecha === dStr && x.hora_inicio !== null,
+          );
+
+          // Calcular Rangos Ocupados
+          let busyRanges = [];
+          dayCitas.forEach((appt) => {
+            const s = globalServices.find((x) => x.nombre === appt.servicio);
+            const dur = s ? s.duracion_minutos || 60 : 60;
+            const start = timeToMins(appt.hora);
+            const end = start + dur + 30; // +Buffer
+            busyRanges.push({ start, end });
+          });
+          dayBlocks.forEach((bk) => {
+            const start = timeToMins(bk.hora_inicio);
+            const end = timeToMins(bk.hora_fin);
+            busyRanges.push({ start, end });
+          });
+
+          // Generar posibles inicios (Base + Fin de citas)
+          let candidateStartTimes = new Set();
+          base.forEach((h) => candidateStartTimes.add(timeToMins(h)));
+          busyRanges.forEach((r) => {
+            // Si termina antes del cierre, podria empezar una cita ahi
+            if (r.end < closingMins) candidateStartTimes.add(r.end);
+          });
+
+          // C. PROBAR SI CABE "MIN_DURATION" EN ALGUNO
+          let isFull = true;
+          for (let startMins of candidateStartTimes) {
+            // Solo probar si coincide con un slot base o generado valido
+            const endMins = startMins + minServiceDuration + 30; // +Buffer for safety
+
+            // Strict Check: Can fit min service before closing?
+            if (startMins + minServiceDuration > closingMins) continue;
+
+            // Check Collision
+            let collision = false;
+            for (let r of busyRanges) {
+              if (
+                startMins < r.end &&
+                startMins + minServiceDuration + 30 > r.start
+              ) {
+                collision = true;
+                break;
+              }
+            }
+
+            if (!collision) {
+              isFull = false; // Found a spot!
+              break;
+            }
           }
-          const taken = [
-            ...c.filter((x) => x.fecha === dStr).map((x) => x.hora),
-          ];
-          if (!base.filter((h) => !taken.includes(h)).length)
-            el.classList.add("full");
+
+          if (isFull) el.classList.add("full");
         }
       }
 
@@ -2688,6 +2785,8 @@
           new Date().toDateString();
         const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
 
+        let hasAnyAvailability = false;
+
         // REVISAR CADA SERVICIO
         for (let i = 1; i < s.options.length; i++) {
           let opt = s.options[i];
@@ -2702,7 +2801,7 @@
             const endMins = startMins + reqDur + 30; // +Buffer
 
             if (isToday && startMins <= nowMins) continue;
-            if (startMins + reqDur > closingMins) continue;
+            if (startMins + reqDur > closingMins) continue; // Check strict closing fit
 
             let collision = false;
             for (let r of busyRanges) {
@@ -2725,9 +2824,16 @@
           } else {
             opt.disabled = false;
             opt.innerText = svc.nombre;
+            hasAnyAvailability = true;
           }
         }
         s.options[0].text = "Selecciona servicio...";
+
+        // SI NO HAY NADA DISPONIBLE, MARCAR DIA COMO FULL EN ROJO
+        if (!hasAnyAvailability && base.length > 0) {
+          const el = document.getElementById(`day-${f}`);
+          if (el) el.classList.add("full");
+        }
       }
 
       async function checkHoras(f) {
@@ -2758,8 +2864,8 @@
         const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
 
         let busyRanges = [];
+        const explicitBlocks = [];
 
-        // Citas Ocupadas
         if (c && c.length > 0) {
           c.forEach((appt) => {
             const s = globalServices.find((x) => x.nombre === appt.servicio);
@@ -2769,7 +2875,6 @@
             busyRanges.push({ start, end });
           });
         }
-        // Bloqueos Admin (Rangos)
         if (b && b.length > 0) {
           b.forEach((bk) => {
             if (bk.hora_inicio) {
@@ -2797,32 +2902,9 @@
         s.add(new Option("Selecciona hora...", ""));
 
         availableList.forEach((h) => {
-          // HIDE EXPLICITLY BLOCKED HOURS
-          // Logic: If h is INSIDE any admin block range (from b), hide it.
           const startMins = timeToMins(h);
           const endMins = startMins + reqDuration;
 
-          // Check if falls inside ANY admin block
-          let isAdminBlocked = false;
-          if (b) {
-            for (let bk of b) {
-              if (bk.hora_inicio) {
-                const bS = timeToMins(bk.hora_inicio);
-                const bE = timeToMins(bk.hora_fin);
-                // If start time is inside block OR if service end overlaps block
-                // Actually, if it overlaps at all with block, it's invalid.
-                // But user specifically asked: "desaparezcan de ese dia" if blocked.
-                // So if it collides with admin block -> Hide.
-                if (startMins < bE && endMins > bS) {
-                  isAdminBlocked = true;
-                  break;
-                }
-              }
-            }
-          }
-          if (isAdminBlocked) return; // Skip showing this option
-
-          // Validar pasado
           if (isToday && startMins <= nowMins) {
             const opt = document.createElement("option");
             opt.value = h;
@@ -2832,21 +2914,33 @@
             return;
           }
 
-          // Validar cierre (strict finish)
           if (endMins > closingMins) {
             return;
           }
 
-          // Validar Colision (Con buffer) with existing APPOINTMENTS (not blocks, checked above)
           let collision = false;
-          // Only check vs real appointments now? No, check vs all busyRanges to be safe for overlap logic
           for (let r of busyRanges) {
-            // New: [start, end+buffer] vs Existing: [r.start, r.end]
             if (startMins < r.end && endMins + 30 > r.start) {
               collision = true;
               break;
             }
           }
+
+          // HIDE IF INSIDE ADMIN BLOCK
+          let isAdminBlocked = false;
+          if (b) {
+            for (let bk of b) {
+              if (bk.hora_inicio) {
+                const bS = timeToMins(bk.hora_inicio);
+                const bE = timeToMins(bk.hora_fin);
+                if (startMins >= bS && startMins < bE) {
+                  isAdminBlocked = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (isAdminBlocked) return;
 
           if (!collision) {
             const opt = document.createElement("option");
@@ -2855,7 +2949,6 @@
             any = true;
             s.appendChild(opt);
           } else {
-            // If collision with appointment, show Ocupado
             if (base.includes(h)) {
               const opt = document.createElement("option");
               opt.value = h;
