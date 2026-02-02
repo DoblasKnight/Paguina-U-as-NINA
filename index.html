@@ -22,6 +22,7 @@
         --success: #00e676;
         --warning: #ff9800;
         --radius: 20px;
+        --disabled: #f2f2f2;
       }
       body {
         font-family: "Segoe UI", sans-serif;
@@ -42,8 +43,21 @@
           transform: scale(1);
         }
       }
+      @keyframes highlight {
+        0% {
+          border-color: var(--primary);
+          transform: scale(1.02);
+        }
+        100% {
+          border-color: #f0f0f0;
+          transform: scale(1);
+        }
+      }
       .animate-pop {
         animation: popIn 0.3s ease-out;
+      }
+      .highlight-input {
+        animation: highlight 0.5s ease-out;
       }
 
       /* MODALES */
@@ -286,6 +300,7 @@
           grid-template-columns: 1fr 350px;
         }
       }
+
       input,
       select,
       textarea {
@@ -299,6 +314,7 @@
         font-size: 1rem;
         color: #333;
         font-family: inherit;
+        transition: all 0.2s;
       }
       input:focus,
       select:focus,
@@ -306,6 +322,21 @@
         outline: none;
         border-color: var(--primary);
         background: white;
+      }
+
+      /* ESTADO DESHABILITADO */
+      input:disabled,
+      select:disabled {
+        background-color: var(--disabled);
+        color: #aaa;
+        border-color: #eee;
+        cursor: not-allowed;
+      }
+
+      /* OPCIONES DESHABILITADAS EN SELECT */
+      option:disabled {
+        color: #ccc;
+        background-color: #f9f9f9;
       }
 
       .password-wrapper {
@@ -346,8 +377,8 @@
         box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
       }
       .btn-main:disabled {
-        background: #e0e0e0;
-        color: #999;
+        background: #ccc;
+        color: #fff;
         box-shadow: none;
         cursor: not-allowed;
       }
@@ -473,48 +504,6 @@
         padding: 20px;
         background: white;
       }
-      .week-selector {
-        display: flex;
-        justify-content: center;
-        gap: 5px;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
-      }
-      .day-chip {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        background: #f5f5f5;
-        color: #aaa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-      .day-chip.active {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: var(--primary-glow);
-      }
-      .hours-editor-box {
-        background: #fffbfd;
-        padding: 20px;
-        border-radius: 15px;
-        border: 1px dashed var(--primary);
-        margin-bottom: 20px;
-      }
-      .hour-tag {
-        display: inline-block;
-        background: var(--primary);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        margin: 4px;
-        font-size: 0.85rem;
-      }
       .service-item {
         display: flex;
         justify-content: space-between;
@@ -558,23 +547,77 @@
         gap: 10px;
         align-items: center;
         margin-top: 15px;
+      }
+      .add-row input,
+      .add-row select,
+      .add-row button {
+        margin: 0;
+      }
+
+      @media (max-width: 600px) {
+        .add-row {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+        }
+        .add-row input,
+        .add-row select,
+        .add-row button {
+          width: 100% !important;
+          height: 45px;
+        }
+        .service-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+        .svc-controls {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
+
+      .week-selector {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-bottom: 15px;
         flex-wrap: wrap;
       }
-      .add-row input {
-        margin: 0;
-        flex: 1;
+      .day-chip {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        background: #f5f5f5;
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
       }
-      .add-row select {
-        width: 130px;
-        margin: 0;
-        padding: 15px 5px;
-        font-size: 0.8rem;
+      .day-chip.active {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--primary-glow);
       }
-      .add-row button {
-        width: auto;
-        margin: 0;
-        padding: 0 20px;
-        height: 56px;
+      .hours-editor-box {
+        background: #fffbfd;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px dashed var(--primary);
+        margin-bottom: 20px;
+      }
+      .hour-tag {
+        display: inline-block;
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        margin: 4px;
+        font-size: 0.85rem;
       }
 
       .msg-config-box {
@@ -991,12 +1034,14 @@
               pattern="[0-9]*"
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
-            <select id="fieldServicio" onchange="checkHoras(selectedDate)">
-              <option>Cargando servicios...</option>
+
+            <select id="fieldServicio" onchange="enableTimeSelector()" disabled>
+              <option value="">1. Toca un día en el calendario 👆</option>
             </select>
           </div>
-          <select id="fieldHora" onchange="checkSurcharges()">
-            <option value="">Selecciona día...</option>
+
+          <select id="fieldHora" onchange="checkSurcharges()" disabled>
+            <option value="">2. Luego selecciona servicio...</option>
           </select>
 
           <div id="surchargeAlert" class="surcharge-alert">
@@ -1167,7 +1212,12 @@
             />
             <button
               class="btn-main"
-              style="background: var(--warning)"
+              style="
+                background: var(--warning);
+                padding: 0;
+                width: auto;
+                min-width: 50px;
+              "
               onclick="addSurcharge()"
             >
               +
@@ -1371,6 +1421,7 @@
         globalSchedule = {},
         globalServices = [],
         selectedWeekDays = [],
+        stagedHours = [],
         viewDate = new Date(),
         selectedDate = null,
         lastCitaData = null,
@@ -1763,7 +1814,7 @@
         }
       }
 
-      // ADMIN: SERVICIOS
+      // ADMIN: SERVICIOS Y EDICION
       async function fetchServices() {
         const { data } = await client
           .from("servicios")
@@ -1772,14 +1823,22 @@
         if (data) {
           globalServices = data;
           const s = document.getElementById("fieldServicio");
-          s.innerHTML = "";
-          s.add(new Option("Selecciona servicio...", ""));
-          globalServices.forEach((i) => {
-            const o = document.createElement("option");
-            o.value = i.nombre;
-            o.text = i.nombre;
-            s.appendChild(o);
-          });
+          // Mantener "Selecciona un día..." hasta que se seleccione
+          if (s.options[0].text.includes("Cargando")) s.innerHTML = "";
+
+          if (s.options.length <= 1) {
+            // Populate only if empty
+            s.innerHTML = "";
+            s.add(new Option("1. Toca un día en el calendario 👆", ""));
+            globalServices.forEach((i) => {
+              const o = document.createElement("option");
+              o.value = i.nombre;
+              o.text = i.nombre;
+              s.appendChild(o);
+            });
+            // Keep disabled until day selected
+            s.disabled = true;
+          }
 
           if (userProfile?.role === "admin") {
             const l = document.getElementById("adminServicesList");
@@ -1992,6 +2051,7 @@
           if (selectedWeekDays.includes(d)) el.classList.add("active");
           else el.classList.remove("active");
         });
+
         document.getElementById("hoursEditor").style.display =
           selectedWeekDays.length ? "block" : "none";
 
@@ -2048,7 +2108,8 @@
           if (closingTime && selectedWeekDays.length === 1)
             updateData.hora_cierre = closingTime;
           else if (selectedWeekDays.length > 1 && closingTime)
-            updateData.hora_cierre = closingTime;
+            updateData.hora_cierre = closingTime; // Apply to all if set
+
           await client.from("horarios_base").upsert(updateData);
         }
         selectedWeekDays = [];
@@ -2176,6 +2237,14 @@
           else {
             lastCitaData = datos;
             document.getElementById("wspModal").style.display = "flex";
+
+            // RESET FIELDS AFTER BOOKING
+            const s = document.getElementById("fieldServicio");
+            s.value = "";
+            const h = document.getElementById("fieldHora");
+            h.innerHTML =
+              '<option value="">Luego selecciona servicio...</option>';
+            h.disabled = true;
           }
         }
       }
@@ -2398,13 +2467,29 @@
                 .forEach((e) => e.classList.remove("selected"));
               d.classList.add("selected");
               selectedDate = dStr;
-              checkHoras(dStr);
+
+              // RESET Y FEEDBACK VISUAL
+              const s = document.getElementById("fieldServicio");
+              s.disabled = false;
+              s.classList.add("highlight-input");
+              setTimeout(() => s.classList.remove("highlight-input"), 500);
+              s.selectedIndex = 0;
+
+              const h = document.getElementById("fieldHora");
+              h.innerHTML =
+                '<option value="">Luego selecciona servicio...</option>';
+              h.disabled = true;
+              document.getElementById("surchargeAlert").style.display = "none";
+
+              // UPDATE AVAILABLE SERVICES FOR THIS DAY
+              updateServiceAvailability(dStr);
             };
           }
           grid.appendChild(d);
         }
         updateFullDays(y, m, last);
       }
+
       function moveMonth(v) {
         const nextDate = new Date(viewDate);
         nextDate.setMonth(nextDate.getMonth() + v);
@@ -2452,13 +2537,122 @@
             el.classList.add("full");
         }
       }
+
+      function enableTimeSelector() {
+        const svc = document.getElementById("fieldServicio").value;
+        const h = document.getElementById("fieldHora");
+        if (svc && selectedDate) {
+          h.disabled = false;
+          h.classList.add("highlight-input");
+          setTimeout(() => h.classList.remove("highlight-input"), 500);
+          checkHoras(selectedDate);
+        } else {
+          h.disabled = true;
+          h.innerHTML =
+            '<option value="">Luego selecciona servicio...</option>';
+        }
+      }
+
+      // NUEVO: FILTRAR SERVICIOS POR HUECOS DISPONIBLES
+      async function updateServiceAvailability(f) {
+        const s = document.getElementById("fieldServicio");
+        // Disable temporarily while loading
+        const originalText = s.options[0].text;
+        s.options[0].text = "🔄 Verificando disponibilidad...";
+
+        const dw = new Date(f + "T00:00:00").getDay();
+        let base = globalSchedule[dw]
+          ? [...globalSchedule[dw].horas].sort()
+          : [];
+        const closingStr = globalClosingTimes[dw] || "20:00";
+        const closingMins = timeToMins(closingStr);
+
+        const { data: c } = await client
+          .from("citas")
+          .select("hora, servicio")
+          .eq("fecha", f);
+        const { data: b } = await client
+          .from("bloqueos")
+          .select("hora")
+          .eq("fecha", f);
+
+        // CALCULAR OCUPACION
+        let busyRanges = [];
+        if (c)
+          c.forEach((appt) => {
+            const svc = globalServices.find((x) => x.nombre === appt.servicio);
+            const dur = svc ? svc.duracion_minutos || 60 : 60;
+            const start = timeToMins(appt.hora);
+            const end = start + dur + 30;
+            busyRanges.push({ start, end });
+          });
+        if (b)
+          b.forEach((bk) => {
+            if (bk.hora) {
+              const start = timeToMins(bk.hora);
+              busyRanges.push({ start, end: start + 60 });
+            }
+          });
+
+        // GENERAR CANDIDATOS
+        let candidateSlots = new Set(base);
+        busyRanges.forEach((range) => {
+          if (range.end < closingMins)
+            candidateSlots.add(minsToTime(range.end));
+        });
+        let availableSlots = Array.from(candidateSlots).sort();
+
+        const isToday =
+          new Date(f + "T00:00:00").toDateString() ===
+          new Date().toDateString();
+        const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
+
+        // REVISAR CADA SERVICIO
+        for (let i = 1; i < s.options.length; i++) {
+          let opt = s.options[i];
+          let svcName = opt.value;
+          let svc = globalServices.find((x) => x.nombre === svcName);
+          let reqDur = svc.duracion_minutos || 60;
+
+          let fitsAnywhere = false;
+
+          for (let h of availableSlots) {
+            const startMins = timeToMins(h);
+            const endMins = startMins + reqDur + 30; // +Buffer
+
+            if (isToday && startMins <= nowMins) continue;
+            if (endMins - 30 > closingMins) continue;
+
+            let collision = false;
+            for (let r of busyRanges) {
+              if (startMins < r.end && endMins > r.start) {
+                collision = true;
+                break;
+              }
+            }
+
+            if (!collision) {
+              fitsAnywhere = true;
+              break;
+            }
+          }
+
+          if (!fitsAnywhere) {
+            opt.disabled = true;
+            opt.innerText = `🚫 ${svc.nombre} (No cabe hoy)`;
+          } else {
+            opt.disabled = false;
+            opt.innerText = svc.nombre;
+          }
+        }
+        s.options[0].text = "Selecciona servicio...";
+      }
+
       async function checkHoras(f) {
         const dw = new Date(f + "T00:00:00").getDay();
-        // FIX: Handle undefined globalSchedule[dw] robustly
-        let base =
-          globalSchedule[dw] && globalSchedule[dw].horas
-            ? [...globalSchedule[dw].horas].sort()
-            : [];
+        let base = globalSchedule[dw]
+          ? [...globalSchedule[dw].horas].sort()
+          : [];
         const closingStr = globalClosingTimes[dw] || "20:00";
         const closingMins = timeToMins(closingStr);
         const { data: c } = await client
@@ -2469,22 +2663,25 @@
           .from("bloqueos")
           .select("hora")
           .eq("fecha", f);
+
         const svcName = document.getElementById("fieldServicio").value;
         const svcObj = globalServices.find((s) => s.nombre === svcName);
         const reqDuration = svcObj ? svcObj.duracion_minutos || 60 : 60;
+
         const s = document.getElementById("fieldHora");
         s.innerHTML = "";
         const isToday =
           new Date(f + "T00:00:00").toDateString() ===
           new Date().toDateString();
         const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
+
         let busyRanges = [];
         if (c && c.length > 0) {
           c.forEach((appt) => {
             const s = globalServices.find((x) => x.nombre === appt.servicio);
             const dur = s ? s.duracion_minutos || 60 : 60;
             const start = timeToMins(appt.hora);
-            const end = start + dur + 30;
+            const end = start + dur + 30; // +30m BUFFER
             busyRanges.push({ start, end });
           });
         }
@@ -2496,22 +2693,27 @@
             }
           });
         }
+
         let candidateSlots = new Set(base);
         busyRanges.forEach((range) => {
           if (range.end < closingMins)
             candidateSlots.add(minsToTime(range.end));
         });
+
         let availableList = Array.from(candidateSlots).sort();
         let any = false;
+
         if (!availableList.length) {
           s.add(new Option("No disponible", ""));
           s.disabled = true;
           return;
         }
         s.add(new Option("Selecciona hora...", ""));
+
         availableList.forEach((h) => {
           const startMins = timeToMins(h);
-          const endMins = startMins + reqDuration;
+          const endMins = startMins + reqDuration + 30; // +Buffer
+
           if (isToday && startMins <= nowMins) {
             const opt = document.createElement("option");
             opt.value = h;
@@ -2520,22 +2722,22 @@
             s.appendChild(opt);
             return;
           }
-          if (endMins > closingMins) {
+
+          if (endMins - 30 > closingMins) {
             return;
           }
+
           let collision = false;
           for (let r of busyRanges) {
-            if (
-              (startMins >= r.start && startMins < r.end) ||
-              (endMins > r.start && endMins <= r.end) ||
-              (startMins <= r.start && endMins >= r.end)
-            ) {
+            if (startMins < r.end && endMins > r.start) {
               collision = true;
               break;
             }
           }
+
           const opt = document.createElement("option");
           opt.value = h;
+
           if (collision) {
             if (base.includes(h)) {
               opt.text = format12h(h) + " (Ocupado)";
@@ -2548,9 +2750,10 @@
             s.appendChild(opt);
           }
         });
+
         if (!any) {
           s.innerHTML = "";
-          s.add(new Option("Lleno / Pasado", ""));
+          s.add(new Option("Lleno", ""));
           s.disabled = true;
         } else {
           s.disabled = false;
