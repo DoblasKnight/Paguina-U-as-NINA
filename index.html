@@ -8,39 +8,56 @@
     />
     <title>NailsbyNiNa - App</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --primary: #ff1493;
-        --primary-glow: 0 0 10px rgba(255, 20, 147, 0.4);
-        --bg: #fff0f5;
+        --primary-light: #fff0f6;
+        --primary-glow: 0 4px 15px rgba(255, 20, 147, 0.3);
+        --bg: #f8f9fa;
         --card-bg: #ffffff;
-        --text: #4a148c;
-        --text-light: #888;
-        --whatsapp: #25d366;
-        --danger: #ff3366;
-        --info: #00bfff;
-        --success: #00e676;
-        --warning: #ff9800;
-        --radius: 20px;
-        --disabled: #f2f2f2;
+        --text: #2d3436;
+        --text-light: #636e72;
+        --whatsapp: #00e676;
+        --danger: #ff4757;
+        --info: #29b6f6;
+        --success: #00d2d3;
+        --warning: #ffa502;
+        --radius: 24px;
+        --disabled: #f1f2f6;
       }
       body {
-        font-family: "Segoe UI", sans-serif;
+        font-family: "Poppins", sans-serif;
         background: var(--bg);
         margin: 0;
         color: var(--text);
-        padding: 15px;
+        padding: 20px 15px;
         -webkit-tap-highlight-color: transparent;
         overscroll-behavior-y: none;
       }
+
+      /* ANIMACIONES */
       @keyframes popIn {
         0% {
           opacity: 0;
-          transform: scale(0.98);
+          transform: scale(0.95);
         }
         100% {
           opacity: 1;
           transform: scale(1);
+        }
+      }
+      @keyframes slideUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
         }
       }
       @keyframes highlight {
@@ -53,11 +70,13 @@
           transform: scale(1);
         }
       }
+
       .animate-pop {
-        animation: popIn 0.3s ease-out;
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
       .highlight-input {
         animation: highlight 0.5s ease-out;
+        border-color: var(--primary) !important;
       }
 
       /* MODALES */
@@ -69,41 +88,45 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(5px);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
         align-items: center;
         justify-content: center;
       }
       .modal-content {
         background: white;
         padding: 30px;
-        border-radius: var(--radius);
+        border-radius: 30px;
         width: 85%;
-        max-width: 340px;
+        max-width: 350px;
         text-align: center;
-        box-shadow: 0 20px 60px rgba(255, 20, 147, 0.15);
-        border: 1px solid rgba(255, 20, 147, 0.1);
+        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         animation: popIn 0.3s ease-out;
       }
       .modal-icon {
         font-size: 3.5rem;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         display: block;
+        filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.05));
       }
       .modal-btn-row {
         display: flex;
-        gap: 12px;
+        gap: 10px;
         margin-top: 25px;
       }
+
+      /* BOTONES GENERALES */
       .btn-modal {
         flex: 1;
         padding: 14px;
         border: none;
-        border-radius: 12px;
-        font-weight: 600;
+        border-radius: 16px;
+        font-weight: 700;
         cursor: pointer;
         font-size: 0.95rem;
-        transition: transform 0.2s;
+        transition: transform 0.1s;
+        font-family: inherit;
       }
       .btn-modal:active {
         transform: scale(0.95);
@@ -114,16 +137,18 @@
         box-shadow: var(--primary-glow);
       }
       .btn-modal.secondary {
-        background: #f0f0f0;
-        color: #666;
+        background: #f1f2f6;
+        color: #636e72;
       }
       .btn-modal.whatsapp {
         background: var(--whatsapp);
         color: white;
+        box-shadow: 0 5px 15px rgba(0, 230, 118, 0.25);
       }
       .btn-modal.danger {
         background: var(--danger);
         color: white;
+        box-shadow: 0 5px 15px rgba(255, 71, 87, 0.25);
       }
 
       /* LAYOUT */
@@ -134,7 +159,7 @@
         max-width: 800px;
         margin: 0 auto;
         background: var(--card-bg);
-        border-radius: var(--radius);
+        border-radius: 30px;
         overflow: hidden;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
         min-height: 85vh;
@@ -145,8 +170,8 @@
         max-width: 400px;
         margin-top: 40px;
         padding: 40px 30px;
-        border: 2px solid #ffe6f2;
         min-height: auto;
+        border: 2px solid white;
       }
       #recovery-screen {
         display: none;
@@ -155,35 +180,38 @@
       /* HEADER & PERFIL */
       .nav-header {
         background: white;
-        color: var(--primary);
-        padding: 15px 25px;
+        padding: 20px 25px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid #ffe6f2;
+        border-bottom: 1px solid #f1f2f6;
       }
       .brand-title {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         font-weight: 800;
         display: flex;
         align-items: center;
         gap: 8px;
+        color: var(--text);
+        letter-spacing: -0.5px;
+      }
+      .brand-title span {
+        color: var(--primary);
       }
       .header-avatar {
         width: 42px;
         height: 42px;
         border-radius: 50%;
-        background: var(--primary);
+        background: linear-gradient(135deg, var(--primary), #ff80bf);
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
+        font-weight: 700;
         font-size: 0.9rem;
         cursor: pointer;
-        border: 2px solid #ffcce6;
+        box-shadow: 0 5px 15px rgba(255, 20, 147, 0.2);
         transition: transform 0.2s;
-        box-shadow: 0 4px 10px rgba(255, 20, 147, 0.2);
       }
       .header-avatar:active {
         transform: scale(0.9);
@@ -193,54 +221,56 @@
       .tabs {
         display: flex;
         background: white;
-        padding: 5px;
-        border-bottom: 1px solid #f8f8f8;
+        padding: 10px;
+        border-bottom: 1px solid #f8f9fa;
       }
       .tab-btn {
         flex: 1;
-        padding: 15px;
+        padding: 12px;
         border: none;
         background: none;
         cursor: pointer;
         font-weight: 600;
-        color: #bbb;
+        color: #b2bec3;
         position: relative;
         transition: color 0.3s;
+        font-family: inherit;
+        font-size: 0.95rem;
       }
       .tab-btn.active {
-        color: var(--primary);
+        color: var(--text);
       }
       .tab-btn.active::after {
         content: "";
         position: absolute;
-        bottom: 5px;
+        bottom: 0;
         left: 50%;
         transform: translateX(-50%);
         width: 6px;
         height: 6px;
         background: var(--primary);
         border-radius: 50%;
-        box-shadow: var(--primary-glow);
       }
 
       /* SUB-TABS */
       .sub-tabs {
         display: flex;
-        background: #f8f8f8;
+        background: #f1f2f6;
         padding: 5px;
-        border-radius: 15px;
-        margin-bottom: 20px;
+        border-radius: 20px;
+        margin-bottom: 25px;
       }
       .sub-tab-btn {
         flex: 1;
         padding: 12px;
         border: none;
         background: transparent;
-        color: #888;
-        font-weight: 700;
+        color: #636e72;
+        font-weight: 600;
         cursor: pointer;
-        border-radius: 12px;
+        border-radius: 16px;
         transition: all 0.2s;
+        font-family: inherit;
       }
       .sub-tab-btn.active {
         background: white;
@@ -248,79 +278,22 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       }
 
-      /* COMPONENTES */
-      .cal-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 8px;
-        margin-top: 15px;
-      }
-      .day {
-        aspect-ratio: 1/1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 14px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        background: #fff;
-        border: 1px solid transparent;
-        color: #555;
-      }
-      .day.today {
-        border-color: var(--primary);
-        color: var(--primary);
-        font-weight: 700;
-      }
-      .day.selected {
-        background: var(--primary) !important;
-        color: white !important;
-        font-weight: bold;
-      }
-      .day.full {
-        background: #ffcdd2;
-        color: #b71c1c;
-        border: 1px solid #e57373;
-        pointer-events: none;
-      }
-      .day.blocked-day {
-        background: #eeeeee;
-        color: #999;
-        text-decoration: line-through;
-        pointer-events: auto;
-      }
-      .day.disabled {
-        opacity: 0.3;
-        pointer-events: none;
-        background: #fcfcfc;
-      }
-
-      .main-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 30px;
-        padding: 25px;
-      }
-      @media (min-width: 768px) {
-        .main-grid {
-          grid-template-columns: 1fr 350px;
-        }
-      }
-
+      /* INPUTS */
       input,
       select,
       textarea {
         width: 100%;
-        padding: 16px;
+        padding: 16px 20px;
         margin: 8px 0;
-        border: 2px solid #f0f0f0;
-        border-radius: 16px;
+        border: 2px solid #f1f2f6;
+        border-radius: 18px;
         box-sizing: border-box;
         background: #fbfbfb;
         font-size: 1rem;
-        color: #333;
+        color: var(--text);
         font-family: inherit;
         transition: all 0.2s;
+        font-weight: 500;
       }
       input:focus,
       select:focus,
@@ -332,15 +305,10 @@
       input:disabled,
       select:disabled {
         background-color: var(--disabled);
-        color: #aaa;
-        border-color: #eee;
+        color: #b2bec3;
+        border-color: transparent;
         cursor: not-allowed;
       }
-      option:disabled {
-        color: #ccc;
-        background-color: #f9f9f9;
-      }
-
       .password-wrapper {
         position: relative;
         width: 100%;
@@ -357,32 +325,37 @@
         transform: translateY(-50%);
         cursor: pointer;
         font-size: 1.2rem;
-        color: #bbb;
+        color: #b2bec3;
         z-index: 10;
       }
 
       .btn-main {
-        background: var(--primary);
+        background: var(--text);
         color: white;
         border: none;
-        padding: 18px;
+        padding: 20px;
         width: 100%;
-        border-radius: 16px;
+        border-radius: 20px;
         cursor: pointer;
         font-weight: 700;
-        font-size: 1.05rem;
-        margin-top: 15px;
-        box-shadow: var(--primary-glow);
+        font-size: 1.1rem;
+        margin-top: 20px;
+        transition: transform 0.2s;
+        font-family: inherit;
+      }
+      .btn-main:active {
+        transform: scale(0.98);
       }
       .btn-main.reschedule-mode {
         background: var(--info);
-        box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+        box-shadow: 0 8px 25px rgba(41, 182, 246, 0.3);
       }
       .btn-main:disabled {
-        background: #ccc;
-        color: #fff;
-        box-shadow: none;
+        background: #dfe6e9;
+        color: #b2bec3;
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
       }
 
       /* CITA CARD */
@@ -390,10 +363,15 @@
         background: white;
         border: 1px solid #f0f0f0;
         padding: 20px;
-        border-radius: 18px;
-        margin-bottom: 20px;
+        border-radius: 24px;
+        margin-bottom: 15px;
         position: relative;
         overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+        transition: transform 0.2s;
+      }
+      .appointment-card:active {
+        transform: scale(0.98);
       }
       .appointment-card::before {
         content: "";
@@ -401,7 +379,7 @@
         left: 0;
         top: 0;
         bottom: 0;
-        width: 5px;
+        width: 6px;
         background: var(--primary);
       }
       .appointment-card.reprogramada::before {
@@ -414,275 +392,372 @@
         background: var(--danger);
       }
       .appointment-card.past {
-        background: #fbfbfb;
-        opacity: 0.85;
-        border-color: #eee;
+        opacity: 0.6;
+        filter: grayscale(1);
       }
 
       .status-pill {
         display: inline-block;
         font-size: 0.7rem;
-        padding: 4px 10px;
-        border-radius: 20px;
-        background: #f0f0f0;
-        color: #666;
-        margin-bottom: 8px;
-        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 12px;
+        background: #f1f2f6;
+        color: #636e72;
+        margin-bottom: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
       .status-pill.repro {
-        background: rgba(0, 191, 255, 0.1);
+        background: #e1f5fe;
         color: var(--info);
-        border: 1px solid var(--info);
       }
       .status-pill.done {
-        background: #e8f5e9;
+        background: #e0f2f1;
         color: var(--success);
-        border: 1px solid var(--success);
       }
       .status-pill.late {
         background: #ffebee;
         color: var(--danger);
-        border: 1px solid var(--danger);
       }
 
       .actions-row {
         display: flex;
-        gap: 8px;
+        gap: 10px;
         margin-top: 15px;
-        flex-wrap: wrap;
       }
       .btn-action {
         border: none;
-        padding: 10px;
-        border-radius: 10px;
+        padding: 12px;
+        border-radius: 14px;
         cursor: pointer;
-        font-weight: 600;
-        font-size: 0.8rem;
+        font-weight: 700;
+        font-size: 0.85rem;
         flex: 1;
-        min-width: 80px;
         transition: all 0.2s ease;
-      }
-      .btn-action:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        font-family: inherit;
       }
       .btn-reschedule {
-        background: #eeffff;
+        background: #e3f2fd;
         color: var(--info);
       }
       .btn-cancel {
-        background: #fff5f5;
+        background: #ffebee;
         color: var(--danger);
       }
       .btn-arrive {
-        background: #e8f5e9;
+        background: #e0f2f1;
         color: var(--success);
-        border: 1px solid #c8e6c9;
       }
       .btn-notify-late {
         background: var(--danger);
         color: white;
-        box-shadow: 0 2px 5px rgba(255, 50, 100, 0.3);
       }
 
-      .list-section-title {
+      /* --- ADMIN PREMIUM STYLES --- */
+
+      /* CARD GENERICA ADMIN */
+      .admin-card {
+        background: white;
+        border-radius: 24px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        border: 1px solid #f5f5f5;
+        margin-bottom: 25px;
+      }
+      .admin-title {
         font-size: 1.1rem;
-        color: var(--primary);
-        font-weight: 800;
-        margin: 30px 0 15px;
+        color: var(--text);
+        font-weight: 700;
+        margin: 0 0 15px 0;
         display: flex;
         align-items: center;
         gap: 10px;
       }
-      .list-section-title::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: #ffdaeb;
-      }
 
-      /* ADMIN - DISTRIBUCIÓN */
-      .admin-control-panel {
-        padding: 20px;
-        background: white;
-      }
-
+      /* LISTA DE ITEMS (SERVICIOS / RECARGOS) */
       .service-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #f9f9f9;
-        padding: 12px;
-        border-radius: 12px;
-        margin-bottom: 8px;
-        border: 1px solid #eee;
+        background: #fbfbfb;
+        padding: 15px;
+        border-radius: 18px;
+        margin-bottom: 10px;
+        border: 1px solid #f1f2f6;
+        transition: background 0.2s;
+      }
+      .service-item:hover {
+        background: #fdfdfd;
+        border-color: #eee;
       }
       .service-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex: 1;
+        font-weight: 600;
+        color: #2d3436;
+        font-size: 0.95rem;
       }
+
+      /* BOTONES FLOTANTES */
       .svc-controls {
         display: flex;
-        gap: 5px;
+        gap: 8px;
       }
-      .btn-icon {
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 5px 10px;
+      .btn-round {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
-        font-size: 0.9rem;
-        transition: 0.2s;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-size: 1rem;
       }
-      .btn-icon:hover {
-        background: #f0f0f0;
+
+      .btn-edit {
+        background: white;
+        color: var(--text-light);
+        border: 1px solid #eee;
       }
-      .btn-delete-svc {
-        background: #ffebee;
+      .btn-edit:hover {
+        background: var(--info);
+        color: white;
+        border-color: var(--info);
+        transform: rotate(15deg);
+        box-shadow: 0 5px 15px rgba(41, 182, 246, 0.3);
+      }
+
+      .btn-del {
+        background: white;
         color: var(--danger);
         border: 1px solid #ffcdd2;
       }
+      .btn-del:hover {
+        background: var(--danger);
+        color: white;
+        border-color: var(--danger);
+        transform: rotate(90deg);
+        box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+      }
 
+      .btn-move {
+        background: white;
+        color: #b2bec3;
+        border: 1px solid #f1f2f6;
+        font-size: 0.8rem;
+      }
+
+      /* INPUTS EN FILA ADMIN */
       .add-row {
         display: flex;
         gap: 10px;
         align-items: center;
-        margin-top: 15px;
+        margin-top: 10px;
+        background: #f8f9fa;
+        padding: 8px;
+        border-radius: 20px;
+        border: 1px solid #eee;
       }
       .add-row input,
-      .add-row select,
+      .add-row select {
+        border: none;
+        background: transparent;
+        padding: 10px 15px;
+        margin: 0;
+        box-shadow: none;
+        font-size: 0.9rem;
+      }
       .add-row button {
         margin: 0;
+        width: auto;
+        box-shadow: none;
+        border-radius: 14px;
+        padding: 12px 20px;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 48px;
+        min-width: 48px;
+      }
+
+      /* HOURS EDITOR PILLS */
+      .hours-editor-box {
+        background: #fff0f6;
+        padding: 20px;
+        border-radius: 24px;
+        border: 1px dashed var(--primary);
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .weekly-hours-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+      .hour-tag {
+        display: inline-flex;
+        align-items: center;
+        background: white;
+        color: var(--primary);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 3px 10px rgba(255, 20, 147, 0.1);
+      }
+      .hour-tag span {
+        margin-left: 8px;
+        color: #ffb7b2;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .hour-tag span:hover {
+        color: var(--danger);
+      }
+
+      /* DAY SELECTOR */
+      .week-selector {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .day-chip {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: white;
+        border: 1px solid #eee;
+        color: #b2bec3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+      }
+      .day-chip.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-3px);
+        box-shadow: var(--primary-glow);
+      }
+
+      /* CALENDAR */
+      .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+        margin-top: 15px;
+      }
+      .day {
+        aspect-ratio: 1/1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        background: white;
+        border: 1px solid #f1f2f6;
+        color: var(--text);
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .day.today {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: #fff0f6;
+      }
+      .day.selected {
+        background: var(--primary) !important;
+        color: white !important;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--primary-glow);
+      }
+      .day.full {
+        background: #ffeaeb;
+        color: #ff5252;
+        border-color: #ffcdd2;
+        pointer-events: none;
+      }
+      .day.blocked-day {
+        background: #f5f5f5;
+        color: #b2bec3;
+        text-decoration: line-through;
+        pointer-events: auto;
+      }
+      .day.disabled {
+        opacity: 0.2;
+        pointer-events: none;
       }
 
       @media (max-width: 600px) {
         .add-row {
           flex-direction: column;
           align-items: stretch;
-          gap: 10px;
+          gap: 8px;
+          padding: 15px;
         }
         .add-row input,
         .add-row select,
         .add-row button {
           width: 100% !important;
-          height: 45px;
+          height: 50px;
+          border-radius: 14px;
+        }
+        .add-row input,
+        .add-row select {
+          background: #f5f5f5;
         }
         .service-item {
           flex-direction: column;
           align-items: flex-start;
-          gap: 10px;
+          gap: 12px;
         }
         .svc-controls {
           width: 100%;
           justify-content: flex-end;
         }
+        .admin-card {
+          padding: 15px;
+        }
       }
 
-      .week-selector {
-        display: flex;
-        justify-content: center;
-        gap: 5px;
-        margin-bottom: 15px;
-        flex-wrap: wrap;
-      }
-      .day-chip {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        background: #f5f5f5;
-        color: #aaa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-      .day-chip.active {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: var(--primary-glow);
-      }
-      .hours-editor-box {
-        background: #fffbfd;
-        padding: 20px;
-        border-radius: 15px;
-        border: 1px dashed var(--primary);
-        margin-bottom: 20px;
-      }
-      .hour-tag {
-        display: inline-block;
-        background: var(--primary);
-        color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
-        margin: 4px;
-        font-size: 0.85rem;
-      }
-
-      .msg-config-box {
-        background: #fff;
-        padding: 15px;
-        border-radius: 15px;
-        border: 1px solid #eee;
-        margin-top: 15px;
-      }
-      .msg-label {
-        display: block;
-        font-size: 0.8rem;
-        color: #888;
-        margin-bottom: 5px;
-        font-weight: bold;
-      }
       .surcharge-alert {
         background: #fff8e1;
         border: 1px solid #ffe0b2;
         padding: 15px;
-        border-radius: 12px;
+        border-radius: 18px;
         margin: 15px 0;
         display: none;
         color: #f57c00;
         font-size: 0.9rem;
-        font-weight: bold;
+        font-weight: 700;
         align-items: center;
         gap: 10px;
-      }
-
-      /* PERFIL */
-      .profile-header-large {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 30px;
-      }
-      .avatar-large {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), #ff80bf);
-        color: white;
-        font-size: 2.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 15px;
-        border: 4px solid white;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        animation: popIn 0.3s;
       }
       #editModeBar {
         background: var(--info);
         color: white;
-        padding: 12px;
+        padding: 15px;
         text-align: center;
         font-weight: bold;
         display: none;
         justify-content: space-between;
         align-items: center;
-        border-radius: 0 0 15px 15px;
-        margin-bottom: 15px;
+        border-radius: 0 0 24px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(41, 182, 246, 0.3);
       }
     </style>
   </head>
@@ -690,9 +765,16 @@
     <div id="generalModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon" id="genIcon">✨</div>
-        <h3 id="genTitle" style="color: var(--primary); margin: 0"></h3>
-        <p id="genMsg" style="color: #666; margin: 15px 0 25px"></p>
-        <button class="btn-main" onclick="closeModal('generalModal')">
+        <h3 id="genTitle" style="color: var(--text); margin: 0"></h3>
+        <p
+          id="genMsg"
+          style="color: var(--text-light); margin: 15px 0 25px"
+        ></p>
+        <button
+          class="btn-main"
+          style="margin-top: 0"
+          onclick="closeModal('generalModal')"
+        >
           Entendido
         </button>
       </div>
@@ -702,7 +784,6 @@
       <div class="modal-content">
         <div class="modal-icon">🗑️</div>
         <h3 style="color: var(--danger); margin: 0">¿Borrar Servicio?</h3>
-        <p style="color: #666; margin: 10px 0">Esta acción es permanente.</p>
         <div class="modal-btn-row">
           <button
             class="btn-modal secondary"
@@ -721,7 +802,6 @@
       <div class="modal-content">
         <div class="modal-icon">💸</div>
         <h3 style="color: var(--danger); margin: 0">¿Borrar Recargo?</h3>
-        <p style="color: #666; margin: 10px 0">Se eliminará esta regla.</p>
         <div class="modal-btn-row">
           <button
             class="btn-modal secondary"
@@ -740,8 +820,8 @@
       <div class="modal-content">
         <div class="modal-icon">🔓</div>
         <h3 style="color: var(--text); margin: 0">¿Desbloquear?</h3>
-        <p style="color: #666; margin: 10px 0">
-          Se abrirá este espacio en la agenda.
+        <p style="color: var(--text-light); margin: 10px 0">
+          Se abrirá este espacio.
         </p>
         <div class="modal-btn-row">
           <button
@@ -760,7 +840,7 @@
     <div id="resetModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">📧</div>
-        <h3 style="color: var(--primary); margin: 0">Recuperar Cuenta</h3>
+        <h3 style="color: var(--primary); margin: 0">Recuperar</h3>
         <input
           type="email"
           id="resetEmailInput"
@@ -800,7 +880,7 @@
       <div class="modal-content">
         <div class="modal-icon">💅</div>
         <h2 style="color: var(--primary); margin: 0">¡Casi Listo!</h2>
-        <p style="color: #666">Continúa en WhatsApp.</p>
+        <p style="color: var(--text-light)">Continúa en WhatsApp.</p>
         <button class="btn-modal whatsapp" onclick="enviarWhatsAppCliente()">
           Enviar Mensaje
         </button>
@@ -823,7 +903,10 @@
       <h1 style="text-align: center; color: var(--primary); margin-top: 20%">
         Restablecer
       </h1>
-      <p id="recoveryStatus" style="text-align: center; color: #666">
+      <p
+        id="recoveryStatus"
+        style="text-align: center; color: var(--text-light)"
+      >
         Verificando enlace...
       </p>
       <div id="recoveryForm" style="display: none; padding: 20px">
@@ -846,7 +929,13 @@
 
     <div id="auth-screen" class="animate-pop">
       <h1 style="text-align: center; color: var(--primary)">NailsbyNiNa</h1>
-      <p style="text-align: center; color: #aaa; margin-bottom: 30px">
+      <p
+        style="
+          text-align: center;
+          color: var(--text-light);
+          margin-bottom: 30px;
+        "
+      >
         Agenda tu momento de brillo ✨
       </p>
       <div id="login-form">
@@ -873,7 +962,7 @@
           style="
             text-align: center;
             margin-top: 25px;
-            color: #888;
+            color: var(--text-light);
             font-size: 0.9rem;
           "
         >
@@ -934,7 +1023,7 @@
     <div id="app-screen" class="animate-pop">
       <div class="nav-header">
         <div class="brand-title">
-          💅 NailsbyNiNa
+          💅 Nailsby<span>NiNa</span>
           <span
             id="adminBadge"
             style="
@@ -942,8 +1031,8 @@
               font-size: 0.6rem;
               background: var(--text);
               color: white;
-              padding: 2px 5px;
-              border-radius: 4px;
+              padding: 2px 6px;
+              border-radius: 6px;
               margin-left: 5px;
             "
             >ADMIN</span
@@ -966,8 +1055,9 @@
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
-            padding: 5px 10px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            cursor: pointer;
           "
         >
           Cancelar
@@ -1002,7 +1092,7 @@
               display: flex;
               justify-content: space-between;
               align-items: center;
-              margin-bottom: 10px;
+              margin-bottom: 15px;
             "
           >
             <button
@@ -1010,12 +1100,13 @@
               style="
                 border: none;
                 background: white;
-                width: 35px;
-                height: 35px;
-                border-radius: 50%;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                color: var(--primary);
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                color: var(--text);
                 font-weight: bold;
+                cursor: pointer;
               "
             >
               ◀
@@ -1033,12 +1124,13 @@
               style="
                 border: none;
                 background: white;
-                width: 35px;
-                height: 35px;
-                border-radius: 50%;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                color: var(--primary);
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                color: var(--text);
                 font-weight: bold;
+                cursor: pointer;
               "
             >
               ▶
@@ -1047,7 +1139,9 @@
           <div class="cal-grid" id="calendarGrid"></div>
         </div>
         <div class="form-section">
-          <h3 style="color: var(--primary); margin: 0 0 15px">Detalles</h3>
+          <h3 style="color: var(--text); margin: 0 0 15px">
+            Detalles de tu cita
+          </h3>
           <div id="newAppointmentFields">
             <input type="text" id="fieldNombre" placeholder="Nombre" />
             <input type="email" id="fieldCorreo" placeholder="Correo" />
@@ -1108,26 +1202,16 @@
         class="admin-control-panel animate-pop"
         style="display: none"
       >
-        <h3 style="color: var(--primary); margin-top: 0">
-          Gestión de Servicios
-        </h3>
-        <div
-          style="
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 15px;
-            border: 1px dashed #ddd;
-            margin-bottom: 20px;
-          "
-        >
+        <div class="admin-card">
+          <div class="admin-title">💅 Gestión de Servicios</div>
           <div id="adminServicesList"></div>
 
-          <div class="add-row">
+          <div class="add-row" id="formServiceRow">
             <input type="hidden" id="editServiceId" />
             <input
               type="text"
               id="newServiceInput"
-              placeholder="Nombre..."
+              placeholder="Nombre del servicio..."
               style="flex: 2"
             />
             <select id="newServiceType" style="flex: 1.2">
@@ -1138,51 +1222,53 @@
               type="text"
               id="newServiceDuration"
               placeholder="1:30"
-              style="width: 60px; text-align: center"
+              style="width: 70px; text-align: center"
             />
             <button
               id="btnSaveService"
               class="btn-main"
               style="
                 background: var(--success);
-                width: 50px;
-                height: 50px;
+                width: auto;
                 padding: 0;
+                margin: 0;
+                box-shadow: none;
               "
               onclick="saveService()"
             >
-              +
+              💾
             </button>
             <button
               id="btnCancelEdit"
               class="btn-main"
               style="
-                background: #ccc;
-                width: 50px;
-                height: 50px;
+                background: #f1f2f6;
+                color: #636e72;
+                width: auto;
                 padding: 0;
+                margin: 0;
                 display: none;
+                box-shadow: none;
               "
               onclick="cancelEditService()"
             >
-              x
+              ✕
             </button>
           </div>
-          <p style="font-size: 0.7rem; color: #888; margin-top: 5px">
-            * Usa formato hora (ej: 1:30 para hora y media).
-          </p>
 
-          <div class="msg-config-box">
+          <div
+            class="msg-config-box"
+            style="
+              margin-top: 20px;
+              border-top: 1px solid #eee;
+              padding-top: 15px;
+            "
+          >
             <label class="msg-label">🩷 Mensaje Final (Básico):</label>
             <textarea
               id="adminMsgBasic"
               rows="2"
-              style="
-                width: 100%;
-                border: 1px solid #ddd;
-                border-radius: 10px;
-                padding: 10px;
-              "
+              style="border: 1px solid #eee"
             ></textarea>
             <label class="msg-label" style="margin-top: 10px"
               >💖 Mensaje Final (Diseño):</label
@@ -1190,18 +1276,13 @@
             <textarea
               id="adminMsgDesign"
               rows="2"
-              style="
-                width: 100%;
-                border: 1px solid #ddd;
-                border-radius: 10px;
-                padding: 10px;
-              "
+              style="border: 1px solid #eee"
             ></textarea>
             <button
               class="btn-main"
               style="
                 margin-top: 10px;
-                padding: 10px;
+                padding: 12px;
                 font-size: 0.9rem;
                 background: var(--info);
               "
@@ -1212,125 +1293,181 @@
           </div>
         </div>
 
-        <h3 style="text-align: center; color: var(--primary)">
-          Recargos por Hora
-        </h3>
+        <div class="admin-card">
+          <div class="admin-title">⏰ Horario Semanal</div>
+          <div class="week-selector">
+            <div class="day-chip" id="d1" onclick="toggleWeekDay(1)">Lu</div>
+            <div class="day-chip" id="d2" onclick="toggleWeekDay(2)">Ma</div>
+            <div class="day-chip" id="d3" onclick="toggleWeekDay(3)">Mi</div>
+            <div class="day-chip" id="d4" onclick="toggleWeekDay(4)">Ju</div>
+            <div class="day-chip" id="d5" onclick="toggleWeekDay(5)">Vi</div>
+            <div class="day-chip" id="d6" onclick="toggleWeekDay(6)">Sa</div>
+            <div class="day-chip" id="d0" onclick="toggleWeekDay(0)">Do</div>
+          </div>
+
+          <div
+            id="hoursEditor"
+            class="hours-editor-box"
+            style="display: none; background: #fff; border: 1px solid #eee"
+          >
+            <div
+              style="
+                margin-bottom: 15px;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 15px;
+                text-align: left;
+              "
+            >
+              <label
+                style="font-size: 0.85rem; font-weight: 700; color: var(--text)"
+                >Hora de Cierre (Límite):</label
+              >
+              <input
+                type="time"
+                id="dayClosingTime"
+                style="margin-top: 5px; background: #f9f9f9"
+              />
+            </div>
+            <div id="weeklyHours" class="weekly-hours-container"></div>
+            <div class="add-row">
+              <input type="time" id="newHourInput" />
+              <button
+                class="btn-main"
+                style="
+                  background: var(--text);
+                  margin: 0;
+                  padding: 0;
+                  width: auto;
+                "
+                onclick="addHourToSelected()"
+              >
+                +
+              </button>
+            </div>
+            <button
+              class="btn-main"
+              style="
+                background: var(--whatsapp);
+                margin-top: 15px;
+                font-size: 0.9rem;
+              "
+              onclick="saveWeekSchedule()"
+            >
+              Guardar Horario
+            </button>
+          </div>
+        </div>
+
         <div
-          style="
-            background: #fff3e0;
-            padding: 15px;
-            border-radius: 15px;
-            border: 1px dashed var(--warning);
-            margin-bottom: 20px;
-          "
+          class="admin-card"
+          style="background: #fff8e1; border-color: #ffe0b2"
         >
-          <div class="add-row">
-            <input type="time" id="surchargeTime" style="flex: 0.5" />
-            <span style="font-weight: bold">-</span>
-            <input type="time" id="surchargeEnd" style="flex: 0.5" />
+          <div class="admin-title" style="color: #f57c00">
+            💰 Recargos por Hora
+          </div>
+          <div class="add-row" id="formSurchargeRow" style="background: white">
+            <input type="hidden" id="editSurchargeId" />
+            <input type="time" id="surchargeTime" style="flex: 1" />
+            <span style="font-weight: bold; color: #ccc">-</span>
+            <input type="time" id="surchargeEnd" style="flex: 1" />
             <input
               type="text"
               id="surchargeMsg"
               placeholder="Ej: Recargo nocturno"
-              style="flex: 1.5"
+              style="flex: 2"
             />
             <button
+              id="btnSaveSurcharge"
               class="btn-main"
               style="
                 background: var(--warning);
+                margin: 0;
                 padding: 0;
                 width: auto;
-                min-width: 50px;
+                box-shadow: none;
               "
               onclick="addSurcharge()"
             >
               +
             </button>
+            <button
+              id="btnCancelSurcharge"
+              class="btn-main"
+              style="
+                background: #f1f2f6;
+                color: #666;
+                margin: 0;
+                padding: 0;
+                width: auto;
+                display: none;
+                box-shadow: none;
+              "
+              onclick="cancelEditSurcharge()"
+            >
+              ✕
+            </button>
           </div>
           <div id="surchargesList" style="margin-top: 15px"></div>
         </div>
 
-        <h3 style="text-align: center; color: var(--primary)">
-          Horario Semanal
-        </h3>
-        <div class="week-selector">
-          <div class="day-chip" id="d1" onclick="toggleWeekDay(1)">Lu</div>
-          <div class="day-chip" id="d2" onclick="toggleWeekDay(2)">Ma</div>
-          <div class="day-chip" id="d3" onclick="toggleWeekDay(3)">Mi</div>
-          <div class="day-chip" id="d4" onclick="toggleWeekDay(4)">Ju</div>
-          <div class="day-chip" id="d5" onclick="toggleWeekDay(5)">Vi</div>
-          <div class="day-chip" id="d6" onclick="toggleWeekDay(6)">Sa</div>
-          <div class="day-chip" id="d0" onclick="toggleWeekDay(0)">Do</div>
-        </div>
-        <div id="hoursEditor" class="hours-editor-box" style="display: none">
-          <div
-            style="
-              margin-bottom: 10px;
-              border-bottom: 1px solid #eee;
-              padding-bottom: 10px;
-            "
-          >
-            <label style="font-size: 0.8rem; font-weight: bold; color: #666"
-              >Hora Cierre (Para estos días):</label
+        <div
+          class="admin-card"
+          style="background: #ffebee; border-color: #ffcdd2"
+        >
+          <div class="admin-title" style="color: var(--danger)">
+            🔒 Bloquear Fecha
+          </div>
+          <input
+            type="date"
+            id="adminDateInput"
+            onchange="loadAdminDayConfig()"
+            style="background: white; margin-bottom: 15px"
+          />
+
+          <div id="adminPanelControls" style="display: none">
+            <button
+              id="btnToggleDay"
+              onclick="toggleFullDayBlock()"
+              class="btn-main"
+              style="
+                background: white;
+                color: var(--text);
+                border: 1px solid #ddd;
+                margin-bottom: 20px;
+                box-shadow: none;
+              "
             >
-            <input type="time" id="dayClosingTime" style="margin-top: 5px" />
-          </div>
-          <div id="weeklyHours" style="margin-bottom: 10px"></div>
-          <div class="add-row">
-            <input type="time" id="newHourInput" />
-            <button class="btn-main" onclick="addHourToSelected()">+</button>
-          </div>
-          <button
-            class="btn-main"
-            style="background: var(--whatsapp); margin-top: 10px"
-            onclick="saveWeekSchedule()"
-          >
-            Guardar Horario
-          </button>
-        </div>
+              CERRAR DÍA COMPLETO
+            </button>
 
-        <h3 style="text-align: center; color: var(--primary); margin-top: 30px">
-          Bloquear Fecha
-        </h3>
-        <input
-          type="date"
-          id="adminDateInput"
-          onchange="loadAdminDayConfig()"
-        />
-        <div id="adminPanelControls" style="display: none; margin-top: 15px">
-          <button
-            id="btnToggleDay"
-            onclick="toggleFullDayBlock()"
-            class="btn-main"
-            style="background: #888; margin-bottom: 15px"
-          >
-            CERRAR DÍA
-          </button>
-
-          <div
-            style="
-              background: #ffebee;
-              padding: 15px;
-              border-radius: 15px;
-              border: 1px solid #ffcdd2;
-            "
-          >
-            <h4 style="margin: 0 0 10px 0; color: var(--danger)">
-              Bloquear Horas (Descanso/Personal)
+            <h4
+              style="
+                margin: 0 0 10px 0;
+                color: var(--danger);
+                font-size: 0.9rem;
+              "
+            >
+              Bloquear Rango Específico
             </h4>
-            <div class="add-row">
+            <div class="add-row" style="background: white">
               <input type="time" id="blockStartTime" style="flex: 1" />
               <span>-</span>
               <input type="time" id="blockEndTime" style="flex: 1" />
               <button
                 class="btn-main"
-                style="background: var(--danger); width: auto; padding: 0 20px"
+                style="
+                  background: var(--danger);
+                  width: auto;
+                  padding: 0;
+                  margin: 0;
+                  box-shadow: none;
+                "
                 onclick="addBlockRange()"
               >
-                Bloquear
+                🔒
               </button>
             </div>
-            <div id="adminBlockList" style="margin-top: 10px"></div>
+            <div id="adminBlockList" style="margin-top: 15px"></div>
           </div>
         </div>
       </div>
@@ -1350,18 +1487,35 @@
         <div
           style="
             background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
             margin-bottom: 20px;
           "
         >
-          <h4 style="margin-top: 0">Editar Nombre</h4>
-          <div class="add-row">
-            <input type="text" id="profileNameInput" />
+          <h4 style="margin-top: 0; color: var(--primary)">Editar Nombre</h4>
+          <div
+            class="add-row"
+            style="
+              background: #f9f9f9;
+              padding: 0;
+              border: none;
+              box-shadow: none;
+            "
+          >
+            <input
+              type="text"
+              id="profileNameInput"
+              style="background: white"
+            />
             <button
               class="btn-main"
-              style="padding: 0 20px"
+              style="
+                padding: 0 20px;
+                margin: 0;
+                width: auto;
+                background: var(--primary);
+              "
               onclick="updateProfileName()"
             >
               💾
@@ -1375,6 +1529,7 @@
             border: 2px dashed var(--primary);
             color: var(--primary);
             margin-bottom: 20px;
+            box-shadow: none;
           "
           onclick="togglePassForm()"
         >
@@ -1385,9 +1540,9 @@
           style="
             display: none;
             background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
             margin-bottom: 20px;
           "
         >
@@ -1427,7 +1582,7 @@
           </div>
           <button
             class="btn-main"
-            style="margin-top: 10px; background: var(--info)"
+            style="margin-top: 15px; background: var(--info)"
             onclick="updatePassword()"
           >
             Actualizar
@@ -1437,13 +1592,14 @@
           onclick="logout()"
           style="
             width: 100%;
-            padding: 15px;
-            border: 1px solid #eee;
-            background: white;
+            padding: 18px;
+            border: 2px solid #ffebee;
+            background: #fff5f5;
             color: var(--danger);
-            border-radius: 16px;
-            font-weight: bold;
+            border-radius: 20px;
+            font-weight: 800;
             cursor: pointer;
+            font-family: inherit;
           "
         >
           Cerrar Sesión
@@ -1680,7 +1836,7 @@
         }
       }
 
-      // RECARGOS
+      // RECARGOS (LOGICA EDITAR MEJORADA)
       async function fetchSurcharges() {
         const { data } = await client
           .from("recargos_rango")
@@ -1689,22 +1845,65 @@
         globalSurcharges = data || [];
         renderAdminSurcharges();
       }
-      async function addSurcharge() {
-        const s = document.getElementById("surchargeTime").value;
-        const e = document.getElementById("surchargeEnd").value;
-        const m = document.getElementById("surchargeMsg").value;
-        if (!s || !e || !m) {
-          showAlert("Faltan datos", "Llena hora inicio, fin y mensaje.");
-          return;
-        }
-        await client
-          .from("recargos_rango")
-          .insert({ hora_inicio: s, hora_fin: e, mensaje: m });
+
+      // NUEVO: EDITAR RECARGO
+      function editSurcharge(id) {
+        const recargo = globalSurcharges.find((r) => r.id === id);
+        if (!recargo) return;
+
+        document
+          .getElementById("formSurchargeRow")
+          .scrollIntoView({ behavior: "smooth", block: "center" });
+        const row = document.getElementById("formSurchargeRow");
+        row.classList.add("pulse-input");
+        setTimeout(() => row.classList.remove("pulse-input"), 1000);
+
+        document.getElementById("editSurchargeId").value = recargo.id;
+        document.getElementById("surchargeTime").value = recargo.hora_inicio;
+        document.getElementById("surchargeEnd").value = recargo.hora_fin;
+        document.getElementById("surchargeMsg").value = recargo.mensaje;
+
+        document.getElementById("btnSaveSurcharge").innerText = "💾";
+        document.getElementById("btnCancelSurcharge").style.display = "block";
+      }
+
+      function cancelEditSurcharge() {
+        document.getElementById("editSurchargeId").value = "";
         document.getElementById("surchargeTime").value = "";
         document.getElementById("surchargeEnd").value = "";
         document.getElementById("surchargeMsg").value = "";
+        document.getElementById("btnSaveSurcharge").innerText = "+";
+        document.getElementById("btnCancelSurcharge").style.display = "none";
+      }
+
+      async function addSurcharge() {
+        const id = document.getElementById("editSurchargeId").value;
+        const s = document.getElementById("surchargeTime").value;
+        const e = document.getElementById("surchargeEnd").value;
+        const m = document.getElementById("surchargeMsg").value;
+
+        if (!s || !e || !m) {
+          showAlert("Faltan datos", "Llena todos los campos.");
+          return;
+        }
+
+        if (id) {
+          // UPDATE
+          await client
+            .from("recargos_rango")
+            .update({ hora_inicio: s, hora_fin: e, mensaje: m })
+            .eq("id", id);
+        } else {
+          // INSERT
+          await client
+            .from("recargos_rango")
+            .insert({ hora_inicio: s, hora_fin: e, mensaje: m });
+        }
+
+        cancelEditSurcharge();
         await fetchSurcharges();
       }
+
       function deleteSurcharge(id) {
         pendingSurchargeId = id;
         document.getElementById("deleteSurchargeModal").style.display = "flex";
@@ -1719,15 +1918,23 @@
         pendingSurchargeId = null;
         await fetchSurcharges();
       }
+
       function renderAdminSurcharges() {
         const c = document.getElementById("surchargesList");
         c.innerHTML = "";
         globalSurcharges.forEach((r) => {
           const s = r.hora_inicio.substring(0, 5);
           const e = r.hora_fin.substring(0, 5);
-          c.innerHTML += `<div class="service-item"><span><b>${format12h(s)} - ${format12h(e)}</b>: ${r.mensaje}</span><button class="btn-delete-svc" onclick="deleteSurcharge(${r.id})">X</button></div>`;
+          c.innerHTML += `<div class="service-item">
+               <div class="service-info"><b>${format12h(s)} - ${format12h(e)}</b><br><span style="font-weight:400; font-size:0.85rem">${r.mensaje}</span></div>
+               <div class="svc-controls">
+                  <button class="btn-round btn-edit" onclick="editSurcharge(${r.id})">✏️</button>
+                  <button class="btn-round btn-del" onclick="deleteSurcharge(${r.id})">🗑️</button>
+               </div>
+            </div>`;
         });
       }
+
       function checkSurcharges() {
         const h = document.getElementById("fieldHora").value;
         const d = document.getElementById("surchargeAlert");
@@ -1869,9 +2076,8 @@
           globalServices = data;
           const s = document.getElementById("fieldServicio");
           s.innerHTML = "";
-          // 1. Placeholder inicial
           s.add(new Option("1. Toca un día en el calendario 👆", ""));
-          s.disabled = true; // Empieza deshabilitado
+          s.disabled = true;
 
           if (userProfile?.role === "admin") {
             const l = document.getElementById("adminServicesList");
@@ -1884,10 +2090,10 @@
                     <span>${icon} ${i.nombre} (${formatDurationDisplay(i.duracion_minutos || 60)})</span>
                   </div>
                   <div class="svc-controls">
-                    <button class="btn-icon" onclick="moveService(${i.id}, ${i.orden}, 'up')">⬆️</button>
-                    <button class="btn-icon" onclick="moveService(${i.id}, ${i.orden}, 'down')">⬇️</button>
-                    <button class="btn-icon" onclick="editService(${i.id})">✏️</button>
-                    <button class="btn-delete-svc" onclick="askDeleteService(${i.id})">X</button>
+                    <button class="btn-round btn-move" onclick="moveService(${i.id}, ${i.orden}, 'up')">⬆</button>
+                    <button class="btn-round btn-move" onclick="moveService(${i.id}, ${i.orden}, 'down')">⬇</button>
+                    <button class="btn-round btn-edit" onclick="editService(${i.id})">✏️</button>
+                    <button class="btn-round btn-del" onclick="askDeleteService(${i.id})">🗑️</button>
                   </div>
                 </div>`;
             });
@@ -1898,15 +2104,25 @@
       function editService(id) {
         const svc = globalServices.find((s) => s.id === id);
         if (!svc) return;
+
+        document
+          .getElementById("formServiceRow")
+          .scrollIntoView({ behavior: "smooth", block: "center" });
+        const row = document.getElementById("formServiceRow");
+        row.classList.add("pulse-input");
+        setTimeout(() => row.classList.remove("pulse-input"), 1000);
+
         document.getElementById("editServiceId").value = svc.id;
         document.getElementById("newServiceInput").value = svc.nombre;
         document.getElementById("newServiceType").value = svc.tipo;
+
         const h = Math.floor((svc.duracion_minutos || 60) / 60);
         const m = (svc.duracion_minutos || 60) % 60;
         document.getElementById("newServiceDuration").value =
           `${h}:${String(m).padStart(2, "0")}`;
+
         document.getElementById("btnSaveService").innerText = "💾";
-        document.getElementById("btnCancelEdit").style.display = "flex";
+        document.getElementById("btnCancelEdit").style.display = "block";
       }
 
       function cancelEditService() {
@@ -1914,7 +2130,7 @@
         document.getElementById("newServiceInput").value = "";
         document.getElementById("newServiceType").value = "basico";
         document.getElementById("newServiceDuration").value = "1:00";
-        document.getElementById("btnSaveService").innerText = "+";
+        document.getElementById("btnSaveService").innerText = "Guardar";
         document.getElementById("btnCancelEdit").style.display = "none";
       }
 
@@ -1946,6 +2162,7 @@
         }
         cancelEditService();
         await fetchServices();
+        renderCalendar();
       }
 
       async function moveService(id, currentOrder, direction) {
@@ -2107,7 +2324,7 @@
         });
         const sortedHours = Array.from(allHours).sort();
         sortedHours.forEach((h) => {
-          c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')" style="cursor:pointer;margin-left:5px">x</span></span>`;
+          c.innerHTML += `<div class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')">✕</span></div>`;
         });
       }
       function addHourToSelected() {
@@ -2141,8 +2358,7 @@
           if (closingTime && selectedWeekDays.length === 1)
             updateData.hora_cierre = closingTime;
           else if (selectedWeekDays.length > 1 && closingTime)
-            updateData.hora_cierre = closingTime; // Apply to all if set
-
+            updateData.hora_cierre = closingTime;
           await client.from("horarios_base").upsert(updateData);
         }
         selectedWeekDays = [];
@@ -2160,7 +2376,7 @@
           .from("bloqueos")
           .select("*")
           .eq("fecha", d);
-        const isFull = data.some((b) => b.hora === null);
+        const isFull = data.some((b) => b.hora_inicio === null);
         document.getElementById("btnToggleDay").innerText = isFull
           ? "🔓 ABRIR DÍA"
           : "🔒 CERRAR DÍA";
@@ -2173,10 +2389,9 @@
         if (!data) return;
         data.forEach((b) => {
           if (b.hora_inicio !== null) {
-            // Rango especifico
             const s = b.hora_inicio.substring(0, 5);
             const e = b.hora_fin.substring(0, 5);
-            container.innerHTML += `<div class="service-item" style="background:white; border:1px solid #ffcdd2"><span>🚫 ${format12h(s)} - ${format12h(e)}</span><button class="btn-delete-svc" onclick="askDeleteBlock(${b.id})">Abrir</button></div>`;
+            container.innerHTML += `<div class="service-item"><span>🚫 ${format12h(s)} - ${format12h(e)}</span><button class="btn-round btn-del" onclick="askDeleteBlock(${b.id})">🗑️</button></div>`;
           }
         });
       }
@@ -2200,7 +2415,7 @@
         document.getElementById("blockStartTime").value = "";
         document.getElementById("blockEndTime").value = "";
         loadAdminDayConfig();
-        renderCalendar(); // REFRESH CALENDAR GRID
+        renderCalendar();
       }
 
       function askDeleteBlock(id) {
@@ -2213,7 +2428,7 @@
         await client.from("bloqueos").delete().eq("id", pendingBlockId);
         closeModal("deleteBlockModal");
         loadAdminDayConfig();
-        renderCalendar(); // REFRESH CALENDAR GRID
+        renderCalendar();
       }
 
       async function toggleFullDayBlock() {
@@ -2309,11 +2524,11 @@
               .querySelectorAll(".day")
               .forEach((e) => e.classList.remove("selected"));
 
-            // *** FIX: REINICIAR SELECT DE SERVICIOS ***
             const s = document.getElementById("fieldServicio");
-            s.innerHTML = "";
-            s.add(new Option("1. Toca un día en el calendario 👆", ""));
+            s.value = "";
             s.disabled = true;
+            s.innerHTML =
+              '<option value="">1. Toca un día en el calendario 👆</option>';
 
             const h = document.getElementById("fieldHora");
             h.value = "";
@@ -2322,7 +2537,6 @@
               '<option value="">2. Luego selecciona servicio...</option>';
             document.getElementById("surchargeAlert").style.display = "none";
 
-            // RECALCULAR DIAS FULL
             renderCalendar();
           }
         }
@@ -2555,15 +2769,6 @@
 
               // RESET Y FEEDBACK VISUAL
               const s = document.getElementById("fieldServicio");
-              s.innerHTML = "";
-              s.add(new Option("Selecciona servicio...", ""));
-              globalServices.forEach((i) => {
-                const o = document.createElement("option");
-                o.value = i.nombre;
-                o.text = i.nombre;
-                s.appendChild(o);
-              });
-
               s.disabled = false;
               s.classList.add("highlight-input");
               setTimeout(() => s.classList.remove("highlight-input"), 500);
@@ -2667,7 +2872,7 @@
             const s = globalServices.find((x) => x.nombre === appt.servicio);
             const dur = s ? s.duracion_minutos || 60 : 60;
             const start = timeToMins(appt.hora);
-            const end = start + dur + 30; // +Buffer
+            const end = start + dur; // **SIN BUFFER 30 MIN**
             busyRanges.push({ start, end });
           });
           dayBlocks.forEach((bk) => {
@@ -2687,19 +2892,18 @@
           // C. PROBAR SI CABE "MIN_DURATION" EN ALGUNO
           let isFull = true;
           for (let startMins of candidateStartTimes) {
-            // Solo probar si coincide con un slot base o generado valido
-            const endMins = startMins + minServiceDuration + 30; // +Buffer for safety
+            // Solo probar si coincide con un slot base o generado valido (simplificado: si esta en rango operativo)
+            // El inicio debe ser validado contra cierre
+            const endMins = startMins + minServiceDuration; // **SIN BUFFER 30 MIN**
 
             // Strict Check: Can fit min service before closing?
-            if (startMins + minServiceDuration > closingMins) continue;
+            if (endMins > closingMins) continue; // Logic fixed: endMins > closingMins (was start + min > closing)
 
             // Check Collision
             let collision = false;
             for (let r of busyRanges) {
-              if (
-                startMins < r.end &&
-                startMins + minServiceDuration + 30 > r.start
-              ) {
+              if (startMins < r.end && endMins > r.start) {
+                // **SIN BUFFER 30 MIN**
                 collision = true;
                 break;
               }
@@ -2733,9 +2937,10 @@
       // NUEVO: FILTRAR SERVICIOS POR HUECOS DISPONIBLES
       async function updateServiceAvailability(f) {
         const s = document.getElementById("fieldServicio");
-        // Disable temporarily while loading
-        const originalText = s.options[0].text;
-        s.options[0].text = "🔄 Verificando disponibilidad...";
+
+        // 1. RE-POPULATE SERVICES FROM GLOBAL
+        s.innerHTML = "";
+        s.add(new Option("Selecciona servicio...", ""));
 
         const dw = new Date(f + "T00:00:00").getDay();
         let base = globalSchedule[dw]
@@ -2760,7 +2965,7 @@
             const svc = globalServices.find((x) => x.nombre === appt.servicio);
             const dur = svc ? svc.duracion_minutos || 60 : 60;
             const start = timeToMins(appt.hora);
-            const end = start + dur + 30;
+            const end = start + dur; // SIN BUFFER
             busyRanges.push({ start, end });
           });
         if (b)
@@ -2785,28 +2990,22 @@
           new Date().toDateString();
         const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
 
-        let hasAnyAvailability = false;
-
-        // REVISAR CADA SERVICIO
-        for (let i = 1; i < s.options.length; i++) {
-          let opt = s.options[i];
-          let svcName = opt.value;
-          let svc = globalServices.find((x) => x.nombre === svcName);
+        // 2. LOOP & VERIFY
+        globalServices.forEach((svc) => {
           let reqDur = svc.duracion_minutos || 60;
-
           let fitsAnywhere = false;
 
           for (let h of availableSlots) {
             const startMins = timeToMins(h);
-            const endMins = startMins + reqDur + 30; // +Buffer
+            const endMins = startMins + reqDur; // SIN BUFFER
 
             if (isToday && startMins <= nowMins) continue;
-            if (startMins + reqDur > closingMins) continue; // Check strict closing fit
+            if (endMins > closingMins) continue; // Check strict closing fit
 
             let collision = false;
             for (let r of busyRanges) {
               // Overlap check
-              if (startMins < r.end && startMins + reqDur + 30 > r.start) {
+              if (startMins < r.end && endMins > r.start) {
                 collision = true;
                 break;
               }
@@ -2818,22 +3017,21 @@
             }
           }
 
+          let opt = document.createElement("option");
+          opt.value = svc.nombre;
+
           if (!fitsAnywhere) {
             opt.disabled = true;
             opt.innerText = `🚫 ${svc.nombre} (No cabe hoy)`;
           } else {
             opt.disabled = false;
             opt.innerText = svc.nombre;
-            hasAnyAvailability = true;
           }
-        }
-        s.options[0].text = "Selecciona servicio...";
+          s.add(opt);
+        });
 
         // SI NO HAY NADA DISPONIBLE, MARCAR DIA COMO FULL EN ROJO
-        if (!hasAnyAvailability && base.length > 0) {
-          const el = document.getElementById(`day-${f}`);
-          if (el) el.classList.add("full");
-        }
+        // (Aunque updateFullDays ya lo hace, esto es un refuerzo visual si el usuario ya esta dentro)
       }
 
       async function checkHoras(f) {
@@ -2871,7 +3069,7 @@
             const s = globalServices.find((x) => x.nombre === appt.servicio);
             const dur = s ? s.duracion_minutos || 60 : 60;
             const start = timeToMins(appt.hora);
-            const end = start + dur + 30; // +30m BUFFER
+            const end = start + dur; // **SIN BUFFER 30 MIN**
             busyRanges.push({ start, end });
           });
         }
@@ -2903,7 +3101,7 @@
 
         availableList.forEach((h) => {
           const startMins = timeToMins(h);
-          const endMins = startMins + reqDuration;
+          const endMins = startMins + reqDuration; // **SIN BUFFER 30 MIN**
 
           if (isToday && startMins <= nowMins) {
             const opt = document.createElement("option");
@@ -2920,10 +3118,10 @@
 
           let collision = false;
           for (let r of busyRanges) {
-            if (startMins < r.end && endMins + 30 > r.start) {
+            if (startMins < r.end && endMins > r.start) {
               collision = true;
               break;
-            }
+            } // **SIN BUFFER 30 MIN**
           }
 
           // HIDE IF INSIDE ADMIN BLOCK
