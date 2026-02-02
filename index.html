@@ -328,33 +328,6 @@
         z-index: 10;
       }
 
-      .file-upload-wrapper {
-        margin: 15px 0;
-        text-align: center;
-      }
-      .custom-file-upload {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 12px 20px;
-        cursor: pointer;
-        border: 2px dashed var(--primary);
-        border-radius: 15px;
-        background: rgba(255, 20, 147, 0.03);
-        color: var(--primary);
-        font-weight: bold;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      #fileNameDisplay {
-        display: block;
-        font-size: 0.8rem;
-        color: #888;
-        margin-top: 5px;
-        font-style: italic;
-      }
-
       .btn-main {
         background: var(--primary);
         color: white;
@@ -371,6 +344,12 @@
       .btn-main.reschedule-mode {
         background: var(--info);
         box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+      }
+      .btn-main:disabled {
+        background: #e0e0e0;
+        color: #999;
+        box-shadow: none;
+        cursor: not-allowed;
       }
 
       /* CITA CARD */
@@ -401,7 +380,6 @@
       .appointment-card.vencida::before {
         background: var(--danger);
       }
-
       .appointment-card.past {
         background: #fbfbfb;
         opacity: 0.85;
@@ -490,7 +468,7 @@
         background: #ffdaeb;
       }
 
-      /* ADMIN */
+      /* ADMIN - DISTRIBUCIÓN */
       .admin-control-panel {
         padding: 20px;
         background: white;
@@ -542,7 +520,7 @@
         justify-content: space-between;
         align-items: center;
         background: #f9f9f9;
-        padding: 15px;
+        padding: 12px;
         border-radius: 12px;
         margin-bottom: 8px;
         border: 1px solid #eee;
@@ -551,36 +529,36 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        flex: 1;
       }
-      .svc-icon {
-        font-size: 1.4rem;
-        cursor: pointer;
-        padding: 5px;
-        width: 40px;
-        height: 40px;
+      .svc-controls {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.2s;
+        gap: 5px;
       }
-      .svc-icon:active {
-        transform: scale(1.2);
+      .btn-icon {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: 0.2s;
+      }
+      .btn-icon:hover {
+        background: #f0f0f0;
       }
       .btn-delete-svc {
         background: #ffebee;
         color: var(--danger);
-        border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 0.8rem;
+        border: 1px solid #ffcdd2;
       }
+
       .add-row {
         display: flex;
         gap: 10px;
         align-items: center;
         margin-top: 15px;
+        flex-wrap: wrap;
       }
       .add-row input {
         margin: 0;
@@ -598,6 +576,7 @@
         padding: 0 20px;
         height: 56px;
       }
+
       .msg-config-box {
         background: #fff;
         padding: 15px;
@@ -611,6 +590,19 @@
         color: #888;
         margin-bottom: 5px;
         font-weight: bold;
+      }
+      .surcharge-alert {
+        background: #fff8e1;
+        border: 1px solid #ffe0b2;
+        padding: 15px;
+        border-radius: 12px;
+        margin: 15px 0;
+        display: none;
+        color: #f57c00;
+        font-size: 0.9rem;
+        font-weight: bold;
+        align-items: center;
+        gap: 10px;
       }
 
       /* PERFIL */
@@ -679,13 +671,29 @@
       </div>
     </div>
 
+    <div id="deleteSurchargeModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-icon">💸</div>
+        <h3 style="color: var(--danger); margin: 0">¿Borrar Recargo?</h3>
+        <p style="color: #666; margin: 10px 0">Se eliminará esta regla.</p>
+        <div class="modal-btn-row">
+          <button
+            class="btn-modal secondary"
+            onclick="closeModal('deleteSurchargeModal')"
+          >
+            Cancelar
+          </button>
+          <button class="btn-modal danger" onclick="confirmDeleteSurcharge()">
+            Sí, Borrar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div id="resetModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">📧</div>
         <h3 style="color: var(--primary); margin: 0">Recuperar Cuenta</h3>
-        <p style="color: #666; margin: 10px 0">
-          Te enviaremos un enlace mágico.
-        </p>
         <input
           type="email"
           id="resetEmailInput"
@@ -704,12 +712,10 @@
         </div>
       </div>
     </div>
-
     <div id="cancelModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">💔</div>
         <h3 style="color: var(--text); margin: 0">¿Cancelar?</h3>
-        <p style="color: #888">Esta acción libera el espacio.</p>
         <div class="modal-btn-row">
           <button
             class="btn-modal secondary"
@@ -723,23 +729,20 @@
         </div>
       </div>
     </div>
-
     <div id="wspModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">💅</div>
         <h2 style="color: var(--primary); margin: 0">¡Casi Listo!</h2>
-        <p style="color: #666">Continúa en WhatsApp para finalizar.</p>
+        <p style="color: #666">Continúa en WhatsApp.</p>
         <button class="btn-modal whatsapp" onclick="enviarWhatsAppCliente()">
           Enviar Mensaje
         </button>
       </div>
     </div>
-
     <div id="wspRescheduleModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">🔄</div>
         <h2 style="color: var(--info); margin: 0">Cambio Listo</h2>
-        <p style="color: #666">Notifica tu nueva fecha.</p>
         <button
           class="btn-modal whatsapp"
           onclick="enviarWhatsAppReprogramacion()"
@@ -988,13 +991,18 @@
               pattern="[0-9]*"
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
-            <select id="fieldServicio">
+            <select id="fieldServicio" onchange="checkHoras(selectedDate)">
               <option>Cargando servicios...</option>
             </select>
           </div>
-          <select id="fieldHora">
+          <select id="fieldHora" onchange="checkSurcharges()">
             <option value="">Selecciona día...</option>
           </select>
+
+          <div id="surchargeAlert" class="surcharge-alert">
+            ⚠️ <span id="surchargeText"></span>
+          </div>
+
           <button id="btnMainAction" class="btn-main" onclick="confirmarCita()">
             💖 Reservar Cita
           </button>
@@ -1031,7 +1039,9 @@
         class="admin-control-panel animate-pop"
         style="display: none"
       >
-        <h3 style="color: var(--primary); margin-top: 0">Servicios</h3>
+        <h3 style="color: var(--primary); margin-top: 0">
+          Gestión de Servicios
+        </h3>
         <div
           style="
             background: #f9f9f9;
@@ -1042,30 +1052,59 @@
           "
         >
           <div id="adminServicesList"></div>
+
           <div class="add-row">
+            <input type="hidden" id="editServiceId" />
             <input
               type="text"
               id="newServiceInput"
-              placeholder="Nuevo servicio..."
+              placeholder="Nombre..."
+              style="flex: 2"
             />
-            <select id="newServiceType">
+            <select id="newServiceType" style="flex: 1.2">
               <option value="basico">🩷 Básico</option>
               <option value="diseno">💖 Diseño</option>
             </select>
+            <input
+              type="text"
+              id="newServiceDuration"
+              placeholder="1:30"
+              style="width: 60px; text-align: center"
+            />
             <button
+              id="btnSaveService"
               class="btn-main"
-              style="background: var(--success)"
-              onclick="addService()"
+              style="
+                background: var(--success);
+                width: 50px;
+                height: 50px;
+                padding: 0;
+              "
+              onclick="saveService()"
             >
               +
             </button>
+            <button
+              id="btnCancelEdit"
+              class="btn-main"
+              style="
+                background: #ccc;
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                display: none;
+              "
+              onclick="cancelEditService()"
+            >
+              x
+            </button>
           </div>
           <p style="font-size: 0.7rem; color: #888; margin-top: 5px">
-            * Toca el corazón (🩷/💖) para cambiar el tipo.
+            * Usa formato hora (ej: 1:30 para hora y media).
           </p>
 
           <div class="msg-config-box">
-            <label class="msg-label">🩷 Mensaje Final (Servicio Básico):</label>
+            <label class="msg-label">🩷 Mensaje Final (Básico):</label>
             <textarea
               id="adminMsgBasic"
               rows="2"
@@ -1076,9 +1115,8 @@
                 padding: 10px;
               "
             ></textarea>
-
             <label class="msg-label" style="margin-top: 10px"
-              >💖 Mensaje Final (Servicio Diseño):</label
+              >💖 Mensaje Final (Diseño):</label
             >
             <textarea
               id="adminMsgDesign"
@@ -1090,7 +1128,6 @@
                 padding: 10px;
               "
             ></textarea>
-
             <button
               class="btn-main"
               style="
@@ -1107,6 +1144,39 @@
         </div>
 
         <h3 style="text-align: center; color: var(--primary)">
+          Recargos por Hora
+        </h3>
+        <div
+          style="
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px dashed var(--warning);
+            margin-bottom: 20px;
+          "
+        >
+          <div class="add-row">
+            <input type="time" id="surchargeTime" style="flex: 0.5" />
+            <span style="font-weight: bold">-</span>
+            <input type="time" id="surchargeEnd" style="flex: 0.5" />
+            <input
+              type="text"
+              id="surchargeMsg"
+              placeholder="Ej: Recargo nocturno"
+              style="flex: 1.5"
+            />
+            <button
+              class="btn-main"
+              style="background: var(--warning)"
+              onclick="addSurcharge()"
+            >
+              +
+            </button>
+          </div>
+          <div id="surchargesList" style="margin-top: 15px"></div>
+        </div>
+
+        <h3 style="text-align: center; color: var(--primary)">
           Horario Semanal
         </h3>
         <div class="week-selector">
@@ -1119,6 +1189,18 @@
           <div class="day-chip" id="d0" onclick="toggleWeekDay(0)">Do</div>
         </div>
         <div id="hoursEditor" class="hours-editor-box" style="display: none">
+          <div
+            style="
+              margin-bottom: 10px;
+              border-bottom: 1px solid #eee;
+              padding-bottom: 10px;
+            "
+          >
+            <label style="font-size: 0.8rem; font-weight: bold; color: #666"
+              >Hora Cierre (Para estos días):</label
+            >
+            <input type="time" id="dayClosingTime" style="margin-top: 5px" />
+          </div>
           <div id="weeklyHours" style="margin-bottom: 10px"></div>
           <div class="add-row">
             <input type="time" id="newHourInput" />
@@ -1289,7 +1371,6 @@
         globalSchedule = {},
         globalServices = [],
         selectedWeekDays = [],
-        stagedHours = [],
         viewDate = new Date(),
         selectedDate = null,
         lastCitaData = null,
@@ -1299,8 +1380,11 @@
         pendingCancelId = null,
         pendingCancelData = null;
       let pendingServiceDeleteId = null;
+      let pendingSurchargeId = null;
       let msgBasic = "Te envío el comprobante por aquí.";
       let msgDesign = "Te envío el diseño que tengo en mente y el comprobante.";
+      let globalSurcharges = [];
+      let globalClosingTimes = {};
 
       const hash = window.location.hash;
       const isRecovery = hash && hash.includes("type=recovery");
@@ -1342,6 +1426,59 @@
           prefix +
           `${dias[date.getDay()]}, ${date.getDate()} de ${meses[date.getMonth()]}`
         );
+      }
+
+      function minsToTime(totalMins) {
+        let h = Math.floor(totalMins / 60);
+        const m = totalMins % 60;
+        if (h >= 24) h -= 24;
+        return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+      }
+      function timeToMins(t) {
+        if (!t) return 0;
+        const [h, m] = t.split(":").map(Number);
+        return h * 60 + m;
+      }
+      function formatServiceName(str) {
+        if (!str) return "";
+        const minorWords = [
+          "de",
+          "del",
+          "la",
+          "las",
+          "el",
+          "los",
+          "y",
+          "o",
+          "en",
+          "con",
+          "sin",
+          "por",
+          "para",
+          "un",
+          "una",
+        ];
+        return str
+          .toLowerCase()
+          .split(" ")
+          .map((word, index) => {
+            if (index > 0 && minorWords.includes(word)) return word;
+            return word.charAt(0).toUpperCase() + word.slice(1);
+          })
+          .join(" ");
+      }
+      function parseDurationInput(input) {
+        if (!input) return 60;
+        if (input.toString().includes(":")) {
+          const [h, m] = input.split(":").map(Number);
+          return h * 60 + (m || 0);
+        }
+        return parseInt(input);
+      }
+      function formatDurationDisplay(mins) {
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return `${h}:${String(m).padStart(2, "0")}h`;
       }
 
       async function initApp() {
@@ -1410,6 +1547,7 @@
           renderProfileUI();
           await fetchServices();
           await fetchSchedule();
+          await fetchSurcharges();
 
           const { data: cfg } = await client
             .from("textos_app")
@@ -1437,13 +1575,85 @@
             document.getElementById("fieldCorreo").readOnly = true;
           }
           renderCalendar();
-
           setInterval(() => {
             if (document.getElementById("view-lista").style.display !== "none")
               loadAllAppointments();
           }, 30000);
         } else {
           document.getElementById("auth-screen").style.display = "block";
+        }
+      }
+
+      // RECARGOS
+      async function fetchSurcharges() {
+        const { data } = await client
+          .from("recargos_rango")
+          .select("*")
+          .order("hora_inicio");
+        globalSurcharges = data || [];
+        renderAdminSurcharges();
+      }
+      async function addSurcharge() {
+        const s = document.getElementById("surchargeTime").value;
+        const e = document.getElementById("surchargeEnd").value;
+        const m = document.getElementById("surchargeMsg").value;
+        if (!s || !e || !m) {
+          showAlert("Faltan datos", "Llena hora inicio, fin y mensaje.");
+          return;
+        }
+        await client
+          .from("recargos_rango")
+          .insert({ hora_inicio: s, hora_fin: e, mensaje: m });
+        document.getElementById("surchargeTime").value = "";
+        document.getElementById("surchargeEnd").value = "";
+        document.getElementById("surchargeMsg").value = "";
+        await fetchSurcharges();
+      }
+      function deleteSurcharge(id) {
+        pendingSurchargeId = id;
+        document.getElementById("deleteSurchargeModal").style.display = "flex";
+      }
+      async function confirmDeleteSurcharge() {
+        if (!pendingSurchargeId) return;
+        await client
+          .from("recargos_rango")
+          .delete()
+          .eq("id", pendingSurchargeId);
+        closeModal("deleteSurchargeModal");
+        pendingSurchargeId = null;
+        await fetchSurcharges();
+      }
+      function renderAdminSurcharges() {
+        const c = document.getElementById("surchargesList");
+        c.innerHTML = "";
+        globalSurcharges.forEach((r) => {
+          const s = r.hora_inicio.substring(0, 5);
+          const e = r.hora_fin.substring(0, 5);
+          c.innerHTML += `<div class="service-item"><span><b>${format12h(s)} - ${format12h(e)}</b>: ${r.mensaje}</span><button class="btn-delete-svc" onclick="deleteSurcharge(${r.id})">X</button></div>`;
+        });
+      }
+      function checkSurcharges() {
+        const h = document.getElementById("fieldHora").value;
+        const d = document.getElementById("surchargeAlert");
+        if (!h) {
+          d.style.display = "none";
+          return;
+        }
+        const selMins = timeToMins(h);
+        let activeMsg = null;
+        for (let r of globalSurcharges) {
+          const start = timeToMins(r.hora_inicio);
+          const end = timeToMins(r.hora_fin);
+          if (selMins >= start && selMins < end) {
+            activeMsg = r.mensaje;
+            break;
+          }
+        }
+        if (activeMsg) {
+          document.getElementById("surchargeText").innerText = activeMsg;
+          d.style.display = "flex";
+        } else {
+          d.style.display = "none";
         }
       }
 
@@ -1492,7 +1702,6 @@
           ? "none"
           : "block";
       }
-
       async function handleAuth(t) {
         const e = document.getElementById(
           t === "login" ? "loginEmail" : "regEmail",
@@ -1554,12 +1763,17 @@
         }
       }
 
+      // ADMIN: SERVICIOS
       async function fetchServices() {
-        const { data } = await client.from("servicios").select("*").order("id");
+        const { data } = await client
+          .from("servicios")
+          .select("*")
+          .order("orden", { ascending: true });
         if (data) {
           globalServices = data;
           const s = document.getElementById("fieldServicio");
           s.innerHTML = "";
+          s.add(new Option("Selecciona servicio...", ""));
           globalServices.forEach((i) => {
             const o = document.createElement("option");
             o.value = i.nombre;
@@ -1570,30 +1784,92 @@
           if (userProfile?.role === "admin") {
             const l = document.getElementById("adminServicesList");
             l.innerHTML = "";
-            globalServices.forEach((i) => {
+            globalServices.forEach((i, idx) => {
               const icon = i.tipo === "diseno" ? "💖" : "🩷";
-              l.innerHTML += `<div class="service-item"><div class="service-info"><span class="svc-icon" onclick="toggleServiceType(${i.id}, '${i.tipo}')">${icon}</span> <span>${i.nombre}</span></div><button class="btn-delete-svc" onclick="askDeleteService(${i.id})">Borrar</button></div>`;
+              l.innerHTML += `
+                <div class="service-item">
+                  <div class="service-info">
+                    <span>${icon} ${i.nombre} (${formatDurationDisplay(i.duracion_minutos || 60)})</span>
+                  </div>
+                  <div class="svc-controls">
+                    <button class="btn-icon" onclick="moveService(${i.id}, ${i.orden}, 'up')">⬆️</button>
+                    <button class="btn-icon" onclick="moveService(${i.id}, ${i.orden}, 'down')">⬇️</button>
+                    <button class="btn-icon" onclick="editService(${i.id})">✏️</button>
+                    <button class="btn-delete-svc" onclick="askDeleteService(${i.id})">X</button>
+                  </div>
+                </div>`;
             });
           }
         }
       }
 
-      async function addService() {
-        const v = document.getElementById("newServiceInput").value.trim();
-        const t = document.getElementById("newServiceType").value;
-        if (!v) return;
-        const { error } = await client
-          .from("servicios")
-          .insert([{ nombre: v, tipo: t }]);
-        if (!error) {
-          document.getElementById("newServiceInput").value = "";
-          await fetchServices();
-        }
+      function editService(id) {
+        const svc = globalServices.find((s) => s.id === id);
+        if (!svc) return;
+        document.getElementById("editServiceId").value = svc.id;
+        document.getElementById("newServiceInput").value = svc.nombre;
+        document.getElementById("newServiceType").value = svc.tipo;
+        const h = Math.floor((svc.duracion_minutos || 60) / 60);
+        const m = (svc.duracion_minutos || 60) % 60;
+        document.getElementById("newServiceDuration").value =
+          `${h}:${String(m).padStart(2, "0")}`;
+        document.getElementById("btnSaveService").innerText = "💾";
+        document.getElementById("btnCancelEdit").style.display = "flex";
       }
 
-      async function toggleServiceType(id, currentType) {
-        const newType = currentType === "diseno" ? "basico" : "diseno";
-        await client.from("servicios").update({ tipo: newType }).eq("id", id);
+      function cancelEditService() {
+        document.getElementById("editServiceId").value = "";
+        document.getElementById("newServiceInput").value = "";
+        document.getElementById("newServiceType").value = "basico";
+        document.getElementById("newServiceDuration").value = "1:00";
+        document.getElementById("btnSaveService").innerText = "+";
+        document.getElementById("btnCancelEdit").style.display = "none";
+      }
+
+      async function saveService() {
+        const id = document.getElementById("editServiceId").value;
+        let v = document.getElementById("newServiceInput").value.trim();
+        v = formatServiceName(v);
+        const t = document.getElementById("newServiceType").value;
+        const rawDur = document.getElementById("newServiceDuration").value;
+        if (!v) return;
+
+        const d = parseDurationInput(rawDur);
+
+        if (id) {
+          await client
+            .from("servicios")
+            .update({ nombre: v, tipo: t, duracion_minutos: d })
+            .eq("id", id);
+        } else {
+          const lastOrder =
+            globalServices.length > 0
+              ? Math.max(...globalServices.map((s) => s.orden || 0))
+              : 0;
+          await client
+            .from("servicios")
+            .insert([
+              { nombre: v, tipo: t, duracion_minutos: d, orden: lastOrder + 1 },
+            ]);
+        }
+        cancelEditService();
+        await fetchServices();
+      }
+
+      async function moveService(id, currentOrder, direction) {
+        const index = globalServices.findIndex((s) => s.id === id);
+        if (index === -1) return;
+        const swapIndex = direction === "up" ? index - 1 : index + 1;
+        if (swapIndex < 0 || swapIndex >= globalServices.length) return;
+        const otherService = globalServices[swapIndex];
+        await client
+          .from("servicios")
+          .update({ orden: otherService.orden })
+          .eq("id", id);
+        await client
+          .from("servicios")
+          .update({ orden: currentOrder })
+          .eq("id", otherService.id);
         await fetchServices();
       }
 
@@ -1703,64 +1979,78 @@
         if (t !== "agenda") cancelRescheduleMode();
       }
 
-      // NUEVA LOGICA DE HORARIOS INDEPENDIENTES
+      // HORARIOS
       function toggleWeekDay(d) {
         const i = selectedWeekDays.indexOf(d);
         if (i > -1) selectedWeekDays.splice(i, 1);
         else selectedWeekDays.push(d);
         renderWeekDays();
       }
-
       function renderWeekDays() {
         [0, 1, 2, 3, 4, 5, 6].forEach((d) => {
           const el = document.getElementById(`d${d}`);
           if (selectedWeekDays.includes(d)) el.classList.add("active");
           else el.classList.remove("active");
         });
-
         document.getElementById("hoursEditor").style.display =
           selectedWeekDays.length ? "block" : "none";
+
+        if (selectedWeekDays.length === 1) {
+          const day = selectedWeekDays[0];
+          const closing = globalClosingTimes[day] || "";
+          document.getElementById("dayClosingTime").value = closing;
+        } else {
+          document.getElementById("dayClosingTime").value = "";
+        }
         renderStaged();
       }
-
       function renderStaged() {
         const c = document.getElementById("weeklyHours");
         c.innerHTML = "";
         let allHours = new Set();
         selectedWeekDays.forEach((day) => {
-          if (globalSchedule[day])
-            globalSchedule[day].forEach((h) => allHours.add(h));
+          if (globalSchedule[day] && globalSchedule[day].horas)
+            globalSchedule[day].horas.forEach((h) => allHours.add(h));
         });
         const sortedHours = Array.from(allHours).sort();
         sortedHours.forEach((h) => {
           c.innerHTML += `<span class="hour-tag">${format12h(h)} <span onclick="remStaged('${h}')" style="cursor:pointer;margin-left:5px">x</span></span>`;
         });
       }
-
       function addHourToSelected() {
         const h = document.getElementById("newHourInput").value;
         if (!h) return;
         selectedWeekDays.forEach((day) => {
-          if (!globalSchedule[day]) globalSchedule[day] = [];
-          if (!globalSchedule[day].includes(h)) globalSchedule[day].push(h);
+          if (!globalSchedule[day]) globalSchedule[day] = { horas: [] };
+          if (!globalSchedule[day].horas.includes(h))
+            globalSchedule[day].horas.push(h);
         });
         renderStaged();
       }
-
       function remStaged(h) {
         selectedWeekDays.forEach((day) => {
-          if (globalSchedule[day]) {
-            globalSchedule[day] = globalSchedule[day].filter((x) => x !== h);
+          if (globalSchedule[day] && globalSchedule[day].horas) {
+            globalSchedule[day].horas = globalSchedule[day].horas.filter(
+              (x) => x !== h,
+            );
           }
         });
         renderStaged();
       }
 
       async function saveWeekSchedule() {
-        for (let d of selectedWeekDays)
-          await client
-            .from("horarios_base")
-            .upsert({ dia: d, horas: globalSchedule[d] || [] });
+        const closingTime = document.getElementById("dayClosingTime").value;
+        for (let d of selectedWeekDays) {
+          let updateData = {
+            dia: d,
+            horas: globalSchedule[d] ? globalSchedule[d].horas : [],
+          };
+          if (closingTime && selectedWeekDays.length === 1)
+            updateData.hora_cierre = closingTime;
+          else if (selectedWeekDays.length > 1 && closingTime)
+            updateData.hora_cierre = closingTime;
+          await client.from("horarios_base").upsert(updateData);
+        }
         selectedWeekDays = [];
         renderWeekDays();
         await fetchSchedule();
@@ -1781,7 +2071,7 @@
           ? "🔓 ABRIR DÍA"
           : "🔒 CERRAR DÍA";
         const dw = new Date(d + "T00:00:00").getDay();
-        const base = globalSchedule[dw] || [];
+        const base = globalSchedule[dw] ? globalSchedule[dw].horas : [];
         const g = document.getElementById("adminHourGrid");
         g.innerHTML = "";
         base.sort().forEach((h) => {
@@ -1842,6 +2132,25 @@
         if (!selectedDate || !document.getElementById("fieldHora").value)
           return showAlert("Faltan Datos", "Selecciona fecha y hora.");
         const hora = document.getElementById("fieldHora").value;
+
+        const svcName = document.getElementById("fieldServicio").value;
+        const svcObj = globalServices.find((s) => s.nombre === svcName);
+        const duration = svcObj ? svcObj.duracion_minutos || 60 : 60;
+
+        const cleanTel = document
+          .getElementById("fieldTelefono")
+          .value.replace(/\D/g, "");
+        const datos = {
+          fecha: selectedDate,
+          hora,
+          nombre: document.getElementById("fieldNombre").value,
+          correo: document.getElementById("fieldCorreo").value,
+          telefono: cleanTel,
+          servicio: document.getElementById("fieldServicio").value,
+          user_id: userProfile.id,
+          estado: "pendiente",
+        };
+
         if (isRescheduling) {
           const { error } = await client
             .from("citas")
@@ -1862,19 +2171,6 @@
         } else {
           if (!document.getElementById("fieldTelefono").value)
             return showAlert("Faltan Datos", "Teléfono requerido.");
-          const cleanTel = document
-            .getElementById("fieldTelefono")
-            .value.replace(/\D/g, "");
-          const datos = {
-            fecha: selectedDate,
-            hora,
-            nombre: document.getElementById("fieldNombre").value,
-            correo: document.getElementById("fieldCorreo").value,
-            telefono: cleanTel,
-            servicio: document.getElementById("fieldServicio").value,
-            user_id: userProfile.id,
-            estado: "pendiente",
-          };
           const { error } = await client.from("citas").insert([datos]);
           if (error) showAlert("Error", error.message);
           else {
@@ -1938,7 +2234,6 @@
           closeModal("cancelModal");
         }
       }
-
       async function markArrived(id) {
         await client
           .from("citas")
@@ -2019,8 +2314,6 @@
             badgeClass += " done";
             badgeText = "Completada";
           }
-
-          // ESTADO ESPECIAL: VENCIDA (PASADA Y NO COMPLETADA)
           if (isPast && d.estado !== "completada") {
             badgeClass += " late";
             badgeText = "Vencida (No Llegó)";
@@ -2037,12 +2330,10 @@
             d.estado !== "completada" &&
             userProfile.role === "admin"
           ) {
-            // BOTON DE NOTIFICAR CANCELACION EN HISTORIAL
             btns = `<div class="actions-row"><button class="btn-action btn-notify-late" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">📢 Notificar Cancelación</button></div>`;
           }
 
           const card = `<div class="appointment-card ${d.estado === "reprogramada" ? "reprogramada" : ""} ${d.estado === "completada" ? "completada" : ""} ${isPast && d.estado !== "completada" ? "vencida past" : isPast ? "past" : ""} animate-pop"><div class="${badgeClass}">${badgeText}</div><div style="font-size:1.1rem;font-weight:bold">${d.servicio}</div><div style="color:var(--primary);font-weight:bold;margin:5px 0">${formatDateText(d.fecha)} - ${format12h(d.hora)}</div><div style="font-size:0.9rem;color:#888">${d.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9;padding:8px;border-radius:8px;margin-top:8px;font-size:0.8rem">📱 ${d.telefono}<br>📧 ${d.correo}</div>` : ""}${btns}</div>`;
-
           if (isPast || d.estado === "completada") return card;
           else return card;
         };
@@ -2061,7 +2352,12 @@
 
       async function fetchSchedule() {
         const { data } = await client.from("horarios_base").select("*");
-        if (data) data.forEach((i) => (globalSchedule[i.dia] = i.horas));
+        if (data)
+          data.forEach((i) => {
+            if (!globalSchedule[i.dia]) globalSchedule[i.dia] = {};
+            globalSchedule[i.dia].horas = i.horas;
+            globalClosingTimes[i.dia] = i.hora_cierre || "20:00";
+          });
       }
       function renderCalendar() {
         const grid = document.getElementById("calendarGrid");
@@ -2142,7 +2438,7 @@
           const el = document.getElementById(`day-${dStr}`);
           if (!el || el.classList.contains("disabled")) continue;
           const dw = new Date(dStr + "T00:00:00").getDay();
-          const base = globalSchedule[dw] || [];
+          const base = globalSchedule[dw] ? globalSchedule[dw].horas : [];
           const bl = b.some((x) => x.fecha === dStr && x.hora === null);
           if (bl || !base.length) {
             el.classList.add("full");
@@ -2158,56 +2454,106 @@
       }
       async function checkHoras(f) {
         const dw = new Date(f + "T00:00:00").getDay();
-        let base = globalSchedule[dw] ? [...globalSchedule[dw]].sort() : [];
+        // FIX: Handle undefined globalSchedule[dw] robustly
+        let base =
+          globalSchedule[dw] && globalSchedule[dw].horas
+            ? [...globalSchedule[dw].horas].sort()
+            : [];
+        const closingStr = globalClosingTimes[dw] || "20:00";
+        const closingMins = timeToMins(closingStr);
         const { data: c } = await client
           .from("citas")
-          .select("hora")
+          .select("hora, servicio")
           .eq("fecha", f);
         const { data: b } = await client
           .from("bloqueos")
           .select("hora")
           .eq("fecha", f);
-        const taken = [...c.map((x) => x.hora), ...b.map((x) => x.hora)];
-        const bl = b.some((x) => x.hora === null);
+        const svcName = document.getElementById("fieldServicio").value;
+        const svcObj = globalServices.find((s) => s.nombre === svcName);
+        const reqDuration = svcObj ? svcObj.duracion_minutos || 60 : 60;
         const s = document.getElementById("fieldHora");
         s.innerHTML = "";
-        if (!base.length || bl) {
+        const isToday =
+          new Date(f + "T00:00:00").toDateString() ===
+          new Date().toDateString();
+        const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
+        let busyRanges = [];
+        if (c && c.length > 0) {
+          c.forEach((appt) => {
+            const s = globalServices.find((x) => x.nombre === appt.servicio);
+            const dur = s ? s.duracion_minutos || 60 : 60;
+            const start = timeToMins(appt.hora);
+            const end = start + dur + 30;
+            busyRanges.push({ start, end });
+          });
+        }
+        if (b && b.length > 0) {
+          b.forEach((bk) => {
+            if (bk.hora) {
+              const start = timeToMins(bk.hora);
+              busyRanges.push({ start, end: start + 60 });
+            }
+          });
+        }
+        let candidateSlots = new Set(base);
+        busyRanges.forEach((range) => {
+          if (range.end < closingMins)
+            candidateSlots.add(minsToTime(range.end));
+        });
+        let availableList = Array.from(candidateSlots).sort();
+        let any = false;
+        if (!availableList.length) {
           s.add(new Option("No disponible", ""));
           s.disabled = true;
           return;
         }
-        s.disabled = false;
-        let any = false;
         s.add(new Option("Selecciona hora...", ""));
-        base.forEach((h) => {
-          const opt = document.createElement("option");
-          opt.value = h;
-          if (taken.includes(h)) {
+        availableList.forEach((h) => {
+          const startMins = timeToMins(h);
+          const endMins = startMins + reqDuration;
+          if (isToday && startMins <= nowMins) {
+            const opt = document.createElement("option");
+            opt.value = h;
+            opt.text = format12h(h) + " (Pasada)";
             opt.disabled = true;
-            opt.text = format12h(h) + " (Ocupado)";
-          } else {
-            // VALIDAR HORA PASADA EN EL MISMO DIA
-            const now = new Date();
-            const isToday =
-              new Date(f + "T00:00:00").toDateString() === now.toDateString();
-            const currentMins = now.getHours() * 60 + now.getMinutes();
-            const [hb, mb] = h.split(":").map(Number);
-            const slotMins = hb * 60 + mb;
-
-            if (isToday && slotMins <= currentMins) {
-              opt.disabled = true;
-              opt.text = format12h(h) + " (Pasada)";
-            } else {
-              opt.text = format12h(h);
-              any = true;
+            s.appendChild(opt);
+            return;
+          }
+          if (endMins > closingMins) {
+            return;
+          }
+          let collision = false;
+          for (let r of busyRanges) {
+            if (
+              (startMins >= r.start && startMins < r.end) ||
+              (endMins > r.start && endMins <= r.end) ||
+              (startMins <= r.start && endMins >= r.end)
+            ) {
+              collision = true;
+              break;
             }
           }
-          s.appendChild(opt);
+          const opt = document.createElement("option");
+          opt.value = h;
+          if (collision) {
+            if (base.includes(h)) {
+              opt.text = format12h(h) + " (Ocupado)";
+              opt.disabled = true;
+              s.appendChild(opt);
+            }
+          } else {
+            opt.text = format12h(h);
+            any = true;
+            s.appendChild(opt);
+          }
         });
         if (!any) {
           s.innerHTML = "";
           s.add(new Option("Lleno / Pasado", ""));
           s.disabled = true;
+        } else {
+          s.disabled = false;
         }
       }
 
