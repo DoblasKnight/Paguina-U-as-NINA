@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>NailsbyNiNa - App</title>
+    <title>Empyrean Spa by NiNa - App</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap"
@@ -14,10 +14,12 @@
     />
     <style>
       :root {
-        --primary: #ff1493;
-        --primary-light: #fff0f6;
-        --primary-glow: 0 4px 15px rgba(255, 20, 147, 0.3);
-        --bg: #f8f9fa;
+        /* PALETA DE COLORES - EMPYREAN SPA */
+        --primary: #602060; /* Morado Profundo del texto del logo */
+        --gold: #f5c862; /* Dorado Suave de la aureola del logo */
+        --primary-light: #fdf2ff; /* Lavanda extremadamente suave */
+        --primary-glow: 0 4px 20px rgba(245, 200, 98, 0.4); /* Brillo Dorado */
+
         --card-bg: #ffffff;
         --text: #2d3436;
         --text-light: #636e72;
@@ -29,9 +31,20 @@
         --radius: 24px;
         --disabled: #f1f2f6;
       }
+
+      /* --- MEJORA: FONDO PREMIUM MINIMALISTA --- */
       body {
         font-family: "Poppins", sans-serif;
-        background: var(--bg);
+        background-color: #faf7fa; /* Base super clara y cálida */
+        /* Halos de luz ultra suaves y elegantes en las esquinas */
+        background-image:
+          radial-gradient(at 0% 0%, rgba(96, 32, 96, 0.06) 0%, transparent 50%),
+          radial-gradient(
+            at 100% 100%,
+            rgba(245, 200, 98, 0.08) 0%,
+            transparent 50%
+          );
+        background-attachment: fixed;
         margin: 0;
         color: var(--text);
         padding: 20px 15px;
@@ -62,7 +75,7 @@
       }
       @keyframes highlight {
         0% {
-          border-color: var(--primary);
+          border-color: var(--gold);
           transform: scale(1.02);
         }
         100% {
@@ -76,7 +89,7 @@
       }
       .highlight-input {
         animation: highlight 0.5s ease-out;
-        border-color: var(--primary) !important;
+        border-color: var(--gold) !important;
       }
 
       /* MODALES */
@@ -100,15 +113,15 @@
         width: 85%;
         max-width: 350px;
         text-align: center;
-        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.02);
         animation: popIn 0.3s ease-out;
       }
       .modal-icon {
         font-size: 3.5rem;
         margin-bottom: 10px;
         display: block;
-        filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.05));
+        filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.03));
       }
       .modal-btn-row {
         display: flex;
@@ -134,7 +147,7 @@
       .btn-modal.primary {
         background: var(--primary);
         color: white;
-        box-shadow: var(--primary-glow);
+        box-shadow: 0 5px 15px rgba(96, 32, 96, 0.2);
       }
       .btn-modal.secondary {
         background: #f1f2f6;
@@ -143,12 +156,12 @@
       .btn-modal.whatsapp {
         background: var(--whatsapp);
         color: white;
-        box-shadow: 0 5px 15px rgba(0, 230, 118, 0.25);
+        box-shadow: 0 5px 15px rgba(0, 230, 118, 0.2);
       }
       .btn-modal.danger {
         background: var(--danger);
         color: white;
-        box-shadow: 0 5px 15px rgba(255, 71, 87, 0.25);
+        box-shadow: 0 5px 15px rgba(255, 71, 87, 0.2);
       }
 
       /* LAYOUT */
@@ -161,48 +174,46 @@
         background: var(--card-bg);
         border-radius: 30px;
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.03);
         min-height: 85vh;
+        border: 1px solid #f9edf7;
       }
       #auth-screen,
       #recovery-screen {
         display: block;
-        max-width: 400px;
+        max-width: 420px;
         margin-top: 40px;
         padding: 40px 30px;
         min-height: auto;
-        border: 2px solid white;
       }
       #recovery-screen {
         display: none;
       }
 
-      /* HEADER & PERFIL */
+      /* HEADER ESTILO LOGO */
       .nav-header {
         background: white;
-        padding: 20px 25px;
+        padding: 15px 25px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid #f1f2f6;
+        border-bottom: 1px solid #f9edf7;
       }
-      .brand-title {
-        font-size: 1.4rem;
-        font-weight: 800;
+      .logo-header-container {
         display: flex;
         align-items: center;
-        gap: 8px;
-        color: var(--text);
-        letter-spacing: -0.5px;
+        gap: 10px;
       }
-      .brand-title span {
-        color: var(--primary);
+      .header-logo-img {
+        height: 60px;
+        width: auto;
       }
+
       .header-avatar {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), #ff80bf);
+        background: linear-gradient(135deg, var(--primary), #b273b2);
         color: white;
         display: flex;
         align-items: center;
@@ -210,8 +221,9 @@
         font-weight: 700;
         font-size: 0.9rem;
         cursor: pointer;
-        box-shadow: 0 5px 15px rgba(255, 20, 147, 0.2);
+        box-shadow: 0 5px 15px rgba(96, 32, 96, 0.2);
         transition: transform 0.2s;
+        border: 2px solid white;
       }
       .header-avatar:active {
         transform: scale(0.9);
@@ -222,7 +234,7 @@
         display: flex;
         background: white;
         padding: 10px;
-        border-bottom: 1px solid #f8f9fa;
+        border-bottom: 1px solid #fbf4fb;
       }
       .tab-btn {
         flex: 1;
@@ -238,7 +250,7 @@
         font-size: 0.95rem;
       }
       .tab-btn.active {
-        color: var(--text);
+        color: var(--primary);
       }
       .tab-btn.active::after {
         content: "";
@@ -246,16 +258,17 @@
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
-        width: 6px;
-        height: 6px;
-        background: var(--primary);
+        width: 8px;
+        height: 8px;
+        background: var(--gold);
         border-radius: 50%;
+        box-shadow: 0 0 10px var(--gold);
       }
 
       /* SUB-TABS */
       .sub-tabs {
         display: flex;
-        background: #f1f2f6;
+        background: #fbf4fb;
         padding: 5px;
         border-radius: 20px;
         margin-bottom: 25px;
@@ -265,7 +278,7 @@
         padding: 12px;
         border: none;
         background: transparent;
-        color: #636e72;
+        color: #b273b2;
         font-weight: 600;
         cursor: pointer;
         border-radius: 16px;
@@ -275,7 +288,7 @@
       .sub-tab-btn.active {
         background: white;
         color: var(--primary);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
       }
 
       /* INPUTS */
@@ -285,10 +298,10 @@
         width: 100%;
         padding: 16px 20px;
         margin: 8px 0;
-        border: 2px solid #f1f2f6;
+        border: 2px solid #fbf4fb;
         border-radius: 18px;
         box-sizing: border-box;
-        background: #fbfbfb;
+        background: #fdfdfd;
         font-size: 1rem;
         color: var(--text);
         font-family: inherit;
@@ -330,7 +343,7 @@
       }
 
       .btn-main {
-        background: var(--text);
+        background: var(--primary);
         color: white;
         border: none;
         padding: 20px;
@@ -342,6 +355,7 @@
         margin-top: 20px;
         transition: transform 0.2s;
         font-family: inherit;
+        box-shadow: 0 8px 25px rgba(96, 32, 96, 0.2);
       }
       .btn-main:active {
         transform: scale(0.98);
@@ -361,13 +375,13 @@
       /* CITA CARD */
       .appointment-card {
         background: white;
-        border: 1px solid #f0f0f0;
+        border: 1px solid #f9edf7;
         padding: 20px;
         border-radius: 24px;
         margin-bottom: 15px;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.02);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.01);
         transition: transform 0.2s;
       }
       .appointment-card:active {
@@ -401,8 +415,8 @@
         font-size: 0.7rem;
         padding: 6px 12px;
         border-radius: 12px;
-        background: #f1f2f6;
-        color: #636e72;
+        background: #fbf4fb;
+        color: #b273b2;
         margin-bottom: 12px;
         font-weight: 700;
         text-transform: uppercase;
@@ -455,19 +469,17 @@
       }
 
       /* --- ADMIN PREMIUM STYLES --- */
-
-      /* CARD GENERICA ADMIN */
       .admin-card {
         background: white;
         border-radius: 24px;
         padding: 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-        border: 1px solid #f5f5f5;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+        border: 1px solid #f9edf7;
         margin-bottom: 25px;
       }
       .admin-title {
         font-size: 1.1rem;
-        color: var(--text);
+        color: var(--primary);
         font-weight: 700;
         margin: 0 0 15px 0;
         display: flex;
@@ -475,20 +487,19 @@
         gap: 10px;
       }
 
-      /* LISTA DE ITEMS (SERVICIOS / RECARGOS) */
       .service-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #fbfbfb;
+        background: #fdfdfd;
         padding: 15px;
         border-radius: 18px;
         margin-bottom: 10px;
-        border: 1px solid #f1f2f6;
+        border: 1px solid #fbf4fb;
         transition: background 0.2s;
       }
       .service-item:hover {
-        background: #fdfdfd;
+        background: #fffbff;
         border-color: #eee;
       }
       .service-info {
@@ -497,7 +508,6 @@
         font-size: 0.95rem;
       }
 
-      /* BOTONES FLOTANTES */
       .svc-controls {
         display: flex;
         gap: 8px;
@@ -514,11 +524,10 @@
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         font-size: 1rem;
       }
-
       .btn-edit {
         background: white;
-        color: var(--text-light);
-        border: 1px solid #eee;
+        color: var(--primary);
+        border: 1px solid #f9edf7;
       }
       .btn-edit:hover {
         background: var(--info);
@@ -527,7 +536,6 @@
         transform: rotate(15deg);
         box-shadow: 0 5px 15px rgba(41, 182, 246, 0.3);
       }
-
       .btn-del {
         background: white;
         color: var(--danger);
@@ -540,24 +548,22 @@
         transform: rotate(90deg);
         box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
       }
-
       .btn-move {
         background: white;
         color: #b2bec3;
-        border: 1px solid #f1f2f6;
+        border: 1px solid #fbf4fb;
         font-size: 0.8rem;
       }
 
-      /* INPUTS EN FILA ADMIN */
       .add-row {
         display: flex;
         gap: 10px;
         align-items: center;
         margin-top: 10px;
-        background: #f8f9fa;
+        background: #fbf4fb;
         padding: 8px;
         border-radius: 20px;
-        border: 1px solid #eee;
+        border: 1px solid #f9edf7;
       }
       .add-row input,
       .add-row select {
@@ -580,14 +586,14 @@
         justify-content: center;
         height: 48px;
         min-width: 48px;
+        background: var(--primary);
       }
 
-      /* HOURS EDITOR PILLS */
       .hours-editor-box {
-        background: #fff0f6;
+        background: #fbf4fb;
         padding: 20px;
         border-radius: 24px;
-        border: 1px dashed var(--primary);
+        border: 1px dashed var(--b273b2);
         margin-bottom: 20px;
         text-align: center;
       }
@@ -607,11 +613,12 @@
         border-radius: 20px;
         font-weight: 600;
         font-size: 0.9rem;
-        box-shadow: 0 3px 10px rgba(255, 20, 147, 0.1);
+        box-shadow: 0 3px 10px rgba(96, 32, 96, 0.05);
+        border: 1px solid #f9edf7;
       }
       .hour-tag span {
         margin-left: 8px;
-        color: #ffb7b2;
+        color: #b273b2;
         cursor: pointer;
         font-weight: bold;
       }
@@ -619,7 +626,6 @@
         color: var(--danger);
       }
 
-      /* DAY SELECTOR */
       .week-selector {
         display: flex;
         justify-content: center;
@@ -632,7 +638,7 @@
         height: 44px;
         border-radius: 14px;
         background: white;
-        border: 1px solid #eee;
+        border: 1px solid #fbf4fb;
         color: #b2bec3;
         display: flex;
         align-items: center;
@@ -647,10 +653,10 @@
         color: white;
         border-color: var(--primary);
         transform: translateY(-3px);
-        box-shadow: var(--primary-glow);
+        box-shadow: 0 5px 15px rgba(96, 32, 96, 0.2);
       }
 
-      /* CALENDAR */
+      /* CALENDAR - EFECTO DORADO LOGO */
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -666,7 +672,7 @@
         cursor: pointer;
         font-size: 0.9rem;
         background: white;
-        border: 1px solid #f1f2f6;
+        border: 1px solid #fbf4fb;
         color: var(--text);
         font-weight: 600;
         transition: all 0.2s;
@@ -674,14 +680,14 @@
       .day.today {
         border-color: var(--primary);
         color: var(--primary);
-        background: #fff0f6;
+        background: #fffbff;
       }
       .day.selected {
         background: var(--primary) !important;
         color: white !important;
         border-color: var(--primary);
         transform: translateY(-2px);
-        box-shadow: var(--primary-glow);
+        box-shadow: 0 0 15px var(--gold);
       }
       .day.full {
         background: #ffeaeb;
@@ -698,6 +704,14 @@
       .day.disabled {
         opacity: 0.2;
         pointer-events: none;
+      }
+
+      .auth-logo-large {
+        display: block;
+        width: 80%;
+        max-width: 300px;
+        height: auto;
+        margin: 0 auto 30px;
       }
 
       @media (max-width: 600px) {
@@ -729,6 +743,9 @@
         }
         .admin-card {
           padding: 15px;
+        }
+        .header-logo-img {
+          height: 50px;
         }
       }
 
@@ -779,7 +796,6 @@
         </button>
       </div>
     </div>
-
     <div id="deleteServiceModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">🗑️</div>
@@ -789,15 +805,13 @@
             class="btn-modal secondary"
             onclick="closeModal('deleteServiceModal')"
           >
-            Cancelar
-          </button>
-          <button class="btn-modal danger" onclick="confirmDeleteService()">
+            Cancelar</button
+          ><button class="btn-modal danger" onclick="confirmDeleteService()">
             Sí, Borrar
           </button>
         </div>
       </div>
     </div>
-
     <div id="deleteSurchargeModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">💸</div>
@@ -807,15 +821,13 @@
             class="btn-modal secondary"
             onclick="closeModal('deleteSurchargeModal')"
           >
-            Cancelar
-          </button>
-          <button class="btn-modal danger" onclick="confirmDeleteSurcharge()">
+            Cancelar</button
+          ><button class="btn-modal danger" onclick="confirmDeleteSurcharge()">
             Sí, Borrar
           </button>
         </div>
       </div>
     </div>
-
     <div id="deleteBlockModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">🔓</div>
@@ -828,19 +840,17 @@
             class="btn-modal secondary"
             onclick="closeModal('deleteBlockModal')"
           >
-            Cancelar
-          </button>
-          <button class="btn-modal primary" onclick="confirmDeleteBlock()">
+            Cancelar</button
+          ><button class="btn-modal primary" onclick="confirmDeleteBlock()">
             Sí, Abrir
           </button>
         </div>
       </div>
     </div>
-
     <div id="resetModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">📧</div>
-        <h3 style="color: var(--primary); margin: 0">Recuperar</h3>
+        <h3 style="color: var(--primary); margin: 0">Recuperar Cuenta</h3>
         <input
           type="email"
           id="resetEmailInput"
@@ -851,9 +861,8 @@
             class="btn-modal secondary"
             onclick="closeModal('resetModal')"
           >
-            Cancelar
-          </button>
-          <button class="btn-modal primary" onclick="sendResetEmail()">
+            Cancelar</button
+          ><button class="btn-modal primary" onclick="sendResetEmail()">
             Enviar
           </button>
         </div>
@@ -862,15 +871,14 @@
     <div id="cancelModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-icon">💔</div>
-        <h3 style="color: var(--text); margin: 0">¿Cancelar?</h3>
+        <h3 style="color: var(--text); margin: 0">¿Cancelar Cita?</h3>
         <div class="modal-btn-row">
           <button
             class="btn-modal secondary"
             onclick="closeModal('cancelModal')"
           >
-            Volver
-          </button>
-          <button class="btn-modal danger" onclick="confirmCancelation()">
+            Volver</button
+          ><button class="btn-modal danger" onclick="confirmCancelation()">
             Sí, Cancelar
           </button>
         </div>
@@ -878,9 +886,11 @@
     </div>
     <div id="wspModal" class="modal-overlay">
       <div class="modal-content">
-        <div class="modal-icon">💅</div>
+        <div class="modal-icon">😇</div>
         <h2 style="color: var(--primary); margin: 0">¡Casi Listo!</h2>
-        <p style="color: var(--text-light)">Continúa en WhatsApp.</p>
+        <p style="color: var(--text-light)">
+          Continúa en WhatsApp para confirmar.
+        </p>
         <button class="btn-modal whatsapp" onclick="enviarWhatsAppCliente()">
           Enviar Mensaje
         </button>
@@ -894,7 +904,7 @@
           class="btn-modal whatsapp"
           onclick="enviarWhatsAppReprogramacion()"
         >
-          Confirmar
+          Confirmar Cambio
         </button>
       </div>
     </div>
@@ -928,15 +938,21 @@
     </div>
 
     <div id="auth-screen" class="animate-pop">
-      <h1 style="text-align: center; color: var(--primary)">NailsbyNiNa</h1>
+      <img
+        src="logoImagenes/logotipo.png"
+        alt="Empyrean Spa by NiNa Logo"
+        class="auth-logo-large"
+      />
       <p
         style="
           text-align: center;
           color: var(--text-light);
           margin-bottom: 30px;
+          font-weight: 600;
         "
       >
-        Agenda tu momento de brillo ✨
+        Donde los ángeles y la tentación se encuentran.<br />Agenda tu momento
+        celestial. 💅✨
       </p>
       <div id="login-form">
         <input type="email" id="loginEmail" placeholder="Tu Correo" />
@@ -948,7 +964,7 @@
           >
         </div>
         <button class="btn-main" onclick="handleAuth('login')">
-          Ingresar 💖
+          Ingresar 😇
         </button>
         <p style="text-align: center; margin-top: 15px">
           <a
@@ -966,7 +982,7 @@
             font-size: 0.9rem;
           "
         >
-          ¿Nueva?
+          ¿Nueva en Empyrean Spa?
           <a
             href="#"
             onclick="toggleAuth(false)"
@@ -982,6 +998,18 @@
       <div id="signup-form" style="display: none">
         <input type="text" id="regNombre" placeholder="Nombre Completo" />
         <input type="email" id="regEmail" placeholder="Tu Correo" />
+        <p
+          style="
+            font-size: 0.8rem;
+            color: var(--warning);
+            margin: -5px 0 10px 10px;
+            font-weight: 600;
+            text-align: left;
+          "
+        >
+          ⚠️ Tu fecha de nacimiento (no podrás cambiarla luego)
+        </p>
+        <input type="date" id="regBirthday" required />
         <div class="password-wrapper">
           <input
             type="password"
@@ -1022,9 +1050,12 @@
 
     <div id="app-screen" class="animate-pop">
       <div class="nav-header">
-        <div class="brand-title">
-          💅 Nailsby<span>NiNa</span>
-          <span
+        <div class="logo-header-container">
+          <img
+            src="logoImagenes/logotipo.png"
+            alt="Empyrean Spa Logo"
+            class="header-logo-img"
+          /><span
             id="adminBadge"
             style="
               display: none;
@@ -1033,7 +1064,6 @@
               color: white;
               padding: 2px 6px;
               border-radius: 6px;
-              margin-left: 5px;
             "
             >ADMIN</span
           >
@@ -1043,7 +1073,7 @@
           id="headerAvatar"
           onclick="showTab('perfil')"
         >
-          NN
+          ..
         </div>
       </div>
 
@@ -1058,6 +1088,7 @@
             padding: 6px 12px;
             border-radius: 10px;
             cursor: pointer;
+            font-family: inherit;
           "
         >
           Cancelar
@@ -1103,8 +1134,8 @@
                 width: 40px;
                 height: 40px;
                 border-radius: 12px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-                color: var(--text);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+                color: var(--primary);
                 font-weight: bold;
                 cursor: pointer;
               "
@@ -1127,8 +1158,8 @@
                 width: 40px;
                 height: 40px;
                 border-radius: 12px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-                color: var(--text);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+                color: var(--primary);
                 font-weight: bold;
                 cursor: pointer;
               "
@@ -1140,7 +1171,7 @@
         </div>
         <div class="form-section">
           <h3 style="color: var(--text); margin: 0 0 15px">
-            Detalles de tu cita
+            Detalles de tu cita celestial
           </h3>
           <div id="newAppointmentFields">
             <input type="text" id="fieldNombre" placeholder="Nombre" />
@@ -1152,20 +1183,16 @@
               pattern="[0-9]*"
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
-
             <select id="fieldServicio" onchange="enableTimeSelector()" disabled>
               <option value="">1. Toca un día en el calendario 👆</option>
             </select>
           </div>
-
           <select id="fieldHora" onchange="checkSurcharges()" disabled>
             <option value="">2. Luego selecciona servicio...</option>
           </select>
-
           <div id="surchargeAlert" class="surcharge-alert">
             ⚠️ <span id="surchargeText"></span>
           </div>
-
           <button id="btnMainAction" class="btn-main" onclick="confirmarCita()">
             💖 Reservar Cita
           </button>
@@ -1203,20 +1230,19 @@
         style="display: none"
       >
         <div class="admin-card">
-          <div class="admin-title">💅 Gestión de Servicios</div>
+          <div class="admin-title">💜 Gestión de Servicios Spa</div>
           <div id="adminServicesList"></div>
-
           <div class="add-row" id="formServiceRow">
             <input type="hidden" id="editServiceId" />
             <input
               type="text"
               id="newServiceInput"
-              placeholder="Nombre del servicio..."
+              placeholder="Nombre del servicio celestial..."
               style="flex: 2"
             />
             <select id="newServiceType" style="flex: 1.2">
-              <option value="basico">🩷 Básico</option>
-              <option value="diseno">💖 Diseño</option>
+              <option value="basico">🩷 Spa Básico</option>
+              <option value="diseno">💖 Diseño Divino</option>
             </select>
             <input
               type="text"
@@ -1228,7 +1254,7 @@
               id="btnSaveService"
               class="btn-main"
               style="
-                background: var(--success);
+                background: var(--whatsapp);
                 width: auto;
                 padding: 0;
                 margin: 0;
@@ -1255,7 +1281,6 @@
               ✕
             </button>
           </div>
-
           <div
             class="msg-config-box"
             style="
@@ -1264,19 +1289,18 @@
               padding-top: 15px;
             "
           >
-            <label class="msg-label">🩷 Mensaje Final (Básico):</label>
-            <textarea
+            <label class="msg-label">🩷 Mensaje Final (Básico):</label
+            ><textarea
               id="adminMsgBasic"
               rows="2"
-              style="border: 1px solid #eee"
+              style="border: 1px solid #fbf4fb"
             ></textarea>
             <label class="msg-label" style="margin-top: 10px"
               >💖 Mensaje Final (Diseño):</label
-            >
-            <textarea
+            ><textarea
               id="adminMsgDesign"
               rows="2"
-              style="border: 1px solid #eee"
+              style="border: 1px solid #fbf4fb"
             ></textarea>
             <button
               class="btn-main"
@@ -1304,34 +1328,31 @@
             <div class="day-chip" id="d6" onclick="toggleWeekDay(6)">Sa</div>
             <div class="day-chip" id="d0" onclick="toggleWeekDay(0)">Do</div>
           </div>
-
           <div
             id="hoursEditor"
             class="hours-editor-box"
-            style="display: none; background: #fff; border: 1px solid #eee"
+            style="display: none; background: #fff; border: 1px solid #f9edf7"
           >
             <div
               style="
                 margin-bottom: 15px;
-                border-bottom: 1px solid #eee;
+                border-bottom: 1px solid #fbf4fb;
                 padding-bottom: 15px;
                 text-align: left;
               "
             >
               <label
                 style="font-size: 0.85rem; font-weight: 700; color: var(--text)"
-                >Hora de Cierre (Límite):</label
-              >
-              <input
+                >Hora de Cierre Spa (Límite):</label
+              ><input
                 type="time"
                 id="dayClosingTime"
-                style="margin-top: 5px; background: #f9f9f9"
+                style="margin-top: 5px; background: #fdfdfd"
               />
             </div>
             <div id="weeklyHours" class="weekly-hours-container"></div>
             <div class="add-row">
-              <input type="time" id="newHourInput" />
-              <button
+              <input type="time" id="newHourInput" /><button
                 class="btn-main"
                 style="
                   background: var(--text);
@@ -1363,14 +1384,15 @@
           style="background: #fff8e1; border-color: #ffe0b2"
         >
           <div class="admin-title" style="color: #f57c00">
-            💰 Recargos por Hora
+            💰 Recargos por Hora Spa
           </div>
           <div class="add-row" id="formSurchargeRow" style="background: white">
-            <input type="hidden" id="editSurchargeId" />
-            <input type="time" id="surchargeTime" style="flex: 1" />
-            <span style="font-weight: bold; color: #ccc">-</span>
-            <input type="time" id="surchargeEnd" style="flex: 1" />
-            <input
+            <input type="hidden" id="editSurchargeId" /><input
+              type="time"
+              id="surchargeTime"
+              style="flex: 1"
+            /><span style="font-weight: bold; color: #ffe0b2">-</span>
+            <input type="time" id="surchargeEnd" style="flex: 1" /><input
               type="text"
               id="surchargeMsg"
               placeholder="Ej: Recargo nocturno"
@@ -1415,7 +1437,7 @@
           style="background: #ffebee; border-color: #ffcdd2"
         >
           <div class="admin-title" style="color: var(--danger)">
-            🔒 Bloquear Fecha
+            🔒 Bloquear Fecha Spa
           </div>
           <input
             type="date"
@@ -1423,7 +1445,6 @@
             onchange="loadAdminDayConfig()"
             style="background: white; margin-bottom: 15px"
           />
-
           <div id="adminPanelControls" style="display: none">
             <button
               id="btnToggleDay"
@@ -1439,7 +1460,6 @@
             >
               CERRAR DÍA COMPLETO
             </button>
-
             <h4
               style="
                 margin: 0 0 10px 0;
@@ -1450,9 +1470,9 @@
               Bloquear Rango Específico
             </h4>
             <div class="add-row" style="background: white">
-              <input type="time" id="blockStartTime" style="flex: 1" />
-              <span>-</span>
-              <input type="time" id="blockEndTime" style="flex: 1" />
+              <input type="time" id="blockStartTime" style="flex: 1" /><span
+                >-</span
+              ><input type="time" id="blockEndTime" style="flex: 1" />
               <button
                 class="btn-main"
                 style="
@@ -1477,8 +1497,29 @@
         style="display: none; padding: 20px"
         class="animate-pop"
       >
-        <div class="profile-header-large">
-          <div class="avatar-large" id="profileAvatarLarge">NN</div>
+        <div
+          class="profile-header-large"
+          style="text-align: center; margin-bottom: 20px"
+        >
+          <div
+            class="avatar-large"
+            id="profileAvatarLarge"
+            style="
+              width: 80px;
+              height: 80px;
+              border-radius: 50%;
+              background: var(--primary);
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 2rem;
+              margin: 0 auto 10px;
+              font-weight: bold;
+            "
+          >
+            ..
+          </div>
           <h2 style="margin: 0; color: var(--text)" id="displayProfileName">
             Usuario
           </h2>
@@ -1489,15 +1530,15 @@
             background: white;
             padding: 25px;
             border-radius: 24px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.01);
             margin-bottom: 20px;
           "
         >
-          <h4 style="margin-top: 0; color: var(--primary)">Editar Nombre</h4>
+          <h4 style="margin-top: 0; color: var(--primary)">Editar Mi Nombre</h4>
           <div
             class="add-row"
             style="
-              background: #f9f9f9;
+              background: #fdfdfd;
               padding: 0;
               border: none;
               box-shadow: none;
@@ -1506,7 +1547,7 @@
             <input
               type="text"
               id="profileNameInput"
-              style="background: white"
+              style="background: white; border: 1px solid #fbf4fb"
             />
             <button
               class="btn-main"
@@ -1542,11 +1583,11 @@
             background: white;
             padding: 25px;
             border-radius: 24px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.01);
             margin-bottom: 20px;
           "
         >
-          <h4 style="margin-top: 0">Nueva Contraseña</h4>
+          <h4 style="margin-top: 0">Nueva Contraseña Spa</h4>
           <div class="password-wrapper">
             <input
               type="password"
@@ -1602,7 +1643,7 @@
             font-family: inherit;
           "
         >
-          Cerrar Sesión
+          Cerrar Sesión Empyrean
         </button>
       </div>
     </div>
@@ -1635,6 +1676,9 @@
       let globalSurcharges = [];
       let globalClosingTimes = {};
       let adminSelectedDate = null;
+
+      // NUEVA VARIABLE GLOBAL PARA CUMPLEAÑOS
+      let perfilesCumpleanos = {};
 
       const hash = window.location.hash;
       const isRecovery = hash && hash.includes("type=recovery");
@@ -1677,7 +1721,6 @@
           `${dias[date.getDay()]}, ${date.getDate()} de ${meses[date.getMonth()]}`
         );
       }
-
       function minsToTime(totalMins) {
         let h = Math.floor(totalMins / 60);
         const m = totalMins % 60;
@@ -1741,9 +1784,9 @@
             const { data } = await client.auth.getSession();
             if (data.session) {
               document.getElementById("recoveryStatus").innerText =
-                "✅ Verificado. Escribe tu nueva clave.";
+                "✅ Verificado. Escribe tu nueva clave celestial.";
               document.getElementById("recoveryStatus").style.color =
-                "var(--success)";
+                "var(--whatsapp)";
               document.getElementById("recoveryForm").style.display = "block";
               return true;
             }
@@ -1759,13 +1802,21 @@
         }
       }
 
+      function getInitials(name) {
+        if (!name) return "..";
+        const names = name.split(" ");
+        let initials = names[0][0];
+        if (names.length > 1 && names[names.length - 1][0]) {
+          initials += names[names.length - 1][0];
+        } else if (names[0].length > 1) {
+          initials += names[0][1];
+        }
+        return initials.toUpperCase();
+      }
+
       function renderProfileUI() {
         if (!userProfile) return;
-        const names = userProfile.full_name.split(" ");
-        const initials =
-          names.length > 1
-            ? (names[0][0] + names[1][0]).toUpperCase()
-            : names[0].substring(0, 2).toUpperCase();
+        const initials = getInitials(userProfile.full_name);
         document.getElementById("headerAvatar").innerText = initials;
         document.getElementById("profileAvatarLarge").innerText = initials;
         document.getElementById("displayProfileName").innerText =
@@ -1820,13 +1871,21 @@
             document.getElementById("tab-config").style.display = "block";
             document.getElementById("fieldNombre").readOnly = false;
             document.getElementById("fieldCorreo").readOnly = false;
+
+            // LOGICA CUMPLEAÑOS AÑADIDA AQUÍ
+            const { data: profs } = await client
+              .from("profiles")
+              .select("id, birthday");
+            if (profs) {
+              profs.forEach((p) => {
+                perfilesCumpleanos[p.id] = p.birthday;
+              });
+            }
           } else {
             document.getElementById("fieldNombre").readOnly = true;
             document.getElementById("fieldCorreo").readOnly = true;
           }
-
           renderCalendar();
-
           setInterval(() => {
             if (document.getElementById("view-lista").style.display !== "none")
               loadAllAppointments();
@@ -1836,7 +1895,6 @@
         }
       }
 
-      // RECARGOS (LOGICA EDITAR MEJORADA)
       async function fetchSurcharges() {
         const { data } = await client
           .from("recargos_rango")
@@ -1845,28 +1903,19 @@
         globalSurcharges = data || [];
         renderAdminSurcharges();
       }
-
-      // NUEVO: EDITAR RECARGO
       function editSurcharge(id) {
         const recargo = globalSurcharges.find((r) => r.id === id);
         if (!recargo) return;
-
         document
           .getElementById("formSurchargeRow")
           .scrollIntoView({ behavior: "smooth", block: "center" });
-        const row = document.getElementById("formSurchargeRow");
-        row.classList.add("pulse-input");
-        setTimeout(() => row.classList.remove("pulse-input"), 1000);
-
         document.getElementById("editSurchargeId").value = recargo.id;
         document.getElementById("surchargeTime").value = recargo.hora_inicio;
         document.getElementById("surchargeEnd").value = recargo.hora_fin;
         document.getElementById("surchargeMsg").value = recargo.mensaje;
-
         document.getElementById("btnSaveSurcharge").innerText = "💾";
         document.getElementById("btnCancelSurcharge").style.display = "block";
       }
-
       function cancelEditSurcharge() {
         document.getElementById("editSurchargeId").value = "";
         document.getElementById("surchargeTime").value = "";
@@ -1875,35 +1924,25 @@
         document.getElementById("btnSaveSurcharge").innerText = "+";
         document.getElementById("btnCancelSurcharge").style.display = "none";
       }
-
       async function addSurcharge() {
         const id = document.getElementById("editSurchargeId").value;
         const s = document.getElementById("surchargeTime").value;
         const e = document.getElementById("surchargeEnd").value;
         const m = document.getElementById("surchargeMsg").value;
-
-        if (!s || !e || !m) {
-          showAlert("Faltan datos", "Llena todos los campos.");
-          return;
-        }
-
-        if (id) {
-          // UPDATE
+        if (!s || !e || !m)
+          return showAlert("Faltan datos", "Llena todos los campos.");
+        if (id)
           await client
             .from("recargos_rango")
             .update({ hora_inicio: s, hora_fin: e, mensaje: m })
             .eq("id", id);
-        } else {
-          // INSERT
+        else
           await client
             .from("recargos_rango")
             .insert({ hora_inicio: s, hora_fin: e, mensaje: m });
-        }
-
         cancelEditSurcharge();
         await fetchSurcharges();
       }
-
       function deleteSurcharge(id) {
         pendingSurchargeId = id;
         document.getElementById("deleteSurchargeModal").style.display = "flex";
@@ -1918,23 +1957,15 @@
         pendingSurchargeId = null;
         await fetchSurcharges();
       }
-
       function renderAdminSurcharges() {
         const c = document.getElementById("surchargesList");
         c.innerHTML = "";
         globalSurcharges.forEach((r) => {
           const s = r.hora_inicio.substring(0, 5);
           const e = r.hora_fin.substring(0, 5);
-          c.innerHTML += `<div class="service-item">
-               <div class="service-info"><b>${format12h(s)} - ${format12h(e)}</b><br><span style="font-weight:400; font-size:0.85rem">${r.mensaje}</span></div>
-               <div class="svc-controls">
-                  <button class="btn-round btn-edit" onclick="editSurcharge(${r.id})">✏️</button>
-                  <button class="btn-round btn-del" onclick="deleteSurcharge(${r.id})">🗑️</button>
-               </div>
-            </div>`;
+          c.innerHTML += `<div class="service-item"><div class="service-info"><b>${format12h(s)} - ${format12h(e)}</b><br><span style="font-weight:400; font-size:0.85rem">${r.mensaje}</span></div><div class="svc-controls"><button class="btn-round btn-edit" onclick="editSurcharge(${r.id})">✏️</button><button class="btn-round btn-del" onclick="deleteSurcharge(${r.id})">🗑️</button></div></div>`;
         });
       }
-
       function checkSurcharges() {
         const h = document.getElementById("fieldHora").value;
         const d = document.getElementById("surchargeAlert");
@@ -1955,22 +1986,20 @@
         if (activeMsg) {
           document.getElementById("surchargeText").innerText = activeMsg;
           d.style.display = "flex";
-        } else {
-          d.style.display = "none";
-        }
+        } else d.style.display = "none";
       }
-
       async function saveMsgConfig() {
         const b = document.getElementById("adminMsgBasic").value;
         const d = document.getElementById("adminMsgDesign").value;
         const { error } = await client
           .from("textos_app")
           .upsert({ id: 1, final_basico: b, final_diseno: d });
-        if (error) showAlert("Error", "Falta crear la tabla en DB.");
+        if (error)
+          showAlert("Error Config", "Falta crear la tabla textos_app en DB.");
         else {
           msgBasic = b;
           msgDesign = d;
-          showAlert("Éxito", "Mensajes actualizados.");
+          showAlert("Éxito Celestial ✨", "Mensajes actualizados.");
         }
       }
 
@@ -2005,6 +2034,7 @@
           ? "none"
           : "block";
       }
+
       async function handleAuth(t) {
         const e = document.getElementById(
           t === "login" ? "loginEmail" : "regEmail",
@@ -2013,60 +2043,91 @@
           t === "login" ? "loginPass" : "regPass",
         ).value;
         if (t === "signup") {
+          const b = document.getElementById("regBirthday").value;
+          if (!b)
+            return showAlert(
+              "Error Divino",
+              "La fecha de nacimiento es obligatoria para tu protección.",
+            );
           if (p !== document.getElementById("regPassConfirm").value)
-            return showAlert("Error", "No coinciden");
+            return showAlert("Error Divino", "Las contraseñas no coinciden");
           const { error } = await client.auth.signUp({
             email: e,
             password: p,
             options: {
-              data: { full_name: document.getElementById("regNombre").value },
+              data: {
+                full_name: document.getElementById("regNombre").value,
+                birthday: b,
+              },
             },
           });
-          if (error) showAlert("Error", error.message);
-          else showAlert("Bienvenida", "Cuenta creada.");
+          if (error) showAlert("Error en el Cielo", error.message);
+          else
+            showAlert(
+              "Bienvenida Celestial ✨",
+              "Tu cuenta en Empyrean Spa ha sido creada. Ingresa ahora.",
+            );
         } else {
           const { error } = await client.auth.signInWithPassword({
             email: e,
             password: p,
           });
-          if (error) showAlert("Error", "Datos incorrectos.");
+          if (error)
+            showAlert(
+              "Error de Tentación",
+              "Datos incorrectos. Intenta de nuevo.",
+            );
           else checkUser();
         }
       }
+
       function openResetModal() {
         document.getElementById("resetModal").style.display = "flex";
       }
       async function sendResetEmail() {
         const e = document.getElementById("resetEmailInput").value;
-        if (!e) return showAlert("Error", "Falta correo");
+        if (!e)
+          return showAlert("Falta Correo", "Por favor, escribe tu correo.");
         const { error } = await client.auth.resetPasswordForEmail(e, {
           redirectTo: window.location.href,
         });
-        if (error) showAlert("Error", error.message);
+        if (error) showAlert("Error Celestial", error.message);
         else {
           closeModal("resetModal");
-          showAlert("Enviado", "Revisa tu correo.");
+          showAlert(
+            "Enviado ✨",
+            "Revisa tu correo para el enlace de recuperación.",
+          );
         }
       }
       async function finalizeRecovery() {
         const p = document.getElementById("recoveryPass").value;
-        if (p.length < 6) return showAlert("Error", "Min 6 caracteres");
+        if (p.length < 6)
+          return showAlert(
+            "Contraseña Débil",
+            "La nueva clave debe tener mínimo 6 caracteres.",
+          );
         const { error } = await client.auth.updateUser({ password: p });
         if (error) {
-          showAlert("Error", "Enlace expirado.");
+          showAlert(
+            "Error de Recuperación",
+            "El enlace ha expirado o es inválido.",
+          );
           setTimeout(() => {
             window.location.hash = "";
             window.location.reload();
           }, 2000);
         } else {
-          showAlert("¡Éxito!", "Clave cambiada.");
+          showAlert(
+            "¡Paz Restaurada! ✨",
+            "Tu clave celestial ha sido cambiada.",
+          );
           document.getElementById("recovery-screen").style.display = "none";
           history.replaceState(null, null, " ");
           checkUser();
         }
       }
 
-      // ADMIN: SERVICIOS Y EDICION
       async function fetchServices() {
         const { data } = await client
           .from("servicios")
@@ -2076,55 +2137,34 @@
           globalServices = data;
           const s = document.getElementById("fieldServicio");
           s.innerHTML = "";
-          s.add(new Option("1. Toca un día en el calendario 👆", ""));
+          s.add(new Option("1. Toca un día celestial 👆", ""));
           s.disabled = true;
-
           if (userProfile?.role === "admin") {
             const l = document.getElementById("adminServicesList");
             l.innerHTML = "";
             globalServices.forEach((i, idx) => {
               const icon = i.tipo === "diseno" ? "💖" : "🩷";
-              l.innerHTML += `
-                <div class="service-item">
-                  <div class="service-info">
-                    <span>${icon} ${i.nombre} (${formatDurationDisplay(i.duracion_minutos || 60)})</span>
-                  </div>
-                  <div class="svc-controls">
-                    <button class="btn-round btn-move" onclick="moveService(${i.id}, ${i.orden}, 'up')">⬆</button>
-                    <button class="btn-round btn-move" onclick="moveService(${i.id}, ${i.orden}, 'down')">⬇</button>
-                    <button class="btn-round btn-edit" onclick="editService(${i.id})">✏️</button>
-                    <button class="btn-round btn-del" onclick="askDeleteService(${i.id})">🗑️</button>
-                  </div>
-                </div>`;
+              l.innerHTML += `<div class="service-item"><div class="service-info"><span>${icon} ${i.nombre} (${formatDurationDisplay(i.duracion_minutos || 60)})</span></div><div class="svc-controls"><button class="btn-round btn-move" onclick="moveService(${i.id}, ${i.orden}, 'up')">⬆</button><button class="btn-round btn-move" onclick="moveService(${i.id}, ${i.orden}, 'down')">⬇</button><button class="btn-round btn-edit" onclick="editService(${i.id})">✏️</button><button class="btn-round btn-del" onclick="askDeleteService(${i.id})">🗑️</button></div></div>`;
             });
           }
         }
       }
-
       function editService(id) {
         const svc = globalServices.find((s) => s.id === id);
         if (!svc) return;
-
         document
           .getElementById("formServiceRow")
           .scrollIntoView({ behavior: "smooth", block: "center" });
-        const row = document.getElementById("formServiceRow");
-        row.classList.add("pulse-input");
-        setTimeout(() => row.classList.remove("pulse-input"), 1000);
-
         document.getElementById("editServiceId").value = svc.id;
         document.getElementById("newServiceInput").value = svc.nombre;
         document.getElementById("newServiceType").value = svc.tipo;
-
         const h = Math.floor((svc.duracion_minutos || 60) / 60);
         const m = (svc.duracion_minutos || 60) % 60;
         document.getElementById("newServiceDuration").value =
           `${h}:${String(m).padStart(2, "0")}`;
-
         document.getElementById("btnSaveService").innerText = "💾";
         document.getElementById("btnCancelEdit").style.display = "block";
       }
-
       function cancelEditService() {
         document.getElementById("editServiceId").value = "";
         document.getElementById("newServiceInput").value = "";
@@ -2133,7 +2173,6 @@
         document.getElementById("btnSaveService").innerText = "Guardar";
         document.getElementById("btnCancelEdit").style.display = "none";
       }
-
       async function saveService() {
         const id = document.getElementById("editServiceId").value;
         let v = document.getElementById("newServiceInput").value.trim();
@@ -2141,9 +2180,7 @@
         const t = document.getElementById("newServiceType").value;
         const rawDur = document.getElementById("newServiceDuration").value;
         if (!v) return;
-
         const d = parseDurationInput(rawDur);
-
         if (id) {
           await client
             .from("servicios")
@@ -2164,7 +2201,6 @@
         await fetchServices();
         renderCalendar();
       }
-
       async function moveService(id, currentOrder, direction) {
         const index = globalServices.findIndex((s) => s.id === id);
         if (index === -1) return;
@@ -2181,7 +2217,6 @@
           .eq("id", otherService.id);
         await fetchServices();
       }
-
       function askDeleteService(id) {
         pendingServiceDeleteId = id;
         document.getElementById("deleteServiceModal").style.display = "flex";
@@ -2196,7 +2231,6 @@
         pendingServiceDeleteId = null;
         await fetchServices();
       }
-
       async function updateProfileName() {
         const n = document.getElementById("profileNameInput").value;
         const { error } = await client
@@ -2206,26 +2240,32 @@
         if (!error) {
           userProfile.full_name = n;
           renderProfileUI();
-          showAlert("Éxito", "Nombre actualizado.");
+          showAlert("Éxito Divino ✨", "Nombre celestial actualizado.");
         }
       }
       async function updatePassword() {
         const c = document.getElementById("currentPassProfile").value,
           n = document.getElementById("newPassProfile").value,
           cf = document.getElementById("confirmPassProfile").value;
-        if (!c || !n || !cf) return showAlert("Falta", "Llena todo");
-        if (n !== cf) return showAlert("Error", "No coinciden");
+        if (!c || !n || !cf)
+          return showAlert("Faltan Datos", "Llena todos los campos.");
+        if (n !== cf)
+          return showAlert("Error Celestial", "Las contraseñas no coinciden");
         const { error: s } = await client.auth.signInWithPassword({
           email: currentUserEmail,
           password: c,
         });
-        if (s) return showAlert("Error", "Contraseña actual mal");
+        if (s)
+          return showAlert(
+            "Error de Autenticación",
+            "La contraseña actual es incorrecta.",
+          );
         const { error } = await client.auth.updateUser({ password: n });
         if (!error) {
           togglePassForm();
           document.getElementById("currentPassProfile").value = "";
-          showAlert("Éxito", "Actualizada.");
-        } else showAlert("Error", error.message);
+          showAlert("¡Paz Restaurada! ✨", "Contraseña celestial actualizada.");
+        } else showAlert("Error Celestial", error.message);
       }
       async function logout() {
         await client.auth.signOut();
@@ -2262,6 +2302,7 @@
             }
           }
         });
+
       function format12h(h) {
         if (!h) return "";
         let [hr, m] = h.split(":");
@@ -2288,7 +2329,6 @@
         if (t !== "agenda") cancelRescheduleMode();
       }
 
-      // HORARIOS
       function toggleWeekDay(d) {
         const i = selectedWeekDays.indexOf(d);
         if (i > -1) selectedWeekDays.splice(i, 1);
@@ -2301,10 +2341,8 @@
           if (selectedWeekDays.includes(d)) el.classList.add("active");
           else el.classList.remove("active");
         });
-
         document.getElementById("hoursEditor").style.display =
           selectedWeekDays.length ? "block" : "none";
-
         if (selectedWeekDays.length === 1) {
           const day = selectedWeekDays[0];
           const closing = globalClosingTimes[day] || "";
@@ -2347,7 +2385,6 @@
         });
         renderStaged();
       }
-
       async function saveWeekSchedule() {
         const closingTime = document.getElementById("dayClosingTime").value;
         for (let d of selectedWeekDays) {
@@ -2364,7 +2401,7 @@
         selectedWeekDays = [];
         renderWeekDays();
         await fetchSchedule();
-        showAlert("Éxito", "Horario guardado.");
+        showAlert("¡Cielo Ordenado! ✨", "Horario celestial guardado.");
       }
 
       async function loadAdminDayConfig() {
@@ -2378,11 +2415,10 @@
           .eq("fecha", d);
         const isFull = data.some((b) => b.hora_inicio === null);
         document.getElementById("btnToggleDay").innerText = isFull
-          ? "🔓 ABRIR DÍA"
-          : "🔒 CERRAR DÍA";
+          ? "🔓 ABRIR DÍA SPA"
+          : "🔒 CERRAR DÍA SPA";
         renderBlockedRanges(data);
       }
-
       function renderBlockedRanges(data) {
         const container = document.getElementById("adminBlockList");
         container.innerHTML = "";
@@ -2391,20 +2427,18 @@
           if (b.hora_inicio !== null) {
             const s = b.hora_inicio.substring(0, 5);
             const e = b.hora_fin.substring(0, 5);
-            container.innerHTML += `<div class="service-item"><span>🚫 ${format12h(s)} - ${format12h(e)}</span><button class="btn-round btn-del" onclick="askDeleteBlock(${b.id})">🗑️</button></div>`;
+            container.innerHTML += `<div class="service-item"><span>🚫 ${format12h(s)} - ${format12h(e)} (Descanso)</span><button class="btn-round btn-del" onclick="askDeleteBlock(${b.id})">🗑️</button></div>`;
           }
         });
       }
-
       async function addBlockRange() {
         if (!adminSelectedDate) return;
         const start = document.getElementById("blockStartTime").value;
         const end = document.getElementById("blockEndTime").value;
         if (!start || !end) {
-          showAlert("Falta hora", "Selecciona inicio y fin.");
+          showAlert("Faltan Horas", "Selecciona el inicio y fin del descanso.");
           return;
         }
-
         await client
           .from("bloqueos")
           .insert({
@@ -2417,12 +2451,10 @@
         loadAdminDayConfig();
         renderCalendar();
       }
-
       function askDeleteBlock(id) {
         pendingBlockId = id;
         document.getElementById("deleteBlockModal").style.display = "flex";
       }
-
       async function confirmDeleteBlock() {
         if (!pendingBlockId) return;
         await client.from("bloqueos").delete().eq("id", pendingBlockId);
@@ -2430,7 +2462,6 @@
         loadAdminDayConfig();
         renderCalendar();
       }
-
       async function toggleFullDayBlock() {
         const { data } = await client
           .from("bloqueos")
@@ -2460,7 +2491,11 @@
         document.getElementById("btnMainAction").className =
           "btn-main reschedule-mode";
         showTab("agenda");
-        showAlert("Reprogramar", "Selecciona fecha y hora.", "🗓️");
+        showAlert(
+          "Reprogramar Cita Divina",
+          "Selecciona nueva fecha y hora celestial.",
+          "🗓️",
+        );
       }
       function cancelRescheduleMode() {
         isRescheduling = false;
@@ -2473,11 +2508,12 @@
 
       async function confirmarCita() {
         if (!selectedDate || !document.getElementById("fieldHora").value)
-          return showAlert("Faltan Datos", "Selecciona fecha y hora.");
+          return showAlert(
+            "Cita Incompleta",
+            "Selecciona fecha y hora celestial.",
+          );
         const hora = document.getElementById("fieldHora").value;
         const svcName = document.getElementById("fieldServicio").value;
-        const svcObj = globalServices.find((s) => s.nombre === svcName);
-        const duration = svcObj ? svcObj.duracion_minutos || 60 : 60;
         const cleanTel = document
           .getElementById("fieldTelefono")
           .value.replace(/\D/g, "");
@@ -2491,13 +2527,12 @@
           user_id: userProfile.id,
           estado: "pendiente",
         };
-
         if (isRescheduling) {
           const { error } = await client
             .from("citas")
             .update({ fecha: selectedDate, hora: hora, estado: "reprogramada" })
             .eq("id", rescheduleId);
-          if (error) showAlert("Error", error.message);
+          if (error) showAlert("Error de Cambio", error.message);
           else {
             lastCitaData = {
               ...rescheduleData,
@@ -2511,32 +2546,27 @@
           }
         } else {
           if (!document.getElementById("fieldTelefono").value)
-            return showAlert("Faltan Datos", "Teléfono requerido.");
+            return showAlert("Falta Teléfono", "WhatsApp es requerido.");
           const { error } = await client.from("citas").insert([datos]);
-          if (error) showAlert("Error", error.message);
+          if (error) showAlert("Error de Reserva", error.message);
           else {
             lastCitaData = datos;
             document.getElementById("wspModal").style.display = "flex";
-
-            // RESET ABSOLUTO AL AGENDAR
             selectedDate = null;
             document
               .querySelectorAll(".day")
               .forEach((e) => e.classList.remove("selected"));
-
             const s = document.getElementById("fieldServicio");
             s.value = "";
             s.disabled = true;
             s.innerHTML =
-              '<option value="">1. Toca un día en el calendario 👆</option>';
-
+              '<option value="">1. Toca un día celestial 👆</option>';
             const h = document.getElementById("fieldHora");
             h.value = "";
             h.disabled = true;
             h.innerHTML =
               '<option value="">2. Luego selecciona servicio...</option>';
             document.getElementById("surchargeAlert").style.display = "none";
-
             renderCalendar();
           }
         }
@@ -2548,11 +2578,7 @@
         );
         const finalPhrase =
           serviceObj && serviceObj.tipo === "diseno" ? msgDesign : msgBasic;
-        const msg =
-          `Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\n` +
-          `Cita: ${formatDateText(lastCitaData.fecha)} ${format12h(lastCitaData.hora)}\n` +
-          `Servicio: ${lastCitaData.servicio}\n` +
-          finalPhrase;
+        const msg = `Hola Empyrean Spa by NiNa. Soy ${lastCitaData.nombre}.\nCita Celestial: ${formatDateText(lastCitaData.fecha)} ${format12h(lastCitaData.hora)}\nServicio Spa: ${lastCitaData.servicio}\n${finalPhrase}`;
         window.open(
           `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
           "_blank",
@@ -2562,7 +2588,7 @@
       }
       function enviarWhatsAppReprogramacion() {
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola NailsbyNiNa. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\nNueva: ${formatDateText(lastCitaData.fecha)} ${format12h(lastCitaData.hora)}`)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola Empyrean Spa. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita divina.\nNueva Cita: ${formatDateText(lastCitaData.fecha)} ${format12h(lastCitaData.hora)}`)}`,
           "_blank",
         );
         closeModal("wspRescheduleModal");
@@ -2584,9 +2610,9 @@
           if (!rawTel.startsWith("57")) rawTel = "57" + rawTel;
           let msg = "";
           if (pendingCancelData.isClient) {
-            msg = `Hola NailsbyNiNa. Cancelo cita de ${pendingCancelData.name}.`;
+            msg = `Hola Empyrean Spa by NiNa. Por favor cancela la cita divina de ${pendingCancelData.name}.`;
           } else {
-            msg = `Hola! ¿Cómo estás?\nHan pasado 20 minutos o más desde la hora de tu cita, debido a esto, será cancelada la cita que tenías para el día de hoy a las ${format12h(pendingCancelData.hour)}\nSi deseas agendar un nuevo turno hazmelo saber para que juntas revisemos la agenda 💅🏻`;
+            msg = `Hola celestial ${pendingCancelData.name}!\nHan pasado 20 minutos desde tu hora divina, por lo que tu cita de las ${format12h(pendingCancelData.hour)} de hoy ha sido cancelada.\n¡No te preocupes! Juntas revisaremos la agenda divina para encontrar un nuevo momento celestial para ti 💅🏻😇`;
           }
           window.open(
             `https://wa.me/${pendingCancelData.isClient ? miWhatsAppAdmin : rawTel}?text=${encodeURIComponent(msg)}`,
@@ -2603,7 +2629,6 @@
           .eq("id", id);
         loadAllAppointments();
       }
-
       function switchListTab(tab) {
         document
           .querySelectorAll(".sub-tab-btn")
@@ -2628,29 +2653,25 @@
         const { data } = await q
           .order("fecha", { ascending: false })
           .order("hora");
-
         const cUp = document.getElementById("list-upcoming-container");
         const cHist = document.getElementById("list-history-container");
         cUp.innerHTML = "";
         cHist.innerHTML = "";
-
         if (!data || !data.length) {
           cUp.innerHTML =
-            "<p style='text-align:center;color:#aaa;margin-top:30px'>Sin citas.</p>";
+            "<p style='text-align:center;color:#b2bec3;margin-top:30px'>Sin citas divinas aún.</p>";
           return;
         }
 
         const now = new Date();
         const upcomingData = [];
         const historyData = [];
-
         data.forEach((d) => {
           const apptTime = new Date(d.fecha + "T" + d.hora);
           const threshold = new Date(apptTime.getTime() + 20 * 60000);
           if (threshold < now || d.estado === "completada") historyData.push(d);
           else upcomingData.push(d);
         });
-
         upcomingData.sort(
           (a, b) =>
             new Date(a.fecha + "T" + a.hora) - new Date(b.fecha + "T" + b.hora),
@@ -2659,34 +2680,27 @@
         const renderCard = (d, isPast) => {
           let rawTel = d.telefono.replace(/\D/g, "");
           if (!rawTel.startsWith("57")) rawTel = "57" + rawTel;
-          const reminderMsg =
-            `Hola ${d.nombre}!\n` +
-            `Fecha: ${formatDateText(d.fecha)}.\n` +
-            `Hora: ${format12h(d.hora)}\n` +
-            `Lugar: Carrera 81d #68-03sur Bosa Palestina\n` +
-            `Servicio: ${d.servicio}.\n\n` +
-            `*Recuerda que tenemos 20 minutos de tolerancia si no llegas tu cita será cancelada.`;
-
+          const reminderMsg = `Hola celestial ${d.nombre}!\nTu momento Empyrean está cerca:\nFecha Divina: ${formatDateText(d.fecha)}.\nHora Divina: ${format12h(d.hora)}\nLugar Celestial: Carrera 81d #68-03sur Bosa Palestina\nServicio Spa: ${d.servicio}.\n\n*Recuerda que tenemos 20 minutos de tolerancia celestial o tu cita divina será cancelada.💅🏻😇`;
           let badgeClass = "status-pill";
-          let badgeText = "Confirmada";
+          let badgeText = "Confirmada Divine";
           if (d.estado === "reprogramada") {
             badgeClass += " repro";
-            badgeText = "Reprogramada";
+            badgeText = "Reprogramada Divina";
           } else if (d.estado === "completada") {
             badgeClass += " done";
-            badgeText = "Completada";
+            badgeText = "Completada Divine";
           }
           if (isPast && d.estado !== "completada") {
             badgeClass += " late";
-            badgeText = "Vencida (No Llegó)";
+            badgeText = "Vencida (Descanso)";
           }
 
           let btns = "";
           if (!isPast && d.estado !== "completada") {
             btns =
               userProfile.role === "admin"
-                ? `<div class="actions-row"><button class="btn-action btn-arrive" onclick="markArrived('${d.id}')">✅ Llegó</button><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=${encodeURIComponent(reminderMsg)}')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">Cancelar</button></div>`
-                : `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true, '${d.hora}')">Cancelar</button></div>`;
+                ? `<div class="actions-row"><button class="btn-action btn-arrive" onclick="markArrived('${d.id}')">✅ Llegó</button><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=${encodeURIComponent(reminderMsg)}')">Recordar Divino</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">Cancelar Divino</button></div>`
+                : `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar Divine</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true, '${d.hora}')">Cancelar Divino</button></div>`;
           } else if (
             isPast &&
             d.estado !== "completada" &&
@@ -2695,21 +2709,66 @@
             btns = `<div class="actions-row"><button class="btn-action btn-notify-late" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">📢 Notificar Cancelación</button></div>`;
           }
 
-          const card = `<div class="appointment-card ${d.estado === "reprogramada" ? "reprogramada" : ""} ${d.estado === "completada" ? "completada" : ""} ${isPast && d.estado !== "completada" ? "vencida past" : isPast ? "past" : ""} animate-pop"><div class="${badgeClass}">${badgeText}</div><div style="font-size:1.1rem;font-weight:bold">${d.servicio}</div><div style="color:var(--primary);font-weight:bold;margin:5px 0">${formatDateText(d.fecha)} - ${format12h(d.hora)}</div><div style="font-size:0.9rem;color:#888">${d.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#f9f9f9;padding:8px;border-radius:8px;margin-top:8px;font-size:0.8rem">📱 ${d.telefono}<br>📧 ${d.correo}</div>` : ""}${btns}</div>`;
-          if (isPast || d.estado === "completada") return card;
-          else return card;
+          // AQUI ESTÁ LA LÓGICA DE CUMPLEAÑOS QUE FALTABA
+          let bdayHtml = "";
+          if (userProfile.role === "admin" && perfilesCumpleanos[d.user_id]) {
+            const bdayStr = perfilesCumpleanos[d.user_id];
+            if (bdayStr) {
+              const parts = bdayStr.split("-");
+              const bMonth = parseInt(parts[1]) - 1;
+              const bDay = parseInt(parts[2]);
+              const apptDate = new Date(d.fecha + "T00:00:00");
+              let bThisYear = new Date(apptDate.getFullYear(), bMonth, bDay);
+              let diff = Math.round(
+                (bThisYear - apptDate) / (1000 * 60 * 60 * 24),
+              );
+              if (diff < -180) {
+                bThisYear = new Date(apptDate.getFullYear() + 1, bMonth, bDay);
+                diff = Math.round(
+                  (bThisYear - apptDate) / (1000 * 60 * 60 * 24),
+                );
+              } else if (diff > 180) {
+                let bLastYear = new Date(
+                  apptDate.getFullYear() - 1,
+                  bMonth,
+                  bDay,
+                );
+                let diffPrev = Math.round(
+                  (apptDate - bLastYear) / (1000 * 60 * 60 * 24),
+                );
+                if (diffPrev <= 15) {
+                  diff = -diffPrev;
+                }
+              }
+              if (Math.abs(diff) <= 15) {
+                let text =
+                  diff === 0
+                    ? "¡HOY ES SU CUMPLEAÑOS! 🎉"
+                    : diff > 0
+                      ? `Faltan ${diff} días para su cumple 🎂`
+                      : `Cumplió hace ${Math.abs(diff)} días 🎂`;
+                bdayHtml = `<div style="background: linear-gradient(135deg, #fff0f5, #fce4ec); color: #d81b60; padding: 10px; border-radius: 14px; font-size: 0.85rem; font-weight: 700; margin-top: 12px; border: 1px dashed #f48fb1; text-align: center;">✨ Modo Cumpleañera: ${text} (${String(bDay).padStart(2, "0")}/${String(bMonth + 1).padStart(2, "0")})</div>`;
+              } else {
+                let dFaltan = diff > 0 ? diff : diff + 365;
+                bdayHtml = `<div style="font-size: 0.8rem; color: #b2bec3; margin-top: 8px;">🎂 Cumpleaños: ${String(bDay).padStart(2, "0")}/${String(bMonth + 1).padStart(2, "0")} (Faltan ${dFaltan} días)</div>`;
+              }
+            }
+          }
+
+          const card = `<div class="appointment-card ${d.estado === "reprogramada" ? "reprogramada" : ""} ${d.estado === "completada" ? "completada" : ""} ${isPast && d.estado !== "completada" ? "vencida past" : isPast ? "past" : ""} animate-pop"><div class="${badgeClass}">${badgeText}</div><div style="font-size:1.1rem;font-weight:bold">${d.servicio}</div><div style="color:var(--primary);font-weight:bold;margin:5px 0">${formatDateText(d.fecha)} - ${format12h(d.hora)}</div><div style="font-size:0.9rem;color:#b273b2;font-weight:500">${d.nombre}</div>${userProfile.role === "admin" ? `<div style="background:#fffbff;padding:12px;border-radius:12px;margin-top:12px;font-size:0.85rem;border:1px solid #fbf4fb">📱 ${d.telefono}<br>📧 ${d.correo}</div>` : ""}${bdayHtml}${btns}</div>`;
+          return card;
         };
 
         if (upcomingData.length)
           upcomingData.forEach((d) => (cUp.innerHTML += renderCard(d, false)));
         else
           cUp.innerHTML =
-            "<p style='text-align:center;color:#ccc;margin-top:20px'>No tienes citas próximas.</p>";
+            "<p style='text-align:center;color:#b2bec3;margin-top:20px'>No tienes citas divinas próximas.</p>";
         if (historyData.length)
           historyData.forEach((d) => (cHist.innerHTML += renderCard(d, true)));
         else
           cHist.innerHTML =
-            "<p style='text-align:center;color:#ccc;margin-top:20px'>No hay historial reciente.</p>";
+            "<p style='text-align:center;color:#b2bec3;margin-top:20px'>Historial divino vacío.</p>";
       }
 
       async function fetchSchedule() {
@@ -2721,6 +2780,7 @@
             globalClosingTimes[i.dia] = i.hora_cierre || "20:00";
           });
       }
+
       function renderCalendar() {
         const grid = document.getElementById("calendarGrid");
         grid.innerHTML = "";
@@ -2754,40 +2814,37 @@
             if (cDate.getTime() === today.getTime()) d.classList.add("today");
             d.onclick = () => {
               if (d.classList.contains("full"))
-                return showAlert("Lo sentimos", "Día completo o no laboral.");
-              // BLOCK CHECK DAY
+                return showAlert(
+                  "Error Divino",
+                  "Día celestial lleno o no laboral.",
+                );
               if (d.classList.contains("blocked-day")) {
-                showAlert("Día Cerrado", "No hay servicio este día.");
+                showAlert(
+                  "Día Cerrado Divino",
+                  "No hay servicio Empyrean este día.",
+                );
                 return;
               }
-
               document
                 .querySelectorAll(".day")
                 .forEach((e) => e.classList.remove("selected"));
               d.classList.add("selected");
               selectedDate = dStr;
-
-              // RESET Y FEEDBACK VISUAL
               const s = document.getElementById("fieldServicio");
               s.disabled = false;
               s.classList.add("highlight-input");
               setTimeout(() => s.classList.remove("highlight-input"), 500);
               s.selectedIndex = 0;
-
               const h = document.getElementById("fieldHora");
               h.innerHTML =
-                '<option value="">Luego selecciona servicio...</option>';
+                '<option value="">Luego selecciona servicio spa...</option>';
               h.disabled = true;
               document.getElementById("surchargeAlert").style.display = "none";
-
-              // UPDATE AVAILABLE SERVICES FOR THIS DAY
               updateServiceAvailability(dStr);
             };
           }
           grid.appendChild(d);
         }
-
-        // CALL NEW MASSIVE UPDATE FUNCTION
         updateFullDays(y, m, last);
       }
 
@@ -2806,14 +2863,9 @@
         viewDate.setMonth(viewDate.getMonth() + v);
         renderCalendar();
       }
-
-      // NUEVA FUNCION INTELIGENTE: UPDATE FULL DAYS MASIVO
       async function updateFullDays(y, m, last) {
-        // 1. OBTENER RANGO MES
         const s = `${y}-${String(m + 1).padStart(2, "0")}-01`;
         const e = `${y}-${String(m + 1).padStart(2, "0")}-${last}`;
-
-        // 2. FETCH MASIVO
         const { data: c } = await client
           .from("citas")
           .select("fecha,hora,servicio")
@@ -2824,22 +2876,16 @@
           .select("fecha,hora_inicio,hora_fin")
           .gte("fecha", s)
           .lte("fecha", e);
-
-        // 3. CALCULAR MINIMA DURACION DE SERVICIO (O 60 POR DEFECTO)
         let minServiceDuration = 60;
         if (globalServices.length > 0) {
           minServiceDuration = Math.min(
             ...globalServices.map((svc) => svc.duracion_minutos || 60),
           );
         }
-
-        // 4. ITERAR DIAS DEL MES
         for (let i = 1; i <= last; i++) {
           const dStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
           const el = document.getElementById(`day-${dStr}`);
           if (!el || el.classList.contains("disabled")) continue;
-
-          // A. DIA CERRADO ADMIN?
           const isBlockedDay = b.some(
             (x) => x.fecha === dStr && x.hora_inicio === null,
           );
@@ -2847,32 +2893,24 @@
             el.classList.add("blocked-day");
             continue;
           }
-
-          // B. ANALIZAR SI CABE EL SERVICIO MAS CORTO
           const dw = new Date(dStr + "T00:00:00").getDay();
           const base = globalSchedule[dw] ? globalSchedule[dw].horas : [];
-
           if (!base.length) {
             el.classList.add("full");
             continue;
-          } // Si no hay horario base, dia cerrado
-
+          }
           const closingStr = globalClosingTimes[dw] || "20:00";
           const closingMins = timeToMins(closingStr);
-
-          // Filtrar eventos de este dia
           const dayCitas = c.filter((x) => x.fecha === dStr);
           const dayBlocks = b.filter(
             (x) => x.fecha === dStr && x.hora_inicio !== null,
           );
-
-          // Calcular Rangos Ocupados
           let busyRanges = [];
           dayCitas.forEach((appt) => {
             const s = globalServices.find((x) => x.nombre === appt.servicio);
             const dur = s ? s.duracion_minutos || 60 : 60;
             const start = timeToMins(appt.hora);
-            const end = start + dur; // **SIN BUFFER 30 MIN**
+            const end = start + dur;
             busyRanges.push({ start, end });
           });
           dayBlocks.forEach((bk) => {
@@ -2880,41 +2918,27 @@
             const end = timeToMins(bk.hora_fin);
             busyRanges.push({ start, end });
           });
-
-          // Generar posibles inicios (Base + Fin de citas)
           let candidateStartTimes = new Set();
           base.forEach((h) => candidateStartTimes.add(timeToMins(h)));
           busyRanges.forEach((r) => {
-            // Si termina antes del cierre, podria empezar una cita ahi
             if (r.end < closingMins) candidateStartTimes.add(r.end);
           });
-
-          // C. PROBAR SI CABE "MIN_DURATION" EN ALGUNO
           let isFull = true;
           for (let startMins of candidateStartTimes) {
-            // Solo probar si coincide con un slot base o generado valido (simplificado: si esta en rango operativo)
-            // El inicio debe ser validado contra cierre
-            const endMins = startMins + minServiceDuration; // **SIN BUFFER 30 MIN**
-
-            // Strict Check: Can fit min service before closing?
-            if (endMins > closingMins) continue; // Logic fixed: endMins > closingMins (was start + min > closing)
-
-            // Check Collision
+            const endMins = startMins + minServiceDuration;
+            if (endMins > closingMins) continue;
             let collision = false;
             for (let r of busyRanges) {
               if (startMins < r.end && endMins > r.start) {
-                // **SIN BUFFER 30 MIN**
                 collision = true;
                 break;
               }
             }
-
             if (!collision) {
-              isFull = false; // Found a spot!
+              isFull = false;
               break;
             }
           }
-
           if (isFull) el.classList.add("full");
         }
       }
@@ -2930,25 +2954,20 @@
         } else {
           h.disabled = true;
           h.innerHTML =
-            '<option value="">Luego selecciona servicio...</option>';
+            '<option value="">Luego selecciona servicio spa...</option>';
         }
       }
 
-      // NUEVO: FILTRAR SERVICIOS POR HUECOS DISPONIBLES
       async function updateServiceAvailability(f) {
         const s = document.getElementById("fieldServicio");
-
-        // 1. RE-POPULATE SERVICES FROM GLOBAL
         s.innerHTML = "";
-        s.add(new Option("Selecciona servicio...", ""));
-
+        s.add(new Option("Selecciona servicio spa divine...", ""));
         const dw = new Date(f + "T00:00:00").getDay();
         let base = globalSchedule[dw]
           ? [...globalSchedule[dw].horas].sort()
           : [];
         const closingStr = globalClosingTimes[dw] || "20:00";
         const closingMins = timeToMins(closingStr);
-
         const { data: c } = await client
           .from("citas")
           .select("hora, servicio")
@@ -2957,15 +2976,13 @@
           .from("bloqueos")
           .select("hora_inicio, hora_fin")
           .eq("fecha", f);
-
-        // CALCULAR OCUPACION
         let busyRanges = [];
         if (c)
           c.forEach((appt) => {
             const svc = globalServices.find((x) => x.nombre === appt.servicio);
             const dur = svc ? svc.duracion_minutos || 60 : 60;
             const start = timeToMins(appt.hora);
-            const end = start + dur; // SIN BUFFER
+            const end = start + dur;
             busyRanges.push({ start, end });
           });
         if (b)
@@ -2976,62 +2993,47 @@
               busyRanges.push({ start, end });
             }
           });
-
-        // GENERAR CANDIDATOS
         let candidateSlots = new Set(base);
         busyRanges.forEach((range) => {
           if (range.end < closingMins)
             candidateSlots.add(minsToTime(range.end));
         });
         let availableSlots = Array.from(candidateSlots).sort();
-
         const isToday =
           new Date(f + "T00:00:00").toDateString() ===
           new Date().toDateString();
         const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
-
-        // 2. LOOP & VERIFY
         globalServices.forEach((svc) => {
           let reqDur = svc.duracion_minutos || 60;
           let fitsAnywhere = false;
-
           for (let h of availableSlots) {
             const startMins = timeToMins(h);
-            const endMins = startMins + reqDur; // SIN BUFFER
-
+            const endMins = startMins + reqDur;
             if (isToday && startMins <= nowMins) continue;
-            if (endMins > closingMins) continue; // Check strict closing fit
-
+            if (endMins > closingMins) continue;
             let collision = false;
             for (let r of busyRanges) {
-              // Overlap check
               if (startMins < r.end && endMins > r.start) {
                 collision = true;
                 break;
               }
             }
-
             if (!collision) {
               fitsAnywhere = true;
               break;
             }
           }
-
           let opt = document.createElement("option");
           opt.value = svc.nombre;
-
           if (!fitsAnywhere) {
             opt.disabled = true;
-            opt.innerText = `🚫 ${svc.nombre} (No cabe hoy)`;
+            opt.innerText = `🚫 ${svc.nombre} (No cabe en el cielo hoy)`;
           } else {
             opt.disabled = false;
             opt.innerText = svc.nombre;
           }
           s.add(opt);
         });
-
-        // SI NO HAY NADA DISPONIBLE, MARCAR DIA COMO FULL EN ROJO
-        // (Aunque updateFullDays ya lo hace, esto es un refuerzo visual si el usuario ya esta dentro)
       }
 
       async function checkHoras(f) {
@@ -3049,27 +3051,22 @@
           .from("bloqueos")
           .select("hora_inicio, hora_fin")
           .eq("fecha", f);
-
         const svcName = document.getElementById("fieldServicio").value;
         const svcObj = globalServices.find((s) => s.nombre === svcName);
         const reqDuration = svcObj ? svcObj.duracion_minutos || 60 : 60;
-
         const s = document.getElementById("fieldHora");
         s.innerHTML = "";
         const isToday =
           new Date(f + "T00:00:00").toDateString() ===
           new Date().toDateString();
         const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
-
         let busyRanges = [];
-        const explicitBlocks = [];
-
         if (c && c.length > 0) {
           c.forEach((appt) => {
             const s = globalServices.find((x) => x.nombre === appt.servicio);
             const dur = s ? s.duracion_minutos || 60 : 60;
             const start = timeToMins(appt.hora);
-            const end = start + dur; // **SIN BUFFER 30 MIN**
+            const end = start + dur;
             busyRanges.push({ start, end });
           });
         }
@@ -3082,49 +3079,40 @@
             }
           });
         }
-
         let candidateSlots = new Set(base);
         busyRanges.forEach((range) => {
           if (range.end < closingMins)
             candidateSlots.add(minsToTime(range.end));
         });
-
         let availableList = Array.from(candidateSlots).sort();
         let any = false;
-
         if (!availableList.length) {
-          s.add(new Option("No disponible", ""));
+          s.add(new Option("Cielo Lleno", ""));
           s.disabled = true;
           return;
         }
-        s.add(new Option("Selecciona hora...", ""));
-
+        s.add(new Option("Selecciona hora divine...", ""));
         availableList.forEach((h) => {
           const startMins = timeToMins(h);
-          const endMins = startMins + reqDuration; // **SIN BUFFER 30 MIN**
-
+          const endMins = startMins + reqDuration;
           if (isToday && startMins <= nowMins) {
             const opt = document.createElement("option");
             opt.value = h;
-            opt.text = format12h(h) + " (Pasada)";
+            opt.text = format12h(h) + " (Descanso Pasado)";
             opt.disabled = true;
             s.appendChild(opt);
             return;
           }
-
           if (endMins > closingMins) {
             return;
           }
-
           let collision = false;
           for (let r of busyRanges) {
             if (startMins < r.end && endMins > r.start) {
               collision = true;
               break;
-            } // **SIN BUFFER 30 MIN**
+            }
           }
-
-          // HIDE IF INSIDE ADMIN BLOCK
           let isAdminBlocked = false;
           if (b) {
             for (let bk of b) {
@@ -3139,7 +3127,6 @@
             }
           }
           if (isAdminBlocked) return;
-
           if (!collision) {
             const opt = document.createElement("option");
             opt.value = h;
@@ -3150,16 +3137,15 @@
             if (base.includes(h)) {
               const opt = document.createElement("option");
               opt.value = h;
-              opt.text = format12h(h) + " (Ocupado)";
+              opt.text = format12h(h) + " (Descanso Ocupado)";
               opt.disabled = true;
               s.appendChild(opt);
             }
           }
         });
-
         if (!any) {
           s.innerHTML = "";
-          s.add(new Option("Lleno", ""));
+          s.add(new Option("Cielo Ocupado", ""));
           s.disabled = true;
         } else {
           s.disabled = false;
