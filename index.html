@@ -15,10 +15,10 @@
     <style>
       :root {
         /* PALETA DE COLORES - EMPYREAN SPA */
-        --primary: #602060; /* Morado Profundo del texto del logo */
-        --gold: #f5c862; /* Dorado Suave de la aureola del logo */
-        --primary-light: #fdf2ff; /* Lavanda extremadamente suave */
-        --primary-glow: 0 4px 20px rgba(245, 200, 98, 0.4); /* Brillo Dorado */
+        --primary: #602060;
+        --gold: #f5c862;
+        --primary-light: #fdf2ff;
+        --primary-glow: 0 4px 20px rgba(245, 200, 98, 0.4);
 
         --card-bg: #ffffff;
         --text: #2d3436;
@@ -32,11 +32,10 @@
         --disabled: #f1f2f6;
       }
 
-      /* --- MEJORA: FONDO PREMIUM MINIMALISTA --- */
+      /* FONDO PREMIUM MINIMALISTA */
       body {
         font-family: "Poppins", sans-serif;
-        background-color: #faf7fa; /* Base super clara y cálida */
-        /* Halos de luz ultra suaves y elegantes en las esquinas */
+        background-color: #faf7fa;
         background-image:
           radial-gradient(at 0% 0%, rgba(96, 32, 96, 0.06) 0%, transparent 50%),
           radial-gradient(
@@ -61,16 +60,6 @@
         100% {
           opacity: 1;
           transform: scale(1);
-        }
-      }
-      @keyframes slideUp {
-        0% {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
         }
       }
       @keyframes highlight {
@@ -190,7 +179,7 @@
         display: none;
       }
 
-      /* HEADER ESTILO LOGO */
+      /* HEADER */
       .nav-header {
         background: white;
         padding: 15px 25px;
@@ -468,7 +457,7 @@
         color: white;
       }
 
-      /* --- ADMIN PREMIUM STYLES --- */
+      /* --- ADMIN STYLES --- */
       .admin-card {
         background: white;
         border-radius: 24px;
@@ -656,7 +645,7 @@
         box-shadow: 0 5px 15px rgba(96, 32, 96, 0.2);
       }
 
-      /* CALENDAR - EFECTO DORADO LOGO */
+      /* CALENDAR */
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -940,7 +929,7 @@
     <div id="auth-screen" class="animate-pop">
       <img
         src="logoImagenes/logotipo.png"
-        alt="Empyrean Spa by NiNa Logo"
+        alt="Empyrean Spa Logo"
         class="auth-logo-large"
       />
       <p
@@ -951,8 +940,8 @@
           font-weight: 600;
         "
       >
-        Donde los ángeles y la tentación se encuentran.<br />Agenda tu momento
-        celestial. 💅✨
+        Where Angels and Temptation Meet.<br />Agenda tu visita a este paraíso.
+        💅✨
       </p>
       <div id="login-form">
         <input type="email" id="loginEmail" placeholder="Tu Correo" />
@@ -964,7 +953,7 @@
           >
         </div>
         <button class="btn-main" onclick="handleAuth('login')">
-          Ingresar 😇
+          Ingresar ✨
         </button>
         <p style="text-align: center; margin-top: 15px">
           <a
@@ -1171,7 +1160,7 @@
         </div>
         <div class="form-section">
           <h3 style="color: var(--text); margin: 0 0 15px">
-            Detalles de tu cita celestial
+            Detalles de tu cita
           </h3>
           <div id="newAppointmentFields">
             <input type="text" id="fieldNombre" placeholder="Nombre" />
@@ -1230,14 +1219,14 @@
         style="display: none"
       >
         <div class="admin-card">
-          <div class="admin-title">💜 Gestión de Servicios Spa</div>
+          <div class="admin-title">💜 Gestión de Servicios</div>
           <div id="adminServicesList"></div>
           <div class="add-row" id="formServiceRow">
             <input type="hidden" id="editServiceId" />
             <input
               type="text"
               id="newServiceInput"
-              placeholder="Nombre del servicio celestial..."
+              placeholder="Nombre del servicio..."
               style="flex: 2"
             />
             <select id="newServiceType" style="flex: 1.2">
@@ -1343,7 +1332,7 @@
             >
               <label
                 style="font-size: 0.85rem; font-weight: 700; color: var(--text)"
-                >Hora de Cierre Spa (Límite):</label
+                >Hora de Cierre (Límite):</label
               ><input
                 type="time"
                 id="dayClosingTime"
@@ -1384,7 +1373,7 @@
           style="background: #fff8e1; border-color: #ffe0b2"
         >
           <div class="admin-title" style="color: #f57c00">
-            💰 Recargos por Hora Spa
+            💰 Recargos por Hora
           </div>
           <div class="add-row" id="formSurchargeRow" style="background: white">
             <input type="hidden" id="editSurchargeId" /><input
@@ -1437,7 +1426,7 @@
           style="background: #ffebee; border-color: #ffcdd2"
         >
           <div class="admin-title" style="color: var(--danger)">
-            🔒 Bloquear Fecha Spa
+            🔒 Bloquear Fechas
           </div>
           <input
             type="date"
@@ -1587,7 +1576,7 @@
             margin-bottom: 20px;
           "
         >
-          <h4 style="margin-top: 0">Nueva Contraseña Spa</h4>
+          <h4 style="margin-top: 0">Nueva Contraseña</h4>
           <div class="password-wrapper">
             <input
               type="password"
@@ -1677,7 +1666,6 @@
       let globalClosingTimes = {};
       let adminSelectedDate = null;
 
-      // NUEVA VARIABLE GLOBAL PARA CUMPLEAÑOS
       let perfilesCumpleanos = {};
 
       const hash = window.location.hash;
@@ -1784,7 +1772,7 @@
             const { data } = await client.auth.getSession();
             if (data.session) {
               document.getElementById("recoveryStatus").innerText =
-                "✅ Verificado. Escribe tu nueva clave celestial.";
+                "✅ Verificado. Escribe tu nueva clave.";
               document.getElementById("recoveryStatus").style.color =
                 "var(--whatsapp)";
               document.getElementById("recoveryForm").style.display = "block";
@@ -1872,7 +1860,6 @@
             document.getElementById("fieldNombre").readOnly = false;
             document.getElementById("fieldCorreo").readOnly = false;
 
-            // LOGICA CUMPLEAÑOS AÑADIDA AQUÍ
             const { data: profs } = await client
               .from("profiles")
               .select("id, birthday");
@@ -1994,12 +1981,11 @@
         const { error } = await client
           .from("textos_app")
           .upsert({ id: 1, final_basico: b, final_diseno: d });
-        if (error)
-          showAlert("Error Config", "Falta crear la tabla textos_app en DB.");
+        if (error) showAlert("Error", "Falta crear la tabla textos_app en DB.");
         else {
           msgBasic = b;
           msgDesign = d;
-          showAlert("Éxito Celestial ✨", "Mensajes actualizados.");
+          showAlert("Éxito ✨", "Mensajes actualizados.");
         }
       }
 
@@ -2045,12 +2031,9 @@
         if (t === "signup") {
           const b = document.getElementById("regBirthday").value;
           if (!b)
-            return showAlert(
-              "Error Divino",
-              "La fecha de nacimiento es obligatoria para tu protección.",
-            );
+            return showAlert("Error", "La fecha de nacimiento es obligatoria.");
           if (p !== document.getElementById("regPassConfirm").value)
-            return showAlert("Error Divino", "Las contraseñas no coinciden");
+            return showAlert("Error", "Las contraseñas no coinciden");
           const { error } = await client.auth.signUp({
             email: e,
             password: p,
@@ -2061,10 +2044,10 @@
               },
             },
           });
-          if (error) showAlert("Error en el Cielo", error.message);
+          if (error) showAlert("Error", error.message);
           else
             showAlert(
-              "Bienvenida Celestial ✨",
+              "Bienvenida ✨",
               "Tu cuenta en Empyrean Spa ha sido creada. Ingresa ahora.",
             );
         } else {
@@ -2072,11 +2055,7 @@
             email: e,
             password: p,
           });
-          if (error)
-            showAlert(
-              "Error de Tentación",
-              "Datos incorrectos. Intenta de nuevo.",
-            );
+          if (error) showAlert("Error", "Datos incorrectos. Intenta de nuevo.");
           else checkUser();
         }
       }
@@ -2091,7 +2070,7 @@
         const { error } = await client.auth.resetPasswordForEmail(e, {
           redirectTo: window.location.href,
         });
-        if (error) showAlert("Error Celestial", error.message);
+        if (error) showAlert("Error", error.message);
         else {
           closeModal("resetModal");
           showAlert(
@@ -2109,19 +2088,13 @@
           );
         const { error } = await client.auth.updateUser({ password: p });
         if (error) {
-          showAlert(
-            "Error de Recuperación",
-            "El enlace ha expirado o es inválido.",
-          );
+          showAlert("Error", "El enlace ha expirado o es inválido.");
           setTimeout(() => {
             window.location.hash = "";
             window.location.reload();
           }, 2000);
         } else {
-          showAlert(
-            "¡Paz Restaurada! ✨",
-            "Tu clave celestial ha sido cambiada.",
-          );
+          showAlert("¡Éxito! ✨", "Tu clave ha sido cambiada.");
           document.getElementById("recovery-screen").style.display = "none";
           history.replaceState(null, null, " ");
           checkUser();
@@ -2137,7 +2110,7 @@
           globalServices = data;
           const s = document.getElementById("fieldServicio");
           s.innerHTML = "";
-          s.add(new Option("1. Toca un día celestial 👆", ""));
+          s.add(new Option("1. Toca un día en el calendario 👆", ""));
           s.disabled = true;
           if (userProfile?.role === "admin") {
             const l = document.getElementById("adminServicesList");
@@ -2240,7 +2213,7 @@
         if (!error) {
           userProfile.full_name = n;
           renderProfileUI();
-          showAlert("Éxito Divino ✨", "Nombre celestial actualizado.");
+          showAlert("Éxito ✨", "Nombre actualizado.");
         }
       }
       async function updatePassword() {
@@ -2249,23 +2222,18 @@
           cf = document.getElementById("confirmPassProfile").value;
         if (!c || !n || !cf)
           return showAlert("Faltan Datos", "Llena todos los campos.");
-        if (n !== cf)
-          return showAlert("Error Celestial", "Las contraseñas no coinciden");
+        if (n !== cf) return showAlert("Error", "Las contraseñas no coinciden");
         const { error: s } = await client.auth.signInWithPassword({
           email: currentUserEmail,
           password: c,
         });
-        if (s)
-          return showAlert(
-            "Error de Autenticación",
-            "La contraseña actual es incorrecta.",
-          );
+        if (s) return showAlert("Error", "La contraseña actual es incorrecta.");
         const { error } = await client.auth.updateUser({ password: n });
         if (!error) {
           togglePassForm();
           document.getElementById("currentPassProfile").value = "";
-          showAlert("¡Paz Restaurada! ✨", "Contraseña celestial actualizada.");
-        } else showAlert("Error Celestial", error.message);
+          showAlert("¡Éxito! ✨", "Contraseña actualizada.");
+        } else showAlert("Error", error.message);
       }
       async function logout() {
         await client.auth.signOut();
@@ -2401,7 +2369,10 @@
         selectedWeekDays = [];
         renderWeekDays();
         await fetchSchedule();
-        showAlert("¡Cielo Ordenado! ✨", "Horario celestial guardado.");
+        showAlert(
+          "¡Horario Guardado! ✨",
+          "El horario se actualizó correctamente.",
+        );
       }
 
       async function loadAdminDayConfig() {
@@ -2489,11 +2460,7 @@
         document.getElementById("btnMainAction").className =
           "btn-main reschedule-mode";
         showTab("agenda");
-        showAlert(
-          "Reprogramar Cita Divina",
-          "Selecciona nueva fecha y hora celestial.",
-          "🗓️",
-        );
+        showAlert("Reprogramar", "Selecciona nueva fecha y hora.", "🗓️");
       }
       function cancelRescheduleMode() {
         isRescheduling = false;
@@ -2506,10 +2473,7 @@
 
       async function confirmarCita() {
         if (!selectedDate || !document.getElementById("fieldHora").value)
-          return showAlert(
-            "Cita Incompleta",
-            "Selecciona fecha y hora celestial.",
-          );
+          return showAlert("Cita Incompleta", "Selecciona fecha y hora.");
         const hora = document.getElementById("fieldHora").value;
         const svcName = document.getElementById("fieldServicio").value;
         const cleanTel = document
@@ -2546,7 +2510,7 @@
           if (!document.getElementById("fieldTelefono").value)
             return showAlert("Falta Teléfono", "WhatsApp es requerido.");
           const { error } = await client.from("citas").insert([datos]);
-          if (error) showAlert("Error de Reserva", error.message);
+          if (error) showAlert("Error", error.message);
           else {
             lastCitaData = datos;
             document.getElementById("wspModal").style.display = "flex";
@@ -2558,7 +2522,7 @@
             s.value = "";
             s.disabled = true;
             s.innerHTML =
-              '<option value="">1. Toca un día celestial 👆</option>';
+              '<option value="">1. Toca un día en el calendario 👆</option>';
             const h = document.getElementById("fieldHora");
             h.value = "";
             h.disabled = true;
@@ -2576,7 +2540,7 @@
         );
         const finalPhrase =
           serviceObj && serviceObj.tipo === "diseno" ? msgDesign : msgBasic;
-        const msg = `Hola Empyrean Spa by NiNa. Soy ${lastCitaData.nombre}.\nCita Celestial: ${formatDateText(lastCitaData.fecha)} ${format12h(lastCitaData.hora)}\nServicio Spa: ${lastCitaData.servicio}\n${finalPhrase}`;
+        const msg = `Hola Empyrean Spa by NiNa. Soy ${lastCitaData.nombre}.\nCita: ${formatDateText(lastCitaData.fecha)} a las ${format12h(lastCitaData.hora)}\nServicio: ${lastCitaData.servicio}\n${finalPhrase}`;
         window.open(
           `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(msg)}`,
           "_blank",
@@ -2586,7 +2550,7 @@
       }
       function enviarWhatsAppReprogramacion() {
         window.open(
-          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola Empyrean Spa. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita divina.\nNueva Cita: ${formatDateText(lastCitaData.fecha)} ${format12h(lastCitaData.hora)}`)}`,
+          `https://wa.me/${miWhatsAppAdmin}?text=${encodeURIComponent(`Hola Empyrean Spa. Soy ${lastCitaData.nombre}.\nHe reprogramado mi cita.\nNueva Fecha: ${formatDateText(lastCitaData.fecha)} a las ${format12h(lastCitaData.hora)}`)}`,
           "_blank",
         );
         closeModal("wspRescheduleModal");
@@ -2598,6 +2562,7 @@
         pendingCancelData = { tel: t, name: n, isClient: c, hour: h };
         document.getElementById("cancelModal").style.display = "flex";
       }
+
       async function confirmCancelation() {
         const { error } = await client
           .from("citas")
@@ -2608,9 +2573,9 @@
           if (!rawTel.startsWith("57")) rawTel = "57" + rawTel;
           let msg = "";
           if (pendingCancelData.isClient) {
-            msg = `Hola Empyrean Spa by NiNa. Por favor cancela la cita divina de ${pendingCancelData.name}.`;
+            msg = `Hola Empyrean Spa by NiNa. Por favor cancela mi cita de las ${format12h(pendingCancelData.hour)}.`;
           } else {
-            msg = `Hola celestial ${pendingCancelData.name}!\nHan pasado 20 minutos desde tu hora divina, por lo que tu cita de las ${format12h(pendingCancelData.hour)} de hoy ha sido cancelada.\n¡No te preocupes! Juntas revisaremos la agenda divina para encontrar un nuevo momento celestial para ti 💅🏻😇`;
+            msg = `Hola ${pendingCancelData.name} ✨!\nHan pasado 20 minutos desde tu hora agendada, por lo que tu cita de las ${format12h(pendingCancelData.hour)} ha sido cancelada.\n¡No te preocupes! Escríbeme y revisamos la agenda para encontrar un nuevo espacio para ti 💅🏻😇`;
           }
           window.open(
             `https://wa.me/${pendingCancelData.isClient ? miWhatsAppAdmin : rawTel}?text=${encodeURIComponent(msg)}`,
@@ -2620,6 +2585,7 @@
           closeModal("cancelModal");
         }
       }
+
       async function markArrived(id) {
         await client
           .from("citas")
@@ -2657,7 +2623,7 @@
         cHist.innerHTML = "";
         if (!data || !data.length) {
           cUp.innerHTML =
-            "<p style='text-align:center;color:#b2bec3;margin-top:30px'>Sin citas divinas aún.</p>";
+            "<p style='text-align:center;color:#b2bec3;margin-top:30px'>Sin citas aún.</p>";
           return;
         }
 
@@ -2678,27 +2644,28 @@
         const renderCard = (d, isPast) => {
           let rawTel = d.telefono.replace(/\D/g, "");
           if (!rawTel.startsWith("57")) rawTel = "57" + rawTel;
-          const reminderMsg = `Hola celestial ${d.nombre}!\nTu momento Empyrean está cerca:\nFecha Divina: ${formatDateText(d.fecha)}.\nHora Divina: ${format12h(d.hora)}\nLugar Celestial: Carrera 81d #68-03sur Bosa Palestina\nServicio Spa: ${d.servicio}.\n\n*Recuerda que tenemos 20 minutos de tolerancia celestial o tu cita divina será cancelada.💅🏻😇`;
+          const reminderMsg = `Hola ${d.nombre} ✨!\nTu cita en Empyrean Spa está cerca:\nFecha: ${formatDateText(d.fecha)}.\nHora: ${format12h(d.hora)}\nLugar: Carrera 81d #68-03sur Bosa Palestina\nServicio: ${d.servicio}.\n\n*Recuerda que tenemos 20 minutos de tolerancia o tu cita será cancelada.💅🏻😇`;
+
           let badgeClass = "status-pill";
-          let badgeText = "Confirmada Divine";
+          let badgeText = "Confirmada";
           if (d.estado === "reprogramada") {
             badgeClass += " repro";
-            badgeText = "Reprogramada Divina";
+            badgeText = "Reprogramada";
           } else if (d.estado === "completada") {
             badgeClass += " done";
-            badgeText = "Completada Divine";
+            badgeText = "Completada";
           }
           if (isPast && d.estado !== "completada") {
             badgeClass += " late";
-            badgeText = "Vencida (Descanso)";
+            badgeText = "Vencida";
           }
 
           let btns = "";
           if (!isPast && d.estado !== "completada") {
             btns =
               userProfile.role === "admin"
-                ? `<div class="actions-row"><button class="btn-action btn-arrive" onclick="markArrived('${d.id}')">✅ Llegó</button><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=${encodeURIComponent(reminderMsg)}')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">Cancelar Divino</button></div>`
-                : `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar Divine</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true, '${d.hora}')">Cancelar Divino</button></div>`;
+                ? `<div class="actions-row"><button class="btn-action btn-arrive" onclick="markArrived('${d.id}')">✅ Llegó</button><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=${encodeURIComponent(reminderMsg)}')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">Cancelar</button></div>`
+                : `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true, '${d.hora}')">Cancelar</button></div>`;
           } else if (
             isPast &&
             d.estado !== "completada" &&
@@ -2707,7 +2674,6 @@
             btns = `<div class="actions-row"><button class="btn-action btn-notify-late" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">📢 Notificar Cancelación</button></div>`;
           }
 
-          // AQUI ESTÁ LA LÓGICA DE CUMPLEAÑOS QUE FALTABA
           let bdayHtml = "";
           if (userProfile.role === "admin" && perfilesCumpleanos[d.user_id]) {
             const bdayStr = perfilesCumpleanos[d.user_id];
@@ -2745,7 +2711,7 @@
                     : diff > 0
                       ? `Faltan ${diff} días para su cumple 🎂`
                       : `Cumplió hace ${Math.abs(diff)} días 🎂`;
-                bdayHtml = `<div style="background: linear-gradient(135deg, #fff0f5, #fce4ec); color: #d81b60; padding: 10px; border-radius: 14px; font-size: 0.85rem; font-weight: 700; margin-top: 12px; border: 1px dashed #f48fb1; text-align: center;">✨ Modo Cumpleañera: ${text} (${String(bDay).padStart(2, "0")}/${String(bMonth + 1).padStart(2, "0")})</div>`;
+                bdayHtml = `<div style="background: linear-gradient(135deg, #fff0f5, #fce4ec); color: #d81b60; padding: 10px; border-radius: 14px; font-size: 0.85rem; font-weight: 700; margin-top: 12px; border: 1px dashed #f48fb1; text-align: center;">✨ Modo Cumpleañer@: ${text} (${String(bDay).padStart(2, "0")}/${String(bMonth + 1).padStart(2, "0")})</div>`;
               } else {
                 let dFaltan = diff > 0 ? diff : diff + 365;
                 bdayHtml = `<div style="font-size: 0.8rem; color: #b2bec3; margin-top: 8px;">🎂 Cumpleaños: ${String(bDay).padStart(2, "0")}/${String(bMonth + 1).padStart(2, "0")} (Faltan ${dFaltan} días)</div>`;
@@ -2761,12 +2727,12 @@
           upcomingData.forEach((d) => (cUp.innerHTML += renderCard(d, false)));
         else
           cUp.innerHTML =
-            "<p style='text-align:center;color:#b2bec3;margin-top:20px'>No tienes citas divinas próximas.</p>";
+            "<p style='text-align:center;color:#b2bec3;margin-top:20px'>No tienes citas próximas.</p>";
         if (historyData.length)
           historyData.forEach((d) => (cHist.innerHTML += renderCard(d, true)));
         else
           cHist.innerHTML =
-            "<p style='text-align:center;color:#b2bec3;margin-top:20px'>Historial divino vacío.</p>";
+            "<p style='text-align:center;color:#b2bec3;margin-top:20px'>Historial vacío.</p>";
       }
 
       async function fetchSchedule() {
@@ -2813,14 +2779,11 @@
             d.onclick = () => {
               if (d.classList.contains("full"))
                 return showAlert(
-                  "Error Divino",
-                  "Día celestial lleno o no laboral.",
+                  "Día Lleno",
+                  "El día seleccionado está lleno o no hay servicio.",
                 );
               if (d.classList.contains("blocked-day")) {
-                showAlert(
-                  "Día Cerrado Divino",
-                  "No hay servicio Empyrean este día.",
-                );
+                showAlert("Día Cerrado", "No hay servicio este día.");
                 return;
               }
               document
@@ -2835,7 +2798,7 @@
               s.selectedIndex = 0;
               const h = document.getElementById("fieldHora");
               h.innerHTML =
-                '<option value="">Luego selecciona servicio spa...</option>';
+                '<option value="">Luego selecciona servicio...</option>';
               h.disabled = true;
               document.getElementById("surchargeAlert").style.display = "none";
               updateServiceAvailability(dStr);
@@ -2952,14 +2915,14 @@
         } else {
           h.disabled = true;
           h.innerHTML =
-            '<option value="">Luego selecciona servicio spa...</option>';
+            '<option value="">Luego selecciona servicio...</option>';
         }
       }
 
       async function updateServiceAvailability(f) {
         const s = document.getElementById("fieldServicio");
         s.innerHTML = "";
-        s.add(new Option("Selecciona servicio spa divine...", ""));
+        s.add(new Option("Selecciona servicio...", ""));
         const dw = new Date(f + "T00:00:00").getDay();
         let base = globalSchedule[dw]
           ? [...globalSchedule[dw].horas].sort()
@@ -3025,7 +2988,7 @@
           opt.value = svc.nombre;
           if (!fitsAnywhere) {
             opt.disabled = true;
-            opt.innerText = `🚫 ${svc.nombre} (No cabe en el cielo hoy)`;
+            opt.innerText = `🚫 ${svc.nombre} (No hay espacio hoy)`;
           } else {
             opt.disabled = false;
             opt.innerText = svc.nombre;
@@ -3085,11 +3048,11 @@
         let availableList = Array.from(candidateSlots).sort();
         let any = false;
         if (!availableList.length) {
-          s.add(new Option("Cielo Lleno", ""));
+          s.add(new Option("Agenda Llena", ""));
           s.disabled = true;
           return;
         }
-        s.add(new Option("Selecciona hora divine...", ""));
+        s.add(new Option("Selecciona hora...", ""));
         availableList.forEach((h) => {
           const startMins = timeToMins(h);
           const endMins = startMins + reqDuration;
@@ -3143,7 +3106,7 @@
         });
         if (!any) {
           s.innerHTML = "";
-          s.add(new Option("Cielo Ocupado", ""));
+          s.add(new Option("Agenda Llena", ""));
           s.disabled = true;
         } else {
           s.disabled = false;
