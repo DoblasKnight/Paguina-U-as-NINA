@@ -32,9 +32,24 @@
         --disabled: #f1f2f6;
       }
 
-      /* FONDO PREMIUM MINIMALISTA */
+      /* FONDO PANTALLA DE INICIO (IMAGEN) */
       body {
         font-family: "Poppins", sans-serif;
+        background-image: url("logoImagenes/fondo.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        margin: 0;
+        color: var(--text);
+        padding: 20px 15px;
+        -webkit-tap-highlight-color: transparent;
+        overscroll-behavior-y: none;
+        transition: background 0.5s ease;
+      }
+
+      /* FONDO PANTALLA PRINCIPAL (DEGRADADO AL INICIAR SESIÓN) */
+      body.logged-in-bg {
         background-color: #faf7fa;
         background-image:
           radial-gradient(at 0% 0%, rgba(96, 32, 96, 0.06) 0%, transparent 50%),
@@ -43,12 +58,6 @@
             rgba(245, 200, 98, 0.08) 0%,
             transparent 50%
           );
-        background-attachment: fixed;
-        margin: 0;
-        color: var(--text);
-        padding: 20px 15px;
-        -webkit-tap-highlight-color: transparent;
-        overscroll-behavior-y: none;
       }
 
       /* ANIMACIONES */
@@ -794,8 +803,9 @@
             class="btn-modal secondary"
             onclick="closeModal('deleteServiceModal')"
           >
-            Cancelar</button
-          ><button class="btn-modal danger" onclick="confirmDeleteService()">
+            Cancelar
+          </button>
+          <button class="btn-modal danger" onclick="confirmDeleteService()">
             Sí, Borrar
           </button>
         </div>
@@ -810,8 +820,9 @@
             class="btn-modal secondary"
             onclick="closeModal('deleteSurchargeModal')"
           >
-            Cancelar</button
-          ><button class="btn-modal danger" onclick="confirmDeleteSurcharge()">
+            Cancelar
+          </button>
+          <button class="btn-modal danger" onclick="confirmDeleteSurcharge()">
             Sí, Borrar
           </button>
         </div>
@@ -829,8 +840,9 @@
             class="btn-modal secondary"
             onclick="closeModal('deleteBlockModal')"
           >
-            Cancelar</button
-          ><button class="btn-modal primary" onclick="confirmDeleteBlock()">
+            Cancelar
+          </button>
+          <button class="btn-modal primary" onclick="confirmDeleteBlock()">
             Sí, Abrir
           </button>
         </div>
@@ -850,8 +862,9 @@
             class="btn-modal secondary"
             onclick="closeModal('resetModal')"
           >
-            Cancelar</button
-          ><button class="btn-modal primary" onclick="sendResetEmail()">
+            Cancelar
+          </button>
+          <button class="btn-modal primary" onclick="sendResetEmail()">
             Enviar
           </button>
         </div>
@@ -866,8 +879,9 @@
             class="btn-modal secondary"
             onclick="closeModal('cancelModal')"
           >
-            Volver</button
-          ><button class="btn-modal danger" onclick="confirmCancelation()">
+            Volver
+          </button>
+          <button class="btn-modal danger" onclick="confirmCancelation()">
             Sí, Cancelar
           </button>
         </div>
@@ -914,7 +928,8 @@
             type="password"
             id="recoveryPass"
             placeholder="Nueva contraseña (mín 6)"
-          /><span
+          />
+          <span
             class="toggle-eye"
             onclick="togglePassword('recoveryPass', this)"
             >👁️</span
@@ -946,9 +961,8 @@
       <div id="login-form">
         <input type="email" id="loginEmail" placeholder="Tu Correo" />
         <div class="password-wrapper">
-          <input type="password" id="loginPass" placeholder="Contraseña" /><span
-            class="toggle-eye"
-            onclick="togglePassword('loginPass', this)"
+          <input type="password" id="loginPass" placeholder="Contraseña" />
+          <span class="toggle-eye" onclick="togglePassword('loginPass', this)"
             >👁️</span
           >
         </div>
@@ -1004,7 +1018,8 @@
             type="password"
             id="regPass"
             placeholder="Contraseña (mín 6)"
-          /><span class="toggle-eye" onclick="togglePassword('regPass', this)"
+          />
+          <span class="toggle-eye" onclick="togglePassword('regPass', this)"
             >👁️</span
           >
         </div>
@@ -1013,7 +1028,8 @@
             type="password"
             id="regPassConfirm"
             placeholder="Confirmar Contraseña"
-          /><span
+          />
+          <span
             class="toggle-eye"
             onclick="togglePassword('regPassConfirm', this)"
             >👁️</span
@@ -1044,7 +1060,8 @@
             src="logoImagenes/logotipo.png"
             alt="Empyrean Spa Logo"
             class="header-logo-img"
-          /><span
+          />
+          <span
             id="adminBadge"
             style="
               display: none;
@@ -1278,15 +1295,16 @@
               padding-top: 15px;
             "
           >
-            <label class="msg-label">🩷 Mensaje Final (Básico):</label
-            ><textarea
+            <label class="msg-label">🩷 Mensaje Final (Básico):</label>
+            <textarea
               id="adminMsgBasic"
               rows="2"
               style="border: 1px solid #fbf4fb"
             ></textarea>
             <label class="msg-label" style="margin-top: 10px"
               >💖 Mensaje Final (Diseño):</label
-            ><textarea
+            >
+            <textarea
               id="adminMsgDesign"
               rows="2"
               style="border: 1px solid #fbf4fb"
@@ -1333,7 +1351,8 @@
               <label
                 style="font-size: 0.85rem; font-weight: 700; color: var(--text)"
                 >Hora de Cierre (Límite):</label
-              ><input
+              >
+              <input
                 type="time"
                 id="dayClosingTime"
                 style="margin-top: 5px; background: #fdfdfd"
@@ -1341,7 +1360,8 @@
             </div>
             <div id="weeklyHours" class="weekly-hours-container"></div>
             <div class="add-row">
-              <input type="time" id="newHourInput" /><button
+              <input type="time" id="newHourInput" />
+              <button
                 class="btn-main"
                 style="
                   background: var(--text);
@@ -1376,12 +1396,11 @@
             💰 Recargos por Hora
           </div>
           <div class="add-row" id="formSurchargeRow" style="background: white">
-            <input type="hidden" id="editSurchargeId" /><input
-              type="time"
-              id="surchargeTime"
-              style="flex: 1"
-            /><span style="font-weight: bold; color: #ffe0b2">-</span>
-            <input type="time" id="surchargeEnd" style="flex: 1" /><input
+            <input type="hidden" id="editSurchargeId" />
+            <input type="time" id="surchargeTime" style="flex: 1" />
+            <span style="font-weight: bold; color: #ffe0b2">-</span>
+            <input type="time" id="surchargeEnd" style="flex: 1" />
+            <input
               type="text"
               id="surchargeMsg"
               placeholder="Ej: Recargo nocturno"
@@ -1459,9 +1478,9 @@
               Bloquear Rango Específico
             </h4>
             <div class="add-row" style="background: white">
-              <input type="time" id="blockStartTime" style="flex: 1" /><span
-                >-</span
-              ><input type="time" id="blockEndTime" style="flex: 1" />
+              <input type="time" id="blockStartTime" style="flex: 1" />
+              <span>-</span>
+              <input type="time" id="blockEndTime" style="flex: 1" />
               <button
                 class="btn-main"
                 style="
@@ -1582,7 +1601,8 @@
               type="password"
               id="currentPassProfile"
               placeholder="Actual"
-            /><span
+            />
+            <span
               class="toggle-eye"
               onclick="togglePassword('currentPassProfile', this)"
               >👁️</span
@@ -1593,7 +1613,8 @@
               type="password"
               id="newPassProfile"
               placeholder="Nueva (min 6)"
-            /><span
+            />
+            <span
               class="toggle-eye"
               onclick="togglePassword('newPassProfile', this)"
               >👁️</span
@@ -1604,7 +1625,8 @@
               type="password"
               id="confirmPassProfile"
               placeholder="Confirmar"
-            /><span
+            />
+            <span
               class="toggle-eye"
               onclick="togglePassword('confirmPassProfile', this)"
               >👁️</span
@@ -1665,7 +1687,6 @@
       let globalSurcharges = [];
       let globalClosingTimes = {};
       let adminSelectedDate = null;
-
       let perfilesCumpleanos = {};
 
       const hash = window.location.hash;
@@ -1820,6 +1841,7 @@
         const {
           data: { session },
         } = await client.auth.getSession();
+
         if (session) {
           currentUserEmail = session.user.email;
           const { data } = await client
@@ -1829,6 +1851,10 @@
             .single();
           if (!data) return setTimeout(checkUser, 500);
           userProfile = data;
+
+          // ---> MAGIA AQUÍ: Cambiamos el fondo al degradado <---
+          document.body.classList.add("logged-in-bg");
+
           document.getElementById("auth-screen").style.display = "none";
           document.getElementById("app-screen").style.display = "block";
           document.getElementById("fieldNombre").value = data.full_name;
@@ -1878,6 +1904,8 @@
               loadAllAppointments();
           }, 30000);
         } else {
+          // ---> MAGIA AQUÍ: Volvemos a la foto si no hay sesión <---
+          document.body.classList.remove("logged-in-bg");
           document.getElementById("auth-screen").style.display = "block";
         }
       }
@@ -2410,11 +2438,13 @@
           showAlert("Faltan Horas", "Selecciona el inicio y fin del descanso.");
           return;
         }
-        await client.from("bloqueos").insert({
-          fecha: adminSelectedDate,
-          hora_inicio: start,
-          hora_fin: end,
-        });
+        await client
+          .from("bloqueos")
+          .insert({
+            fecha: adminSelectedDate,
+            hora_inicio: start,
+            hora_fin: end,
+          });
         document.getElementById("blockStartTime").value = "";
         document.getElementById("blockEndTime").value = "";
         loadAdminDayConfig();
