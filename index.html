@@ -2439,13 +2439,11 @@
           showAlert("Faltan Horas", "Selecciona el inicio y fin del descanso.");
           return;
         }
-        await client
-          .from("bloqueos")
-          .insert({
-            fecha: adminSelectedDate,
-            hora_inicio: start,
-            hora_fin: end,
-          });
+        await client.from("bloqueos").insert({
+          fecha: adminSelectedDate,
+          hora_inicio: start,
+          hora_fin: end,
+        });
         document.getElementById("blockStartTime").value = "";
         document.getElementById("blockEndTime").value = "";
         loadAdminDayConfig();
@@ -2699,7 +2697,7 @@
           if (!isPast && d.estado !== "completada") {
             btns =
               userProfile.role === "admin"
-                ? `<div class="actions-row"><button class="btn-action btn-arrive" onclick="markArrived('${d.id}')">✅ Llegó</button><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=${encodeURIComponent(reminderMsg)}')">Recordar Divino</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">Cancelar Divino</button></div>`
+                ? `<div class="actions-row"><button class="btn-action btn-arrive" onclick="markArrived('${d.id}')">✅ Llegó</button><button class="btn-action btn-reschedule" style="background:var(--whatsapp);color:white" onclick="window.open('https://wa.me/${rawTel}?text=${encodeURIComponent(reminderMsg)}')">Recordar</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',false, '${d.hora}')">Cancelar Divino</button></div>`
                 : `<div class="actions-row"><button class="btn-action btn-reschedule" onclick="startReschedule('${d.id}','${d.fecha}','${d.hora}','${d.servicio}','${d.nombre}','${d.telefono}')">Reprogramar Divine</button><button class="btn-action btn-cancel" onclick="openCancelModal('${d.id}','${d.telefono}','${d.nombre}',true, '${d.hora}')">Cancelar Divino</button></div>`;
           } else if (
             isPast &&
