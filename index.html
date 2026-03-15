@@ -21,6 +21,10 @@
         --primary-light: #fdf2ff;
         --primary-glow: 0 4px 20px rgba(96, 32, 96, 0.4);
 
+        /* ✨ VARIABLES NEÓN DINÁMICAS ✨ */
+        --neon-color: #f5c862;
+        --neon-speed: 0.8s;
+
         --card-bg: #ffffff;
         --text: #2d3436;
         --text-light: #636e72;
@@ -88,9 +92,7 @@
         border-color: var(--gold) !important;
       }
 
-      /* =========================================
-         ✨ ANIMACIONES SVG PARA MODALES ✨
-         ========================================= */
+      /* MODALES SVG */
       .svg-modal-icon {
         width: 70px;
         height: 70px;
@@ -172,11 +174,11 @@
       }
 
       /* =========================================
-         ✨ ESTILOS BURBUJA DE PERFIL SILEO ✨
+         ✨ ESTILOS BURBUJA DE PERFIL ✨
          ========================================= */
       .profile-bubble {
         position: absolute;
-        top: 75px;
+        top: 85px;
         right: 20px;
         width: 320px;
         background: rgba(255, 255, 255, 0.95);
@@ -191,6 +193,8 @@
         transform-origin: top right;
         display: none;
         border: 1px solid #f9edf7;
+        max-height: 80vh;
+        overflow-y: auto;
       }
 
       /* Botón "X" de la burbuja */
@@ -211,6 +215,7 @@
         cursor: pointer;
         transition: all 0.2s;
         font-size: 0.9rem;
+        z-index: 10;
       }
       .close-bubble-btn:hover {
         background: #ffebee;
@@ -297,7 +302,7 @@
         font-weight: 700;
         padding-left: 5px;
       }
-      .bubble-input-group input {
+      .bubble-input-group input[type="text"] {
         padding: 12px 15px;
         font-size: 0.95rem;
         margin: 0;
@@ -308,12 +313,27 @@
         box-sizing: border-box;
         transition: all 0.2s;
       }
-      .bubble-input-group input:focus {
+      .bubble-input-group input[type="text"]:focus {
         background: white;
         border-color: var(--primary);
         box-shadow: 0 4px 15px rgba(96, 32, 96, 0.05);
         outline: none;
       }
+
+      .neon-controls {
+        background: #fdfdfd;
+        border: 1px solid #fbf4fb;
+        padding: 15px;
+        border-radius: 20px;
+        margin-top: 15px;
+      }
+      .neon-controls-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
       .btn-bubble {
         width: 100%;
         padding: 14px;
@@ -485,6 +505,78 @@
         width: auto;
       }
 
+      /* =========================================
+         ✨ EFECTO NEON AVATAR HEADER ✨
+         ========================================= */
+      .header-avatar-container {
+        position: relative;
+        width: 52px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 50%;
+      }
+
+      .neon-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 2px solid var(--neon-color);
+        box-shadow:
+          0 0 8px var(--neon-color),
+          inset 0 0 8px var(--neon-color);
+        transition: all 0.3s ease;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+
+      .neon-ring.spinning {
+        border-color: transparent;
+        border-top-color: var(--neon-color);
+        border-right-color: var(--neon-color);
+        box-shadow: 0 0 15px var(--neon-color);
+        animation: spinNeon var(--neon-speed) linear infinite;
+        opacity: 1;
+      }
+
+      /* ✨ MODO RAINBOW OVERRIDES ✨ */
+      .neon-ring.rainbow {
+        border-color: #ff0000 !important;
+        box-shadow:
+          0 0 8px #ff0000,
+          inset 0 0 8px #ff0000 !important;
+        animation: rainbowHue 2s linear infinite !important;
+      }
+      .neon-ring.rainbow.spinning {
+        border-color: transparent !important;
+        border-top-color: #ff0000 !important;
+        border-right-color: #ff0000 !important;
+        box-shadow: 0 0 15px #ff0000 !important;
+        /* Mezcla el giro con el cambio de color */
+        animation:
+          spinNeon var(--neon-speed) linear infinite,
+          rainbowHue 2.5s linear infinite !important;
+      }
+
+      @keyframes spinNeon {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes rainbowHue {
+        0% {
+          filter: hue-rotate(0deg);
+        }
+        100% {
+          filter: hue-rotate(360deg);
+        }
+      }
+
       .header-avatar {
         width: 44px;
         height: 44px;
@@ -496,19 +588,18 @@
         justify-content: center;
         font-weight: 700;
         font-size: 0.9rem;
-        cursor: pointer;
-        box-shadow: 0 5px 15px rgba(96, 32, 96, 0.2);
         transition: transform 0.2s;
         border: 2px solid white;
         overflow: hidden;
         position: relative;
+        z-index: 2;
       }
       .header-avatar img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
-      .header-avatar:active {
+      .header-avatar-container:active .header-avatar {
         transform: scale(0.9);
       }
 
@@ -958,7 +1049,6 @@
         position: relative;
       }
 
-      /* Efecto hover mágico para PC */
       .day:not(.disabled):not(.full):not(.blocked-day):not(.selected):hover {
         border-color: var(--primary);
         background: #fdf2ff;
@@ -1006,20 +1096,17 @@
         margin: 0 auto 30px;
       }
 
-      /* ESTILOS DE PADDING (ESPACIO INTERIOR) PARA PANTALLAS */
       #view-agenda,
       #view-lista,
       #view-config {
         padding: 40px;
         box-sizing: border-box;
       }
-
       #view-agenda {
-        gap: 50px; /* ESPACIO ENTRE CALENDARIO Y FORMULARIO */
-        display: grid; /* Aseguramos que inicie como grid */
+        gap: 50px;
+        display: grid;
       }
 
-      /* Layout PC/Responsive */
       @media (min-width: 768px) {
         #view-agenda {
           grid-template-columns: 1.2fr 1fr;
@@ -1027,7 +1114,6 @@
         }
       }
 
-      /* Ajustes para Celular (Volver a compacto) */
       @media (max-width: 768px) {
         #view-agenda,
         #view-lista,
@@ -1037,16 +1123,15 @@
         #view-agenda {
           display: block;
           gap: 20px;
-        } /* Anulamos el grid en móvil */
+        }
       }
 
       @media (max-width: 450px) {
         .profile-bubble {
-          width: auto; /* Dejamos que el ancho se calcule automático */
-          left: 15px; /* 15px de margen izquierdo */
-          right: 15px; /* 15px de margen derecho */
-        } /* Centrado perfecto sin salir de la pantalla */
-
+          width: auto;
+          left: 15px;
+          right: 15px;
+        }
         .add-row {
           flex-direction: column;
           align-items: stretch;
@@ -1566,12 +1651,14 @@
         </div>
 
         <div
-          class="header-avatar"
-          id="headerAvatar"
+          class="header-avatar-container"
           onclick="toggleProfileBubble(true)"
         >
-          <img id="headerAvatarImg" src="" style="display: none" />
-          <span id="headerAvatarText">..</span>
+          <div class="neon-ring" id="neonRing"></div>
+          <div class="header-avatar" id="headerAvatar">
+            <img id="headerAvatarImg" src="" style="display: none" />
+            <span id="headerAvatarText">..</span>
+          </div>
         </div>
       </div>
 
@@ -1614,6 +1701,83 @@
             id="bubbleNombre"
             placeholder="Tu nombre..."
             onblur="saveProfileData()"
+          />
+        </div>
+
+        <div class="neon-controls">
+          <label
+            style="
+              display: block;
+              font-size: 0.8rem;
+              font-weight: bold;
+              color: var(--primary);
+              margin-bottom: 10px;
+            "
+            >✨ Estilo del Aro</label
+          >
+
+          <div class="neon-controls-row">
+            <input
+              type="color"
+              id="neonColorPicker"
+              value="#f5c862"
+              onchange="updateNeonSettings()"
+              style="
+                width: 45px;
+                height: 45px;
+                padding: 0;
+                border: none;
+                border-radius: 12px;
+                cursor: pointer;
+              "
+            />
+
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                cursor: pointer;
+                font-weight: 600;
+              "
+            >
+              <input
+                type="checkbox"
+                id="neonRainbowToggle"
+                onchange="updateNeonSettings()"
+                style="
+                  width: 20px;
+                  height: 20px;
+                  margin: 0;
+                  accent-color: var(--primary);
+                "
+              />
+              Modo Rainbow 🌈
+            </label>
+          </div>
+
+          <label
+            style="
+              display: block;
+              font-size: 0.75rem;
+              color: var(--text-light);
+              margin-bottom: 5px;
+              font-weight: 600;
+            "
+            >Velocidad:
+            <span id="speedLabel">Lento 🐢 -> 🐇 Rápido</span></label
+          >
+          <input
+            type="range"
+            id="neonSpeedSlider"
+            min="0.1"
+            max="3"
+            step="0.1"
+            value="0.8"
+            oninput="updateNeonSettings(true)"
+            style="width: 100%; margin: 0; accent-color: var(--primary)"
+            dir="rtl"
           />
         </div>
 
@@ -2082,18 +2246,58 @@
       const hash = window.location.hash;
       const isRecovery = hash && hash.includes("type=recovery");
 
-      /* CIERRE DE BURBUJA AL TOCAR FUERA */
+      /* CIERRE DE BURBUJA AL TOCAR FUERA Y APAGAR EL NEON */
       document.addEventListener("click", function (event) {
         const bubble = document.getElementById("profileBubble");
-        const avatar = document.getElementById("headerAvatar");
+        const avatarContainer = document.querySelector(
+          ".header-avatar-container",
+        );
         if (
           bubble.style.display === "block" &&
           !bubble.contains(event.target) &&
-          !avatar.contains(event.target)
+          !avatarContainer.contains(event.target)
         ) {
           toggleProfileBubble(false);
         }
       });
+
+      // ✨ FUNCIONES DEL NEON (CARGAR Y GUARDAR) ✨
+      function loadNeonSettings() {
+        const color = localStorage.getItem("neonColor") || "#f5c862";
+        const isRainbow = localStorage.getItem("neonRainbow") === "true";
+        const speed = localStorage.getItem("neonSpeed") || "0.8";
+
+        document.getElementById("neonColorPicker").value = color;
+        document.getElementById("neonRainbowToggle").checked = isRainbow;
+        document.getElementById("neonSpeedSlider").value = speed;
+
+        updateNeonSettings(false);
+      }
+
+      function updateNeonSettings(isSliding = false) {
+        const color = document.getElementById("neonColorPicker").value;
+        const isRainbow = document.getElementById("neonRainbowToggle").checked;
+        const speed = document.getElementById("neonSpeedSlider").value;
+
+        // Aplicar a CSS Variables
+        document.documentElement.style.setProperty("--neon-color", color);
+        document.documentElement.style.setProperty("--neon-speed", speed + "s");
+
+        // Aplicar modo Rainbow
+        const ring = document.getElementById("neonRing");
+        if (isRainbow) ring.classList.add("rainbow");
+        else ring.classList.remove("rainbow");
+
+        // Si estamos moviendo la barra, forzamos el giro temporal para que el usuario vea la velocidad
+        if (isSliding && !ring.classList.contains("spinning")) {
+          ring.classList.add("spinning");
+        }
+
+        // Guardar para la próxima vez
+        localStorage.setItem("neonColor", color);
+        localStorage.setItem("neonRainbow", isRainbow);
+        localStorage.setItem("neonSpeed", speed);
+      }
 
       function formatDateText(dateStr) {
         const dias = [
@@ -2253,9 +2457,12 @@
 
       function toggleProfileBubble(forceShow) {
         const b = document.getElementById("profileBubble");
+        const ring = document.getElementById("neonRing");
+
         if (b.classList.contains("bubble-anim-enter") && forceShow !== true) {
           b.classList.remove("bubble-anim-enter");
           b.classList.add("bubble-anim-leave");
+          if (ring) ring.classList.remove("spinning"); // Apaga el neón
           setTimeout(() => {
             if (b.classList.contains("bubble-anim-leave"))
               b.style.display = "none";
@@ -2268,6 +2475,7 @@
           b.style.display = "block";
           b.classList.remove("bubble-anim-leave");
           b.classList.add("bubble-anim-enter");
+          if (ring) ring.classList.add("spinning"); // Enciende el giro neón
         }
       }
 
@@ -2363,6 +2571,9 @@
           document.getElementById("fieldNombre").value = data.full_name;
           document.getElementById("fieldCorreo").value = session.user.email;
 
+          // Cargar diseño del neón guardado
+          loadNeonSettings();
+
           renderProfileUI();
           await fetchServices();
           await fetchSchedule();
@@ -2401,10 +2612,6 @@
           }
 
           renderCalendar();
-
-          // ¡MAGIA AQUÍ!
-          // Forzamos a la app a que haga "clic" en la pestaña de agenda apenas entra,
-          // para que el navegador construya la cuadrícula correctamente.
           showTab("agenda");
 
           setInterval(() => {
