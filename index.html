@@ -1016,7 +1016,7 @@
 
       #view-agenda {
         gap: 50px; /* ESPACIO ENTRE CALENDARIO Y FORMULARIO */
-        display: grid; /* <--- Aseguramos que inicie como grid */
+        display: grid; /* Aseguramos que inicie como grid */
       }
 
       /* Layout PC/Responsive */
@@ -1037,14 +1037,16 @@
         #view-agenda {
           display: block;
           gap: 20px;
-        } /* <--- Anulamos el grid en móvil */
+        } /* Anulamos el grid en móvil */
       }
 
       @media (max-width: 450px) {
         .profile-bubble {
-          width: calc(100vw - 40px);
-          right: 20px;
-        }
+          width: auto; /* Dejamos que el ancho se calcule automático */
+          left: 15px; /* 15px de margen izquierdo */
+          right: 15px; /* 15px de margen derecho */
+        } /* Centrado perfecto sin salir de la pantalla */
+
         .add-row {
           flex-direction: column;
           align-items: stretch;
