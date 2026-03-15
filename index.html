@@ -19,7 +19,7 @@
         --primary: #602060;
         --gold: #f5c862;
         --primary-light: #fdf2ff;
-        --primary-glow: 0 4px 20px rgba(245, 200, 98, 0.4);
+        --primary-glow: 0 4px 20px rgba(96, 32, 96, 0.4);
 
         --card-bg: #ffffff;
         --text: #2d3436;
@@ -178,20 +178,46 @@
         position: absolute;
         top: 75px;
         right: 20px;
-        width: 300px;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        width: 320px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
         border-radius: 32px;
         box-shadow:
-          0 20px 50px rgba(96, 32, 96, 0.15),
+          0 25px 60px rgba(96, 32, 96, 0.2),
           inset 0 0 0 1px rgba(255, 255, 255, 0.8);
-        padding: 25px;
+        padding: 35px 25px 25px;
         z-index: 2000;
         transform-origin: top right;
         display: none;
         border: 1px solid #f9edf7;
       }
+
+      /* Botón "X" de la burbuja */
+      .close-bubble-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 32px;
+        height: 32px;
+        background: #f1f2f6;
+        border-radius: 50%;
+        border: none;
+        color: #636e72;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+      }
+      .close-bubble-btn:hover {
+        background: #ffebee;
+        color: var(--danger);
+        transform: scale(1.1);
+      }
+
       .bubble-anim-enter {
         animation: bubbleEnter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)
           forwards;
@@ -222,15 +248,15 @@
       }
 
       .bubble-avatar-wrapper {
-        width: 85px;
-        height: 85px;
-        margin: 0 auto 15px;
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 20px;
         border-radius: 50%;
         background: linear-gradient(135deg, var(--primary), #b273b2);
         position: relative;
         cursor: pointer;
         overflow: hidden;
-        box-shadow: 0 8px 25px rgba(96, 32, 96, 0.25);
+        box-shadow: 0 10px 30px rgba(96, 32, 96, 0.3);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -413,12 +439,12 @@
         box-shadow: 0 5px 15px rgba(255, 71, 87, 0.2);
       }
 
-      /* LAYOUT */
+      /* LAYOUT BASE - AMPLIADO PARA PC */
       #auth-screen,
       #app-screen,
       #recovery-screen {
         display: none;
-        max-width: 800px;
+        max-width: 1050px;
         margin: 0 auto;
         background: var(--card-bg);
         border-radius: 30px;
@@ -612,7 +638,7 @@
         margin-top: 20px;
         transition: transform 0.2s;
         font-family: inherit;
-        box-shadow: 0 8px 25px rgba(96, 32, 96, 0.2);
+        box-shadow: var(--primary-glow);
       }
       .btn-main:active {
         transform: scale(0.98);
@@ -909,7 +935,7 @@
         box-shadow: 0 5px 15px rgba(96, 32, 96, 0.2);
       }
 
-      /* CALENDAR */
+      /* CALENDAR - MEJORADO VIP */
       .cal-grid {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
@@ -923,24 +949,37 @@
         justify-content: center;
         border-radius: 14px;
         cursor: pointer;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         background: white;
         border: 1px solid #fbf4fb;
         color: var(--text);
         font-weight: 600;
-        transition: all 0.2s;
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
       }
-      .day.today {
+
+      /* Efecto hover mágico para PC */
+      .day:not(.disabled):not(.full):not(.blocked-day):not(.selected):hover {
         border-color: var(--primary);
+        background: #fdf2ff;
+        transform: scale(1.08);
+        z-index: 2;
+        box-shadow: 0 5px 15px rgba(96, 32, 96, 0.1);
+      }
+
+      .day.today {
+        border: 2px solid var(--primary);
         color: var(--primary);
         background: #fffbff;
+        font-weight: 800;
       }
       .day.selected {
-        background: var(--primary) !important;
+        background: linear-gradient(135deg, var(--primary), #8a2b8a) !important;
         color: white !important;
         border-color: var(--primary);
-        transform: translateY(-2px);
-        box-shadow: 0 0 15px var(--gold);
+        transform: scale(1.08) translateY(-3px);
+        box-shadow: 0 8px 20px rgba(96, 32, 96, 0.35);
+        z-index: 3;
       }
       .day.full {
         background: #ffeaeb;
@@ -967,7 +1006,45 @@
         margin: 0 auto 30px;
       }
 
-      @media (max-width: 600px) {
+      /* ESTILOS DE PADDING (ESPACIO INTERIOR) PARA PANTALLAS */
+      #view-agenda,
+      #view-lista,
+      #view-config {
+        padding: 40px;
+        box-sizing: border-box;
+      }
+
+      #view-agenda {
+        gap: 50px; /* ESPACIO ENTRE CALENDARIO Y FORMULARIO */
+        display: grid; /* <--- Aseguramos que inicie como grid */
+      }
+
+      /* Layout PC/Responsive */
+      @media (min-width: 768px) {
+        #view-agenda {
+          grid-template-columns: 1.2fr 1fr;
+          align-items: start;
+        }
+      }
+
+      /* Ajustes para Celular (Volver a compacto) */
+      @media (max-width: 768px) {
+        #view-agenda,
+        #view-lista,
+        #view-config {
+          padding: 20px;
+        }
+        #view-agenda {
+          display: block;
+          gap: 20px;
+        } /* <--- Anulamos el grid en móvil */
+      }
+
+      @media (max-width: 450px) {
+        .profile-bubble {
+          width: calc(100vw - 40px);
+          right: 20px;
+        }
         .add-row {
           flex-direction: column;
           align-items: stretch;
@@ -1497,6 +1574,10 @@
       </div>
 
       <div id="profileBubble" class="profile-bubble">
+        <button class="close-bubble-btn" onclick="toggleProfileBubble(false)">
+          ✕
+        </button>
+
         <input
           type="file"
           id="avatarUpload"
@@ -1644,7 +1725,7 @@
             <input
               type="tel"
               id="fieldTelefono"
-              placeholder="WhatsApp (Sin espacios)"
+              placeholder="WhatsApp"
               pattern="[0-9]*"
               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             />
@@ -1664,11 +1745,7 @@
         </div>
       </div>
 
-      <div
-        id="view-lista"
-        style="display: none; padding: 20px"
-        class="animate-pop"
-      >
+      <div id="view-lista" style="display: none" class="animate-pop">
         <div class="sub-tabs">
           <button
             id="subtab-upcoming"
@@ -2320,7 +2397,14 @@
             document.getElementById("fieldNombre").readOnly = true;
             document.getElementById("fieldCorreo").readOnly = true;
           }
+
           renderCalendar();
+
+          // ¡MAGIA AQUÍ!
+          // Forzamos a la app a que haga "clic" en la pestaña de agenda apenas entra,
+          // para que el navegador construya la cuadrícula correctamente.
+          showTab("agenda");
+
           setInterval(() => {
             if (document.getElementById("view-lista").style.display !== "none")
               loadAllAppointments();
@@ -2771,11 +2855,10 @@
 
         document.getElementById(`tab-${t}`).className = "tab-btn active";
         document.getElementById(`view-${t}`).style.display =
-          t === "agenda"
-            ? window.innerWidth > 768
-              ? "grid"
-              : "block"
-            : "block";
+          t === "agenda" ? "grid" : "block";
+        if (t === "agenda" && window.innerWidth <= 768)
+          document.getElementById(`view-${t}`).style.display = "block";
+
         if (t === "lista") loadAllAppointments();
         if (t !== "agenda") cancelRescheduleMode();
       }
